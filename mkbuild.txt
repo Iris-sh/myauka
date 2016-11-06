@@ -1,4 +1,4 @@
-project(main-parser-test)
+project(myauka)
 compiler(g++)
 linker(g++)
 source_dir("src")

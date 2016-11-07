@@ -36,7 +36,7 @@ std::u32string init_testing(const char* name){
 }
 
 static const char* help_str =
-    R"~(Usage: main-parser-test [option] file
+    R"~(Usage: myauka [option] file
 Options:
     --help    Display this text.
     --version Display version information)~";
@@ -66,7 +66,6 @@ int main(int argc, char* argv[]){
         help();
         return 0;
     }
-//         puts("Задан обрабатываемый файл.");
 
     auto it = option_func.find(argv[1]);
     if(it != option_func.end()){

@@ -13,6 +13,7 @@
 #include "../include/categories.h"
 #include "../include/operations_with_sets.h"
 #include "../include/char_conv.h" // для отладочной печати
+#include "../include/print_char32.h" // для отладочной печати
 
 using operations_with_sets::operator+;
 using operations_with_sets::operator*;
@@ -57,23 +58,13 @@ const char* category_kind_as_str[] = {
     "All_chars", "Not_single_quote", "Not_double_quote", "Set_of_cs"
 };
 
-void print_char32_t(const char32_t& c){
-    if(c == U'\n'){
-        printf("\'\\n\'");
-    }else{
-        auto s = char32_to_utf8(c);
-        printf("\'%s\'", s.c_str());
-    }
-}
-
 void print_category(const Category& c){
     auto k = c.kind;
     printf("%s", category_kind_as_str[k]);
     if(k == Set_of_cs){
         putchar(' ');
-        print_set(c.s, print_char32_t);
+        print_set(c.s, print_char32);
     }
-//     putchar('\n');
 }
 
 Category gc2category(const Generalized_char& gc){
@@ -103,8 +94,7 @@ Category gc2category(const Generalized_char& gc){
                     break;
 
                 default:
-                    categ.kind = Set_of_cs;
-                    categ.s    = sets_for_char_classes[gc.cls];
+                    ;
             }
             break;
 
@@ -202,16 +192,11 @@ Category operator + (const Category& c1, const Category& c2){
     return result;
 }
 
-// const std::set<std::pair<Category_kind, Category_kind>> intersection_special_cases = {
-//     {Set_of_cs, Not_single_quote}, {Set_of_cs, Not_double_quote}, {Set_of_cs, Set_of_cs},
-//     {Not_single_quote, Set_of_cs}, {Not_double_quote, Set_of_cs}
-// };
-
 bool operator * (const Category& c1, const Category& c2){
     bool t = true;
     Category_kind k1 = c1.kind;
     Category_kind k2 = c2.kind;
-    
+
     if((k1 < Set_of_cs) && (k2 < Set_of_cs)){
         return t;
     }

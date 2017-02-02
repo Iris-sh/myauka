@@ -12,11 +12,7 @@
 
 #include <cstddef>
 enum Char_group {
-    G_Latin,    G_Letter,  G_Russian,
-    G_bdigits,  G_digits,  G_latin,
-    G_letter,   G_odigits, G_russian,
-    G_xdigits,  G_ndq,     G_nsq,
-    G_all
+    G_ndq,      G_nsq,    G_all
 };
 
 enum Kind_of_char {

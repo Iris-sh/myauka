@@ -14,19 +14,11 @@
 #include <map>
 #include <set>
 #include <utility>
-#include "../include/ndfa.h"
 #include "../include/dfa.h"
 #include "../include/categories.h"
-#include "../include/command.h"
-
-// struct DFA_state_with_action{
-//     size_t st;
-//     size_t action_idx;
-// };
 
 using G_DFA_state_jumps = std::map<Category, DFA_state_with_action>;
 using G_DFA_jumps       = std::vector<G_DFA_state_jumps>;
-
 
 struct G_DFA{
     G_DFA_jumps      jumps;
@@ -37,10 +29,4 @@ struct G_DFA{
     ~G_DFA()                 = default;
     G_DFA(const G_DFA& orig) = default;
 };
-
-//void fuse_DFA_jumps(G_DFA& gdfa, const Min_DFA& min_dfa);
-
-void grouped_DFA_by_regexp(G_DFA& gdfa, const Command_buffer& buf);
-
-void print_groupped_DFA(const G_DFA& gdfa);
 #endif

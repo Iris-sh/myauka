@@ -10,7 +10,6 @@
 #define DFA_H
 
 #include "../include/ndfa.h"
-#include "../include/command.h"
 #include "../include/generalized_char.h"
 #include <vector>
 #include <map>
@@ -57,4 +56,8 @@ struct Min_DFA{
 };
 
 void minimize_DFA(Min_DFA& minimized, const DFA& minimizing);
+
+void print_DFA(const DFA& a);
+
+void print_minimal_DFA(const Min_DFA& a);
 #endif

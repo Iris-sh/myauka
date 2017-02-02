@@ -14,8 +14,7 @@
 #include <map>
 #include <vector>
 #include <utility>
-
-#include "../include/command.h"
+#include "../include/unwrapped_command.h"
 #include "../include/generalized_char.h"
 
 using Set_of_states         = std::set<size_t>;
@@ -33,10 +32,10 @@ struct NDFA{
     NDFA(const NDFA& orig) = default;
 };
 
-/*! Данная функция строит по соответствующему регулярному выражению списку команд
-   недетерминированный конечный автомат, отвечающий регулярному выражению.  */
-void build_NDFA(NDFA& a, const Command_buffer& commands);
+/*! Данная функция строит по списку команд, соответствующему регулярному выражению,
+    недетерминированный конечный автомат, отвечающий регулярному выражению.  */
+void build_NDFA(NDFA& a, const Unwrapped_commands& commands);
 
 /*! Печать недетерминированного конечного автомата a. */
-// void print_NDFA(const NDFA& a);
+void print_NDFA(const NDFA& a);
 #endif

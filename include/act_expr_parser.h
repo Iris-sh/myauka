@@ -43,8 +43,8 @@ enum Parser_action_name{
 };
 
 struct Parser_action_info{
-    uint8_t kind : 2;
-    uint8_t arg  : 6;
+    uint8_t kind;
+    uint8_t arg;
 };
 
 enum Number_or_string {

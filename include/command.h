@@ -1,4 +1,4 @@
-/* 
+/*
     Файл:    command.h
     Создан:  13 декабря 2015г. в 09:05 (по Москве)
     Автор:   Гаврилов Владимир Сергеевич
@@ -18,7 +18,8 @@
 enum Command_name {
     Cmd_or,             Cmd_concat,   Cmd_Kleene,
     Cmd_positive,       Cmd_optional, Cmd_char_def,
-    Cmd_char_class_def, Cmd_unknown
+    Cmd_char_class_def, Cmd_unknown,  Cmd_multior,
+    Cmd_multiconcat
 };
 
 enum Char_class {

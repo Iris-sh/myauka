@@ -60,7 +60,7 @@ Simple_regex_parser::Proc Simple_regex_parser::state_proc[] = {
 };
 
 void Simple_regex_parser::state_begin_expr_proc(Command_buffer& buf){
-    Expr_lexem_code elc = eli.code;
+//     Expr_lexem_code elc = eli.code;
     state = State_begin_concat;
     if(Begin_expression == elc){
         return;
@@ -79,30 +79,27 @@ void Simple_regex_parser::state_begin_concat_proc(Command_buffer& buf){
     state = State_concat;
     if(belongs(elc, character_and_char_classes)){
         write_char_or_char_class(buf);
+        first_concatenated     = buf.size() - 1;
+        number_of_concatenated = 1;
         return;
     }
     printf("В строке %zu ожидается символ или класс символов.\n",
            esc_->lexem_begin_line_number());
     et_.ec -> increment_number_of_errors();
-    if(End_expression == elc){
-        state = State_end_expr;
-    }
+    state = (End_expression == elc) ? State_end_expr: State_begin_concat;
 }
 
 void Simple_regex_parser::state_concat_proc(Command_buffer& buf){
-    Command  command;
     if(belongs(elc, character_and_char_classes)){
-        arg1 = buf.size() - 1;
         write_char_or_char_class(buf);
-        arg2 = buf.size() - 1;
-        command.args.first = arg1; command.args.second = arg2;
-        command.name = Cmd_concat;
-        command.action_name = 0;
-        buf.push_back(command);
+        number_of_concatenated++;
     }else if(Or == elc){
+        write_concatenated(buf);
         write_or_command(buf);
+        number_of_concatenated = 0;
         state = State_begin_concat;
     }else if(End_expression == elc){
+        write_concatenated(buf);
         write_or_command(buf);
         state = State_end_expr;
     }else{
@@ -128,9 +125,8 @@ void Simple_regex_parser::write_char_or_char_class(Command_buffer& buf){
         command.cls  = static_cast<Char_class>(elc - Class_Latin);
         command.action_name = 0;
         if(belongs(elc, set_of_non_quotes)){
-            printf("Ошибка в строке %zu: классы символов [:ndq:] "
-                   "и [:nsq:] в определении идентификатора не "
-                   "допускаются.\n",
+            printf("Ошибка в строке %zu: классы символов [:ndq:] и [:nsq:] в определении"
+                   " идентификатора не допускаются.\n",
                    esc_->lexem_begin_line_number());
             et_.ec -> increment_number_of_errors();
         }
@@ -154,9 +150,22 @@ void Simple_regex_parser::write_or_command(Command_buffer& buf){
     }
 }
 
+void Simple_regex_parser::write_concatenated(Command_buffer& buf){
+    if(number_of_concatenated > 1){
+        Command command;
+        command.args.first  = first_concatenated;
+        command.args.second = buf.size() - 1;
+        command.name        = Cmd_multiconcat;
+        command.action_name = 0;
+        buf.push_back(command);
+    }
+}
+
 void Simple_regex_parser::compile(Command_buffer& buf){
-    state         = State_begin_expr;
-    number_of_ors = 0;
+    state              = State_begin_expr;
+    number_of_ors      = 0;
+    first_concatenated = 0;
+    number_of_concatenated = 0;
     arg1 = arg2 = 0;
     while((elc = (eli = esc_->current_lexem()).code)){
         (this->*state_proc[state])(buf);
@@ -165,14 +174,13 @@ void Simple_regex_parser::compile(Command_buffer& buf){
         }
     }
     if(state != State_end_expr){
-        puts("Неожиданный конец регулярного выражения.");
+        printf("Неожиданный конец регулярного выражения в строке %zu\n.",
+               esc_->lexem_begin_line_number());
         et_.ec->increment_number_of_errors();
+        if((State_concat == state) || (State_begin_concat == state)){
+            write_concatenated(buf);
+            write_or_command(buf);
+        }
     }
     esc_->back();
-    switch(state){
-        case State_concat: case State_end_expr:
-            write_or_command(buf);
-        default:
-            ;
-    }
 }

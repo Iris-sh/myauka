@@ -31,6 +31,7 @@
 #include "../include/keyword_delimiter_parser.h"
 #include "../include/num_str_parser.h"
 #include "../include/comments_parser.h"
+#include "../include/used_automaton.h"
 
 enum Begin_chars_for_aut{
     Id_beg_char,     Keyword_beg_char, Delimiter_beg_char,
@@ -98,11 +99,11 @@ protected:
     Command_buffer id_begin, id_body;
     Command_buffer numbers_regexp, strings_regexp;
 
-    enum Used_automaton{
-        Start_aut,     Unknown_aut,   Id_aut,     Keyword_aut,
-        IdKeyword_aut, Delimiter_aut, Number_aut, String_aut,
-        Comment_aut
-    };/* Данное перечисление состоит из имён порождаемых автоматов. */
+//     enum Used_automaton{
+//         Start_aut,     Unknown_aut,   Id_aut,     Keyword_aut,
+//         IdKeyword_aut, Delimiter_aut, Number_aut, String_aut,
+//         Comment_aut
+//     };/* Данное перечисление состоит из имён порождаемых автоматов. */
 
     struct Automaton_with_procs{
         std::string name;

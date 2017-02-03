@@ -28,6 +28,12 @@
 #include "../include/list_to_columns.h"
 #include "../include/char_trie.h"
 #include "../include/operations_with_sets.h"
+#include "../include/unwrapped_command.h"
+#include "../include/info_for_constructing.h"
+#include "../include/unwrap_commands.h"
+#include "../include/conv_case.h"
+#include "../include/implement_automata.h"
+
 // #include "../include/print_commands.h"
 // #include <bitset>
 // #include <set>
@@ -80,10 +86,10 @@ const char* start_proc_newline_is_lexem = R"~(::start_proc(){
     }
     lexem_begin_line = loc->current_line;)~";
 
-static const std::string none_proc = R"~(::none_proc(){
-    /* Данная подпрограмма будет вызвана, если по прочтении входного текста оказались
-     * в автомате A_start. Тогда ничего делать не нужно. */
-})~";
+// static const std::string none_proc = R"~(::none_proc(){
+//     /* Данная подпрограмма будет вызвана, если по прочтении входного текста оказались
+//      * в автомате A_start. Тогда ничего делать не нужно. */
+// })~";
 
 void Main_parser::compile(){
     parse();
@@ -92,34 +98,63 @@ void Main_parser::compile(){
         return;
     }
 
-    detalize_commands(id_begin);
-    detalize_commands(id_body);
-    detalize_commands(numbers_regexp);
-    detalize_commands(strings_regexp);
+    Info_for_constructing constr_info;
 
-    size_t sp_indeces = char_cat.insertSet(spaces);
-    category_name[sp_indeces] = "SPACES";
-
-    name_of_scaner_class = idx_to_string(et_.ids_trie, scaner_name_idx);
-    scaner_file_name_without_ext = name_of_scaner_class;
-    for(char& c : scaner_file_name_without_ext){
-        c = tolower(c);
-    }
-
-    aut_impl[Start_aut] = "bool " + name_of_scaner_class;
+    constr_info.id_begin                     = unwrap_commands(id_begin);
+    constr_info.id_body                      = unwrap_commands(id_body);
+    constr_info.numbers_regexp               = unwrap_commands(numbers_regexp);
+    constr_info.strings_regexp               = unwrap_commands(strings_regexp);
+    size_t sp_indeces                        = constr_info.char_cat.insertSet(spaces);
+    constr_info.category_name[sp_indeces]    = "SPACES";
+    constr_info.name_of_scaner_class         = idx_to_string(et_.ids_trie, scaner_name_idx);
+    constr_info.scaner_file_name_without_ext = tolower_case(constr_info.name_of_scaner_class);
+    constr_info.header_name                  = constr_info.scaner_file_name_without_ext + ".h";
+    constr_info.impl_file_name               = scaner_file_name_without_ext + ".cpp";
+    constr_info.aut_impl[Start_aut]          = "bool " + constr_info.name_of_scaner_class;
+    constr_info.set_of_used_automata         = set_of_used_automata;
+    constr_info.del_repres                   = del_repres;
+    constr_info.et                           = et_;
 
     if(newline_is_lexem){
-        aut_impl[Start_aut] += start_proc_newline_is_lexem;
+        constr_info.aut_impl[Start_aut] += start_proc_newline_is_lexem;
     }else{
-        aut_impl[Start_aut] += start_proc_newline_is_not_lexem;
+        constr_info.aut_impl[Start_aut] += start_proc_newline_is_not_lexem;
     }
 
     if(belongs(Comment_aut, set_of_used_automata)){
         add_fictive_delimiters();
     }
 
-    generate_automata_impl();
-    prepare_automata_info();
+    implement_automata(constr_info);
+
+//     detalize_commands(id_begin);
+//     detalize_commands(id_body);
+//     detalize_commands(numbers_regexp);
+//     detalize_commands(strings_regexp);
+//
+//     size_t sp_indeces = char_cat.insertSet(spaces);
+//     category_name[sp_indeces] = "SPACES";
+//
+//     name_of_scaner_class = idx_to_string(et_.ids_trie, scaner_name_idx);
+//     scaner_file_name_without_ext = name_of_scaner_class;
+//     for(char& c : scaner_file_name_without_ext){
+//         c = tolower(c);
+//     }
+//
+//     aut_impl[Start_aut] = "bool " + name_of_scaner_class;
+//
+//     if(newline_is_lexem){
+//         aut_impl[Start_aut] += start_proc_newline_is_lexem;
+//     }else{
+//         aut_impl[Start_aut] += start_proc_newline_is_not_lexem;
+//     }
+//
+//     if(belongs(Comment_aut, set_of_used_automata)){
+//         add_fictive_delimiters();
+//     }
+//
+//     generate_automata_impl();
+    prepare_automata_info(); // -
 
     generate_scaner_implementation();
     generate_scaner_header();
@@ -873,7 +908,7 @@ static std::string delim_proc_body(const std::string& s){
     return result;
 }
 
-static const std::string del_begin_cat_name_by_default = "DELIMITER_BEGIN";
+// static const std::string del_begin_cat_name_by_default = "DELIMITER_BEGIN";
 
 void Main_parser::generate_delim_automaton_impl(){
     /* Данная функция строит реализацию автомата, обрабатывающего разделители. */
@@ -1719,166 +1754,166 @@ void Main_parser::add_fictive_delimiters(){
     }
 }
 
-void Main_parser::generate_automata_impl(){
-    aut_impl_fin_proc[Start_aut] = "void " + name_of_scaner_class + none_proc;
-    generate_delim_automaton_impl();
-    generate_strings_automaton_impl();
-    generate_numbers_automaton_impl();
-    generate_idents_and_keywords_automata_impl();
-    generate_unknown_automata_impl();
-}
+// void Main_parser::generate_automata_impl(){
+//     aut_impl_fin_proc[Start_aut] = "void " + name_of_scaner_class + none_proc; // +
+//     generate_delim_automaton_impl();                                           // ?
+//     generate_strings_automaton_impl();
+//     generate_numbers_automaton_impl();
+//     generate_idents_and_keywords_automata_impl();
+//     generate_unknown_automata_impl();
+// }
 
-using Category_name_and_set = std::pair<std::string, Set_of_char>;
-using Categories_info       = std::vector<Category_name_and_set>;
-
-/* Следующая функция по заданному символу типа char32_t строит множество категорий,
- * которым он принадлежит. Сведения о категориях передаются в векторе, элементы
- * которого имеют тип Category_name_and_set. Множество категорий представляется в
- * виде числа типа uint64_t: равенство нулю какого--либо разряда означает, что
- * категория с соответствующим номером этому множеству не принадлежит, а равенство
- * единице --- что принадлежит. */
-uint64_t construct_categories_set_for_char(char32_t c,
-                                           const Categories_info& categories_info)
-{
-    using operations_with_sets::is_elem;
-    uint64_t result  = 0;
-    size_t   counter = 0;
-    for(const auto& z : categories_info){
-        if(is_elem(c, z.second)){
-            result |= 1ULL << counter;
-        }
-        counter++;
-    }
-    return result;
-}
-
-std::string construct_category_enum(const Categories_info& categories_info){
-    std::string result = "enum Category {\n";
-    std::vector<std::string> category_names;
-    for(const auto& z : categories_info){
-        category_names.push_back(z.first);
-    }
-    category_names.push_back("Other");
-    Format f;
-    f.indent                 = INDENT_WIDTH;
-    f.number_of_columns      = 2;
-    f.spaces_between_columns = 1;
-    result += string_list_to_columns(category_names, f)+ "\n};\n";
-    return result;
-}
-
-static const std::map<char32_t, std::string> escapes = {
-    {U'\n', R"~(U'\n')~"}, {U'\t', R"~(U'\t')~"}, {U'\'', R"~(U'\'')~"},
-    {U'\"', R"~(U'\"')~"}, {U'\?', R"~(U'\?')~"}, {U'\\', R"~(U'\\')~"},
-    {U' ',  R"~(U' ')~" }, {U'\r', R"~(U'\r')~"}, {U'\v', R"~(U'\v')~"},
-    {U'\a', R"~(U'\a')~"}, {U'\b', R"~(U'\b')~"}, {U'\f', R"~(U'\f')~"}
-};
-
-std::string show_char32(char32_t c){
-    std::string result;
-    auto it = escapes.find(c);
-    if(it != escapes.end()){
-        result = it->second;
-    }else{
-        if(c < U' '){
-            result = "U\\" + std::to_string(static_cast<unsigned>(c));
-        }else{
-            result = "U\'" + char32_to_utf8(c) + "\'";
-        }
-    }
-    return result;
-}
-
-std::string category_table_string_repres(const std::map<char32_t, uint64_t>& t,
-                                         size_t num_of_categories)
-{
-    std::string result;
-    std::string type_for_set_repres;
-    switch(num_of_categories){
-        case 1 ... 8:
-            type_for_set_repres = "uint8_t";
-            break;
-
-        case 9 ... 16:
-            type_for_set_repres = "uint16_t";
-            break;
-
-        case 17 ... 32:
-            type_for_set_repres = "uint32_t";
-            break;
-
-        case 33 ... 64:
-            type_for_set_repres = "uint64_t";
-            break;
-
-        default:
-            ;
-    }
-    result = "static const std::map<char32_t, " + type_for_set_repres +
-             "> categories_table = {\n";
-
-    std::vector<std::string> entries;
-    for(const auto& z : t){
-        auto entry = "{" + show_char32(z.first) + ", " + std::to_string(z.second) + "}";
-        entries.push_back(entry);
-    }
-    Format f;
-    f.indent                 = INDENT_WIDTH;
-    f.number_of_columns      = 4;
-    f.spaces_between_columns = 1;
-
-    result += string_list_to_columns(entries, f)+ "\n};\n";
-
-    return result;
-}
-
-static const std::string get_category_func_str =
-    R"~(
-uint64_t get_categories_set(char32_t c){
-    auto it = categories_table.find(c);
-    if(it != categories_table.end()){
-        return it->second;
-    }else{
-        return 1ULL << Other;
-    }
-}
-)~";
-
-std::string Main_parser::generate_category_table(){
-    using operations_with_sets::operator+;
-    std::string     result;
-    Categories_info categories_info;
-    Set_of_char     categorized_chars;
-    for(const auto& c : category_name){
-        /* перебираем имена всех категорий и записываем сведения о
-         * категориях символов в вектор categories_info */
-        auto cat_idx         = c.first;
-        auto set_for_cat_idx = char_cat.get_set(cat_idx);
-        auto x               = std::make_pair(c.second, set_for_cat_idx);
-        categories_info.push_back(x);
-        /* кроме того, собираем в одно множество все символы, входящие
-         * в какую--либо категорию */
-        categorized_chars    = categorized_chars + set_for_cat_idx;
-    }
-
-    /* теперь для каждого символа из множества categorized_chars строим
-     * множество категорий, которым он принадлежит */
-    std::map<char32_t, uint64_t> splitting_characters_by_category;
-    for(char32_t c : categorized_chars){
-        splitting_characters_by_category[c] =
-            construct_categories_set_for_char(c, categories_info);
-    }
-
-    /* затем создаём перечисление из имён категорий символов */
-    auto category_enum = construct_category_enum(categories_info);
-    auto cat_table_str =
-        category_table_string_repres(splitting_characters_by_category,
-                                     categories_info.size());
-
-    result = category_enum + "\n" + cat_table_str + "\n" +
-             get_category_func_str;
-    return result;
-}
+// using Category_name_and_set = std::pair<std::string, Set_of_char>;
+// using Categories_info       = std::vector<Category_name_and_set>;
+//
+// /* Следующая функция по заданному символу типа char32_t строит множество категорий,
+//  * которым он принадлежит. Сведения о категориях передаются в векторе, элементы
+//  * которого имеют тип Category_name_and_set. Множество категорий представляется в
+//  * виде числа типа uint64_t: равенство нулю какого--либо разряда означает, что
+//  * категория с соответствующим номером этому множеству не принадлежит, а равенство
+//  * единице --- что принадлежит. */
+// uint64_t construct_categories_set_for_char(char32_t c,
+//                                            const Categories_info& categories_info)
+// {
+//     using operations_with_sets::is_elem;
+//     uint64_t result  = 0;
+//     size_t   counter = 0;
+//     for(const auto& z : categories_info){
+//         if(is_elem(c, z.second)){
+//             result |= 1ULL << counter;
+//         }
+//         counter++;
+//     }
+//     return result;
+// }
+//
+// std::string construct_category_enum(const Categories_info& categories_info){
+//     std::string result = "enum Category {\n";
+//     std::vector<std::string> category_names;
+//     for(const auto& z : categories_info){
+//         category_names.push_back(z.first);
+//     }
+//     category_names.push_back("Other");
+//     Format f;
+//     f.indent                 = INDENT_WIDTH;
+//     f.number_of_columns      = 2;
+//     f.spaces_between_columns = 1;
+//     result += string_list_to_columns(category_names, f)+ "\n};\n";
+//     return result;
+// }
+//
+// static const std::map<char32_t, std::string> escapes = {
+//     {U'\n', R"~(U'\n')~"}, {U'\t', R"~(U'\t')~"}, {U'\'', R"~(U'\'')~"},
+//     {U'\"', R"~(U'\"')~"}, {U'\?', R"~(U'\?')~"}, {U'\\', R"~(U'\\')~"},
+//     {U' ',  R"~(U' ')~" }, {U'\r', R"~(U'\r')~"}, {U'\v', R"~(U'\v')~"},
+//     {U'\a', R"~(U'\a')~"}, {U'\b', R"~(U'\b')~"}, {U'\f', R"~(U'\f')~"}
+// };
+//
+// std::string show_char32(char32_t c){
+//     std::string result;
+//     auto it = escapes.find(c);
+//     if(it != escapes.end()){
+//         result = it->second;
+//     }else{
+//         if(c < U' '){
+//             result = "U\\" + std::to_string(static_cast<unsigned>(c));
+//         }else{
+//             result = "U\'" + char32_to_utf8(c) + "\'";
+//         }
+//     }
+//     return result;
+// }
+//
+// std::string category_table_string_repres(const std::map<char32_t, uint64_t>& t,
+//                                          size_t num_of_categories)
+// {
+//     std::string result;
+//     std::string type_for_set_repres;
+//     switch(num_of_categories){
+//         case 1 ... 8:
+//             type_for_set_repres = "uint8_t";
+//             break;
+//
+//         case 9 ... 16:
+//             type_for_set_repres = "uint16_t";
+//             break;
+//
+//         case 17 ... 32:
+//             type_for_set_repres = "uint32_t";
+//             break;
+//
+//         case 33 ... 64:
+//             type_for_set_repres = "uint64_t";
+//             break;
+//
+//         default:
+//             ;
+//     }
+//     result = "static const std::map<char32_t, " + type_for_set_repres +
+//              "> categories_table = {\n";
+//
+//     std::vector<std::string> entries;
+//     for(const auto& z : t){
+//         auto entry = "{" + show_char32(z.first) + ", " + std::to_string(z.second) + "}";
+//         entries.push_back(entry);
+//     }
+//     Format f;
+//     f.indent                 = INDENT_WIDTH;
+//     f.number_of_columns      = 4;
+//     f.spaces_between_columns = 1;
+//
+//     result += string_list_to_columns(entries, f)+ "\n};\n";
+//
+//     return result;
+// }
+//
+// static const std::string get_category_func_str =
+//     R"~(
+// uint64_t get_categories_set(char32_t c){
+//     auto it = categories_table.find(c);
+//     if(it != categories_table.end()){
+//         return it->second;
+//     }else{
+//         return 1ULL << Other;
+//     }
+// }
+// )~";
+//
+// std::string Main_parser::generate_category_table(){
+//     using operations_with_sets::operator+;
+//     std::string     result;
+//     Categories_info categories_info;
+//     Set_of_char     categorized_chars;
+//     for(const auto& c : category_name){
+//         /* перебираем имена всех категорий и записываем сведения о
+//          * категориях символов в вектор categories_info */
+//         auto cat_idx         = c.first;
+//         auto set_for_cat_idx = char_cat.get_set(cat_idx);
+//         auto x               = std::make_pair(c.second, set_for_cat_idx);
+//         categories_info.push_back(x);
+//         /* кроме того, собираем в одно множество все символы, входящие
+//          * в какую--либо категорию */
+//         categorized_chars    = categorized_chars + set_for_cat_idx;
+//     }
+//
+//     /* теперь для каждого символа из множества categorized_chars строим
+//      * множество категорий, которым он принадлежит */
+//     std::map<char32_t, uint64_t> splitting_characters_by_category;
+//     for(char32_t c : categorized_chars){
+//         splitting_characters_by_category[c] =
+//             construct_categories_set_for_char(c, categories_info);
+//     }
+//
+//     /* затем создаём перечисление из имён категорий символов */
+//     auto category_enum = construct_category_enum(categories_info);
+//     auto cat_table_str =
+//         category_table_string_repres(splitting_characters_by_category,
+//                                      categories_info.size());
+//
+//     result = category_enum + "\n" + cat_table_str + "\n" +
+//              get_category_func_str;
+//     return result;
+// }
 
 static const std::string current_lexem_without_comments_proc = R"~(::current_lexem(){
     automaton = A_start; token.code = None;

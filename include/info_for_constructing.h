@@ -41,7 +41,7 @@ struct Info_for_constructing{
     Errors_and_tries                      et;
     std::shared_ptr<Scope>                scope;
     std::string                           codes_type_name;
-    Category*                             begin_chars;
+    Category*                             begin_chars                = nullptr;
     Init_and_final_acts                   acts_for_strings;
     Init_and_final_acts                   acts_for_numbers;
     std::string*                          possible_automata_name_str = nullptr;

@@ -10,15 +10,14 @@
 #include "../include/implement_automata.h"
 #include "../include/generate_delim_automaton_impl.h"
 #include "../include/generate_strings_automaton_impl.h"
+#include "../include/generate_numbers_automaton_impl.h"
 
 static const std::string none_proc = R"~(::none_proc(){
     /* Данная подпрограмма будет вызвана, если по прочтении входного текста оказались
      * в автомате A_start. Тогда ничего делать не нужно. */
 })~";
 
-// static void generate_strings_automaton_impl(Info_for_constructing& info){}
-
-static void generate_numbers_automaton_impl(Info_for_constructing& info){}
+// static void generate_numbers_automaton_impl(Info_for_constructing& info){}
 
 static void generate_idents_and_keywords_automata_impl(Info_for_constructing& info){}
 

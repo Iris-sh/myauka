@@ -9,6 +9,7 @@
 #ifndef AUTOMATA_REPRES_H
 #define AUTOMATA_REPRES_H
 #include <string>
+#include "../include/info_for_constructing.h"
 #include "../include/groupped_dfa.h"
 
 struct Str_data_for_automaton {
@@ -20,6 +21,6 @@ struct Str_data_for_automaton {
     std::string final_states_set_name;
 };
 
-std::string Main_parser::automata_repres(const G_DFA& aut,
-                                         const Str_data_for_automaton& f);
+std::string automata_repres(Info_for_constructing& info, const G_DFA& aut,
+                            const Str_data_for_automaton& f);
 #endif

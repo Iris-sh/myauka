@@ -25,7 +25,7 @@ static const std::string writing_str_into_trie =
 
 void generate_strings_automaton_impl(Info_for_constructing& info)
 {
-    if(!belongs(String_aut, set_of_used_automata)){
+    if(!belongs(String_aut, info.set_of_used_automata)){
         return;
     }
 
@@ -54,30 +54,30 @@ void generate_strings_automaton_impl(Info_for_constructing& info)
     G_DFA string_GDFA;
     grouped_DFA_by_uwrapped_regexp(string_GDFA, info.strings_regexp, false);
 
-//     Str_data_for_automaton f;
-//     f.automata_name         = possible_automata_name_str[String_aut];
-//     f.proc_name             = possible_proc_ptr[String_aut];
-//     f.category_name_prefix  = "STRING";
-//     f.diagnostic_msg        = "В строке %zu неожиданно закончился строковый литерал.";
-//     f.final_states_set_name = "final_states_for_strings";
-//
-//     temp =  "void " + name_of_scaner_class + "::" +
-//             possible_fin_proc_ptr[String_aut] + "{\n" +
-//             indent + "if(!is_elem(state, "   + f.final_states_set_name + ")){\n" +
-//             double_indent + "printf(\"" + f.diagnostic_msg + "\", loc->current_line);\n" +
-//             double_indent + "en->increment_number_of_errors();\n" +
-//             indent + "}\n";
-//
-//     if(fin_acts_str.empty()){
-//         f.final_actions =  writing_str_into_trie;
-//         temp            += indent + writing_str_into_trie + "\n}";
-//     }else{
-//         f.final_actions =  fin_acts_str + "\n" +
-//                            triple_indent + writing_str_into_trie;
-//         temp            += indent + fin_acts_str + "\n" +
-//                            indent + writing_str_into_trie + "\n}";
-//     }
-//
-//     aut_impl[String_aut] = automata_repres(string_GDFA, f);
-//     aut_impl_fin_proc[String_aut] = temp;
+    Str_data_for_automaton f;
+    f.automata_name         = info.possible_automata_name_str[String_aut];
+    f.proc_name             = info.possible_proc_ptr[String_aut];
+    f.category_name_prefix  = "STRING";
+    f.diagnostic_msg        = "В строке %zu неожиданно закончился строковый литерал.";
+    f.final_states_set_name = "final_states_for_strings";
+
+    temp =  "void " + info.name_of_scaner_class + "::" +
+            info.possible_fin_proc_ptr[String_aut] + "{\n" +
+            indent + "if(!is_elem(state, "   + f.final_states_set_name + ")){\n" +
+            double_indent + "printf(\"" + f.diagnostic_msg + "\", loc->current_line);\n" +
+            double_indent + "en->increment_number_of_errors();\n" +
+            indent + "}\n";
+
+    if(fin_acts_str.empty()){
+        f.final_actions =  writing_str_into_trie;
+        temp            += indent + writing_str_into_trie + "\n}";
+    }else{
+        f.final_actions =  fin_acts_str + "\n" +
+                           triple_indent + writing_str_into_trie;
+        temp            += indent + fin_acts_str + "\n" +
+                           indent + writing_str_into_trie + "\n}";
+    }
+
+    info.aut_impl[String_aut] = automata_repres(info, string_GDFA, f);
+    info.aut_impl_fin_proc[String_aut] = temp;
 }

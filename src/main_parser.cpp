@@ -91,6 +91,44 @@ const char* start_proc_newline_is_lexem = R"~(::start_proc(){
 //      * в автомате A_start. Тогда ничего делать не нужно. */
 // })~";
 
+static const std::string possible_automata_name_str[] = {
+    "A_start",     "A_unknown",   "A_id",     "A_keyword",
+    "A_idKeyword", "A_delimiter", "A_number", "A_string",
+    "A_comment"
+};
+
+static const std::string possible_automata_proc_proto[] = {
+    "bool start_proc();",     "bool unknown_proc();",
+    "bool id_proc();",        "bool keyword_proc();",
+    "bool idkeyword_proc();", "bool delimiter_proc();",
+    "bool number_proc();",    "bool string_proc();",
+    "bool comment_proc();"
+};
+
+static const std::string possible_automata_final_proc_proto[] = {
+    "void none_proc();",            "void unknown_final_proc();",
+    "void id_final_proc();",        "void keyword_final_proc();",
+    "void idkeyword_final_proc();", "void delimiter_final_proc();",
+    "void number_final_proc();",    "void string_final_proc();",
+    "void comment_final_proc();"
+};
+
+static const std::string possible_proc_ptr[] = {
+    "start_proc()",     "unknown_proc()",
+    "id_proc()",        "keyword_proc()",
+    "idkeyword_proc()", "delimiter_proc()",
+    "number_proc()",    "string_proc()",
+    "comment_proc()"
+};
+
+static const std::string possible_fin_proc_ptr[] = {
+    "none_proc()",            "unknown_final_proc()",
+    "id_final_proc()",        "keyword_final_proc()",
+    "idkeyword_final_proc()", "delimiter_final_proc()",
+    "number_final_proc()",    "string_final_proc()",
+    "comment_final_proc()"
+};
+
 void Main_parser::compile(){
     parse();
     if (!verify()){
@@ -121,6 +159,9 @@ void Main_parser::compile(){
     constr_info.begin_chars                  = begin_chars;
     constr_info.acts_for_strings             = acts_for_strings;
     constr_info.acts_for_numbers             = acts_for_numbers;
+    constr_info.possible_automata_name_str   = const_cast<std::string*>(possible_automata_name_str);
+    constr_info.possible_proc_ptr            = const_cast<std::string*>(possible_proc_ptr);
+    constr_info.possible_fin_proc_ptr        = const_cast<std::string*>(possible_fin_proc_ptr);
 
     if(newline_is_lexem){
         constr_info.aut_impl[Start_aut] += start_proc_newline_is_lexem;
@@ -629,44 +670,6 @@ std::string Main_parser::generate_scaner_class(){
     return scaner_class;
 }
 
-static const std::string possible_automata_name_str[] = {
-    "A_start",     "A_unknown",   "A_id",     "A_keyword",
-    "A_idKeyword", "A_delimiter", "A_number", "A_string",
-    "A_comment"
-};
-
-static const std::string possible_automata_proc_proto[] = {
-    "bool start_proc();",     "bool unknown_proc();",
-    "bool id_proc();",        "bool keyword_proc();",
-    "bool idkeyword_proc();", "bool delimiter_proc();",
-    "bool number_proc();",    "bool string_proc();",
-    "bool comment_proc();"
-};
-
-static const std::string possible_automata_final_proc_proto[] = {
-    "void none_proc();",            "void unknown_final_proc();",
-    "void id_final_proc();",        "void keyword_final_proc();",
-    "void idkeyword_final_proc();", "void delimiter_final_proc();",
-    "void number_final_proc();",    "void string_final_proc();",
-    "void comment_final_proc();"
-};
-
-static const std::string possible_proc_ptr[] = {
-    "start_proc()",     "unknown_proc()",
-    "id_proc()",        "keyword_proc()",
-    "idkeyword_proc()", "delimiter_proc()",
-    "number_proc()",    "string_proc()",
-    "comment_proc()"
-};
-
-static const std::string possible_fin_proc_ptr[] = {
-    "none_proc()",            "unknown_final_proc()",
-    "id_final_proc()",        "keyword_final_proc()",
-    "idkeyword_final_proc()", "delimiter_final_proc()",
-    "number_final_proc()",    "string_final_proc()",
-    "comment_final_proc()"
-};
-
 void Main_parser::prepare_automata_info(){
     set_of_used_automata |= (1ULL << Start_aut) | (1ULL << Unknown_aut);
     bool t = belongs(Comment_aut, set_of_used_automata) != 0;
@@ -964,28 +967,28 @@ std::string add_newline_if_str_is_not_empty(const std::string& s){
 //     token.code = delim_jump_table[state].code;
 //     )~" + "\n}";
 // }
-
-std::string str_repres_for_set_of_size_t_const(const std::set<size_t>& s,
-                                               const std::string& const_name){
-    std::string result;
-    result = "static const std::set<size_t> " + const_name + " = {\n";
-
-    std::vector<std::string> elems;
-    for(auto x : s){
-        elems.push_back(std::to_string(x));
-    }
-
-    Format f;
-    f.indent                 = INDENT_WIDTH;
-    f.number_of_columns      = 8;
-    f.spaces_between_columns = 1;
-
-    result += string_list_to_columns(elems, f) +"\n};";
-    return result;
-}
-
-std::string sp_else_sp = " else ";
-
+//
+// std::string str_repres_for_set_of_size_t_const(const std::set<size_t>& s,
+//                                                const std::string& const_name){
+//     std::string result;
+//     result = "static const std::set<size_t> " + const_name + " = {\n";
+//
+//     std::vector<std::string> elems;
+//     for(auto x : s){
+//         elems.push_back(std::to_string(x));
+//     }
+//
+//     Format f;
+//     f.indent                 = INDENT_WIDTH;
+//     f.number_of_columns      = 8;
+//     f.spaces_between_columns = 1;
+//
+//     result += string_list_to_columns(elems, f) +"\n};";
+//     return result;
+// }
+//
+// std::string sp_else_sp = " else ";
+//
 // static const std::string string_begin_chars_category_name = "STRING_BEGIN";
 //
 // static const std::string writing_str_into_trie =
@@ -1243,139 +1246,139 @@ Command_buffer regexp1_with_regexp2ast(const Command_buffer& a, const Command_bu
 
     return x;
 }
-
-std::string qindent_string(const std::string& s){
-    std::string result;
-    if(!s.empty()){
-        result = quadruple_indent + s + "\n";
-    }
-    return result;
-}
-
-std::string Main_parser::automata_repres_case_j(const Category&              cat,
-                                                const DFA_state_with_action& swa,
-                                                const Str_data_for_automaton& f)
-{
-    std::string result;
-    auto        temp   = get_act_repres(swa.action_idx);
-    switch(cat.kind){
-        case All_chars:
-            if(!temp.empty()){
-                result = temp + "\n" +
-                         triple_indent + "state = " + std::to_string(swa.st) + ";\n" +
-                         triple_indent + "there_is_jump = true;\n";
-            }else{
-                result = "state = " +  std::to_string(swa.st) + ";\n" +
-                         triple_indent + "there_is_jump = true;\n";
-            }
-            break;
-        case Not_single_quote:
-            result = R"~( else if(ch != U'\''){)~" "\n" + qindent_string(temp) +
-                     quadruple_indent + "state = " + std::to_string(swa.st) + ";\n" +
-                     quadruple_indent + "there_is_jump = true;\n" +
-                     triple_indent + "}\n";
-            break;
-        case Not_double_quote:
-            result = R"~( else if(ch != U'\"'){)~" "\n" + qindent_string(temp) +
-                     quadruple_indent + "state = " + std::to_string(swa.st) + ";\n" +
-                     quadruple_indent + "there_is_jump = true;\n" +
-                     triple_indent + "}\n";
-            break;
-        case Set_of_cs:
-            {
-                std::string default_cat_name = f.category_name_prefix +
-                                               std::to_string(last_category_suffix);
-                auto result_cat = add_category(cat.s, default_cat_name);
-                if(result_cat.first){
-                    // если категории до того не было
-                    last_category_suffix++;
-                }
-                result = " else if(belongs(" + result_cat.second +
-                         ", char_categories)){\n" + qindent_string(temp) +
-                         quadruple_indent + "state = " + std::to_string(swa.st) + ";\n" +
-                         quadruple_indent + "there_is_jump = true;\n" +
-                         triple_indent + "}\n";
-            }
-            break;
-    }
-    return result;
-}
-
-std::string Main_parser::automata_repres_case(const G_DFA_state_jumps& m,
-                                              const Str_data_for_automaton& f,
-                                              size_t counter){
-#define ELSE_SPACE_WIDTH 5
-    std::string result;
-    if(m.empty()){
-        return result;
-    }
-    result = double_indent + "case " + std::to_string(counter) + ":\n";
-    std::vector<std::string> ifs;
-    // size_t category_counter = 0;
-    for(const auto& j : m){
-        auto cat  = j.first;
-        auto swa  = j.second;
-        auto temp = automata_repres_case_j(cat, swa, f);//, category_counter);
-        ifs.push_back(temp);
-    }
-    if(ifs[0].substr(0, ELSE_SPACE_WIDTH + 1) == sp_else_sp){
-        ifs[0] = ifs[0].substr(ELSE_SPACE_WIDTH + 1);
-        // ELSE_SPACE_WIDTH + 1 --- длина строки " else "
-    }
-    for(const auto& x : ifs){
-        result += triple_indent + x;
-    }
-
-    result += "\n" + triple_indent + "break;\n";
-    return result;
-}
-
-std::string Main_parser::automata_repres_switch(const G_DFA& aut,
-                                                const Str_data_for_automaton& f){
-    std::string result;
-    result               = indent + "switch(state){\n";
-    size_t counter       = 0;
-    last_category_suffix = 0;
-    for(const auto& m : aut.jumps){
-        result += automata_repres_case(m, f, counter);
-        counter++;
-    }
-    result += double_indent + "default:\n" +
-              triple_indent + ";\n" +
-              indent        + "}\n";
-    return result;
-}
-
-std::string Main_parser::check_there_is_jump(const Str_data_for_automaton& f){
-    std::string result;
-    result = indent        + "if(!there_is_jump){\n" +
-             double_indent + "t = false;\n"          +
-             double_indent + "if(!is_elem(state, "   + f.final_states_set_name + ")){\n" +
-             triple_indent + "printf(\"" + f.diagnostic_msg + "\", loc->current_line);\n" +
-             triple_indent + "en->increment_number_of_errors();\n" + double_indent + "}\n";
-    auto temp = f.final_actions;
-    if(!temp.empty()){
-        result += double_indent + temp + "\n";
-    }
-    result += indent + "}\n";
-    return result;
-}
-
-std::string Main_parser::automata_repres(const G_DFA& aut,
-                                         const Str_data_for_automaton& f){
-    std::string result;
-
-    std::string proc_def = "bool " + name_of_scaner_class + "::" + f.proc_name + "{\n" +
-                           indent + "bool t             = true;\n" +
-                           indent + "bool there_is_jump = false;\n";
-    proc_def += automata_repres_switch(aut, f) + "\n";
-    proc_def += check_there_is_jump(f) + "\n";
-    proc_def += indent + "return t;\n}";
-    result = str_repres_for_set_of_size_t_const(aut.final_states,
-                                                f.final_states_set_name) +
-             "\n\n" + proc_def;
-    return result;
-}
+//
+// std::string qindent_string(const std::string& s){
+//     std::string result;
+//     if(!s.empty()){
+//         result = quadruple_indent + s + "\n";
+//     }
+//     return result;
+// }
+//
+// std::string Main_parser::automata_repres_case_j(const Category&              cat,
+//                                                 const DFA_state_with_action& swa,
+//                                                 const Str_data_for_automaton& f)
+// {
+//     std::string result;
+//     auto        temp   = get_act_repres(swa.action_idx);
+//     switch(cat.kind){
+//         case All_chars:
+//             if(!temp.empty()){
+//                 result = temp + "\n" +
+//                          triple_indent + "state = " + std::to_string(swa.st) + ";\n" +
+//                          triple_indent + "there_is_jump = true;\n";
+//             }else{
+//                 result = "state = " +  std::to_string(swa.st) + ";\n" +
+//                          triple_indent + "there_is_jump = true;\n";
+//             }
+//             break;
+//         case Not_single_quote:
+//             result = R"~( else if(ch != U'\''){)~" "\n" + qindent_string(temp) +
+//                      quadruple_indent + "state = " + std::to_string(swa.st) + ";\n" +
+//                      quadruple_indent + "there_is_jump = true;\n" +
+//                      triple_indent + "}\n";
+//             break;
+//         case Not_double_quote:
+//             result = R"~( else if(ch != U'\"'){)~" "\n" + qindent_string(temp) +
+//                      quadruple_indent + "state = " + std::to_string(swa.st) + ";\n" +
+//                      quadruple_indent + "there_is_jump = true;\n" +
+//                      triple_indent + "}\n";
+//             break;
+//         case Set_of_cs:
+//             {
+//                 std::string default_cat_name = f.category_name_prefix +
+//                                                std::to_string(last_category_suffix);
+//                 auto result_cat = add_category(cat.s, default_cat_name);
+//                 if(result_cat.first){
+//                     // если категории до того не было
+//                     last_category_suffix++;
+//                 }
+//                 result = " else if(belongs(" + result_cat.second +
+//                          ", char_categories)){\n" + qindent_string(temp) +
+//                          quadruple_indent + "state = " + std::to_string(swa.st) + ";\n" +
+//                          quadruple_indent + "there_is_jump = true;\n" +
+//                          triple_indent + "}\n";
+//             }
+//             break;
+//     }
+//     return result;
+// }
+//
+// std::string Main_parser::automata_repres_case(const G_DFA_state_jumps& m,
+//                                               const Str_data_for_automaton& f,
+//                                               size_t counter){
+// #define ELSE_SPACE_WIDTH 5
+//     std::string result;
+//     if(m.empty()){
+//         return result;
+//     }
+//     result = double_indent + "case " + std::to_string(counter) + ":\n";
+//     std::vector<std::string> ifs;
+//     // size_t category_counter = 0;
+//     for(const auto& j : m){
+//         auto cat  = j.first;
+//         auto swa  = j.second;
+//         auto temp = automata_repres_case_j(cat, swa, f);//, category_counter);
+//         ifs.push_back(temp);
+//     }
+//     if(ifs[0].substr(0, ELSE_SPACE_WIDTH + 1) == sp_else_sp){
+//         ifs[0] = ifs[0].substr(ELSE_SPACE_WIDTH + 1);
+//         // ELSE_SPACE_WIDTH + 1 --- длина строки " else "
+//     }
+//     for(const auto& x : ifs){
+//         result += triple_indent + x;
+//     }
+//
+//     result += "\n" + triple_indent + "break;\n";
+//     return result;
+// }
+//
+// std::string Main_parser::automata_repres_switch(const G_DFA& aut,
+//                                                 const Str_data_for_automaton& f){
+//     std::string result;
+//     result               = indent + "switch(state){\n";
+//     size_t counter       = 0;
+//     last_category_suffix = 0;
+//     for(const auto& m : aut.jumps){
+//         result += automata_repres_case(m, f, counter);
+//         counter++;
+//     }
+//     result += double_indent + "default:\n" +
+//               triple_indent + ";\n" +
+//               indent        + "}\n";
+//     return result;
+// }
+//
+// std::string Main_parser::check_there_is_jump(const Str_data_for_automaton& f){
+//     std::string result;
+//     result = indent        + "if(!there_is_jump){\n" +
+//              double_indent + "t = false;\n"          +
+//              double_indent + "if(!is_elem(state, "   + f.final_states_set_name + ")){\n" +
+//              triple_indent + "printf(\"" + f.diagnostic_msg + "\", loc->current_line);\n" +
+//              triple_indent + "en->increment_number_of_errors();\n" + double_indent + "}\n";
+//     auto temp = f.final_actions;
+//     if(!temp.empty()){
+//         result += double_indent + temp + "\n";
+//     }
+//     result += indent + "}\n";
+//     return result;
+// }
+//
+// std::string Main_parser::automata_repres(const G_DFA& aut,
+//                                          const Str_data_for_automaton& f){
+//     std::string result;
+//
+//     std::string proc_def = "bool " + name_of_scaner_class + "::" + f.proc_name + "{\n" +
+//                            indent + "bool t             = true;\n" +
+//                            indent + "bool there_is_jump = false;\n";
+//     proc_def += automata_repres_switch(aut, f) + "\n";
+//     proc_def += check_there_is_jump(f) + "\n";
+//     proc_def += indent + "return t;\n}";
+//     result = str_repres_for_set_of_size_t_const(aut.final_states,
+//                                                 f.final_states_set_name) +
+//              "\n\n" + proc_def;
+//     return result;
+// }
 
 void Main_parser::generate_separate_identifier_automat(){
     auto ident_commands = regexp1_with_regexp2ast(id_begin, id_body);

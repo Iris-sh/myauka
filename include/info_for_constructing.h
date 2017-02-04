@@ -41,11 +41,14 @@ struct Info_for_constructing{
     Errors_and_tries                      et;
     std::shared_ptr<Scope>                scope;
     std::string                           codes_type_name;
-    Category                              begin_chars[6];
+    Category*                             begin_chars;
     Init_and_final_acts                   acts_for_strings;
     Init_and_final_acts                   acts_for_numbers;
-    uint64_t                              set_of_used_automata = 0;
-    size_t                                del_postaction       = 0;
+    std::string*                          possible_automata_name_str = nullptr;
+    std::string*                          possible_proc_ptr          = nullptr;
+    std::string*                          possible_fin_proc_ptr      = nullptr;
+    uint64_t                              set_of_used_automata       = 0;
+    size_t                                del_postaction             = 0;
     bool                                  there_is_Elem_definition;
 
     Info_for_constructing()                             = default;

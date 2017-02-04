@@ -14,6 +14,7 @@
 #include "../include/idx_to_string.h"
 #include "../include/jump_table_string_repres.h"
 #include "../include/add_category.h"
+#include "../include/get_act_repres.h"
 #include "../include/indent.h"
 #include <string>
 #include <vector>
@@ -52,26 +53,26 @@ static std::string delim_proc_body(const std::string& s){
     return result;
 }
 
-
-/* Данная функция на вход получает индекс имени действия, i, в префиксном дереве
- * идентификаторов, а в качестве результата выдаёт строковое представление
- * определения действия. */
-std::string get_act_repres(Info_for_constructing& info, size_t i){
-    /* Непустая строка возвращается только в том случае, когда действие
-     * с таким индексом имени есть. */
-    std::string result;
-    if(!i){
-        return result;
-    }
-    auto isc = info.scope->idsc;
-    auto iti = isc.find(i);
-    if(iti != isc.end()){
-        size_t act_str_idx = iti->second.act_string;
-        result = idx_to_string(info.et.strs_trie, act_str_idx);
-    }
-    return result;
-}
-
+//
+// /* Данная функция на вход получает индекс имени действия, i, в префиксном дереве
+//  * идентификаторов, а в качестве результата выдаёт строковое представление
+//  * определения действия. */
+// std::string get_act_repres(Info_for_constructing& info, size_t i){
+//     /* Непустая строка возвращается только в том случае, когда действие
+//      * с таким индексом имени есть. */
+//     std::string result;
+//     if(!i){
+//         return result;
+//     }
+//     auto isc = info.scope->idsc;
+//     auto iti = isc.find(i);
+//     if(iti != isc.end()){
+//         size_t act_str_idx = iti->second.act_string;
+//         result = idx_to_string(info.et.strs_trie, act_str_idx);
+//     }
+//     return result;
+// }
+//
 // /*
 //  * Добавляет в ассоциативный массив std::map<size_t, std::string> category_name
 //  * категорию (множество) символов с именем default_name. Если такого множества ещё

@@ -20,6 +20,8 @@
 #include "../include/used_automaton.h"
 #include "../include/scope.h"
 #include "../include/errors_and_tries.h"
+#include "../include/categories.h"
+#include "../include/init_and_final_acts.h"
 
 /* Структура данных для порождения реализации сканера и заголовочного файла сканера. */
 struct Info_for_constructing{
@@ -39,6 +41,9 @@ struct Info_for_constructing{
     Errors_and_tries                      et;
     std::shared_ptr<Scope>                scope;
     std::string                           codes_type_name;
+    Category                              begin_chars[6];
+    Init_and_final_acts                   acts_for_strings;
+    Init_and_final_acts                   acts_for_numbers;
     uint64_t                              set_of_used_automata = 0;
     size_t                                del_postaction       = 0;
     bool                                  there_is_Elem_definition;

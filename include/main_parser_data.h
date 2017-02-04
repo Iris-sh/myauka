@@ -32,11 +32,12 @@
 #include "../include/num_str_parser.h"
 #include "../include/comments_parser.h"
 #include "../include/used_automaton.h"
+#include "../include/begin_chars_for_aut.h"
 
-enum Begin_chars_for_aut{
-    Id_beg_char,     Keyword_beg_char, Delimiter_beg_char,
-    Number_beg_char, String_beg_char,  Comment_beg_char
-};
+// enum Begin_chars_for_aut{
+//     Id_beg_char,     Keyword_beg_char, Delimiter_beg_char,
+//     Number_beg_char, String_beg_char,  Comment_beg_char
+// };
 
 class Main_parser_data {
 public:

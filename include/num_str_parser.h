@@ -18,17 +18,18 @@
 #include "../include/main_scaner.h"
 #include "../include/command.h"
 #include "../include/act_expr_parser.h"
+#include "../include/init_and_final_acts.h"
 #include <utility>
 
-/* Пользовательские действия, выполняемые при инициализации и при завершении
-   автомата обработки строк (или автомата обработки чисел), порождённого из
-   описания сканера.
-*/
-
-struct Init_and_final_acts{
-    size_t init_acts = 0;
-    size_t fin_acts  = 0;
-};
+// /* Пользовательские действия, выполняемые при инициализации и при завершении
+//    автомата обработки строк (или автомата обработки чисел), порождённого из
+//    описания сканера.
+// */
+//
+// struct Init_and_final_acts{
+//     size_t init_acts = 0;
+//     size_t fin_acts  = 0;
+// };
 
 using NS_settings = std::pair<Main_lexem_code, Number_or_string>;
 

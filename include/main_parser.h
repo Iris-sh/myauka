@@ -19,6 +19,7 @@
 #include "../include/categories.h"
 #include "../include/dfa.h"
 #include "../include/groupped_dfa.h"
+#include "../include/init_and_final_acts.h"
 
 class Main_parser : public Main_parser_data {
 public:

@@ -15,8 +15,6 @@ static const std::string none_proc = R"~(::none_proc(){
      * в автомате A_start. Тогда ничего делать не нужно. */
 })~";
 
-// static void generate_delim_automaton_impl(Info_for_constructing& info){}
-
 static void generate_strings_automaton_impl(Info_for_constructing& info){}
 
 static void generate_numbers_automaton_impl(Info_for_constructing& info){}

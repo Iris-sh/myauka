@@ -22,7 +22,7 @@
 #include "../include/first_chars.h"
 #include "../include/groupped_dfa.h"
 #include "../include/categories.h"
-#include "../include/detalize_commands.h"
+// #include "../include/detalize_commands.h"
 #include "../include/attributed_char_trie.h"
 #include "../include/char_conv.h"
 #include "../include/list_to_columns.h"

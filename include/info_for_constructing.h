@@ -14,9 +14,12 @@
 #include <string>
 #include <cstddef>
 #include <cstdint>
+#include <memory>
 #include "../include/unwrapped_command.h"
 #include "../include/trie_for_set_of_char.h"
 #include "../include/used_automaton.h"
+#include "../include/scope.h"
+#include "../include/errors_and_tries.h"
 
 /* Структура данных для порождения реализации сканера и заголовочного файла сканера. */
 struct Info_for_constructing{
@@ -34,7 +37,11 @@ struct Info_for_constructing{
     std::map<Used_automaton, std::string> aut_impl_fin_proc;
     std::vector<size_t>                   del_repres;
     Errors_and_tries                      et;
+    std::shared_ptr<Scope>                scope;
+    std::string                           codes_type_name;
     uint64_t                              set_of_used_automata = 0;
+    size_t                                del_postaction       = 0;
+    bool                                  there_is_Elem_definition;
 
     Info_for_constructing()                             = default;
     Info_for_constructing(const Info_for_constructing&) = default;

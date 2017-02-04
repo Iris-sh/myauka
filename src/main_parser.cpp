@@ -114,6 +114,10 @@ void Main_parser::compile(){
     constr_info.set_of_used_automata         = set_of_used_automata;
     constr_info.del_repres                   = del_repres;
     constr_info.et                           = et_;
+    constr_info.scope                        = scope_;
+    constr_info.del_postaction               = del_postaction;
+    constr_info.there_is_Elem_definition     = there_is_Elem_definition;
+    constr_info.codes_type_name              = idx_to_string(et_.ids_trie, codes_type_name_idx);
 
     if(newline_is_lexem){
         constr_info.aut_impl[Start_aut] += start_proc_newline_is_lexem;
@@ -492,10 +496,10 @@ void Main_parser::idents_sec(){
 #define DOUBLE_INDENT_WIDTH    ((INDENT_WIDTH) * 2)
 #define TRIPLE_INDENT_WIDTH    ((INDENT_WIDTH) * 3)
 #define QUADRUPLE_INDENT_WIDTH ((INDENT_WIDTH) * 4)
-const std::string indent           = std::string(INDENT_WIDTH,           ' ');
-const std::string double_indent    = std::string(DOUBLE_INDENT_WIDTH,    ' ');
-const std::string triple_indent    = std::string(TRIPLE_INDENT_WIDTH,    ' ');
-const std::string quadruple_indent = std::string(QUADRUPLE_INDENT_WIDTH, ' ');
+static const std::string indent           = std::string(INDENT_WIDTH,           ' ');
+static const std::string double_indent    = std::string(DOUBLE_INDENT_WIDTH,    ' ');
+static const std::string triple_indent    = std::string(TRIPLE_INDENT_WIDTH,    ' ');
+static const std::string quadruple_indent = std::string(QUADRUPLE_INDENT_WIDTH, ' ');
 
 const char* header_includes =
     R"~(#include "../include/abstract_scaner.h"
@@ -799,164 +803,164 @@ std::string add_newline_if_str_is_not_empty(const std::string& s){
     return result;
 }
 
-std::string delim_init_table(const Jumps_and_inits& ji,
-                             const std::string&  init_table_name){
-    std::string result;
-    result = "static const State_for_char " + init_table_name + "[] ={\n";
+// std::string delim_init_table(const Jumps_and_inits& ji,
+//                              const std::string&  init_table_name){
+//     std::string result;
+//     result = "static const State_for_char " + init_table_name + "[] ={\n";
+//
+//     std::vector<std::string> init_table_elems;
+//     for(const auto e : ji.init_table){
+//         std::string temp = "{" + std::to_string(e.first) + ", U\'" +
+//                            char32_to_utf8(e.second) + "\'}";
+//         init_table_elems.push_back(temp);
+//     }
+//
+//     Format f;
+//     f.indent                 = INDENT_WIDTH;
+//     f.number_of_columns      = 5;
+//     f.spaces_between_columns = 1;
+//     result += string_list_to_columns(init_table_elems, f) + "\n};\n\n";
+//     return result;
+// }
 
-    std::vector<std::string> init_table_elems;
-    for(const auto e : ji.init_table){
-        std::string temp = "{" + std::to_string(e.first) + ", U\'" +
-                           char32_to_utf8(e.second) + "\'}";
-        init_table_elems.push_back(temp);
-    }
-
-    Format f;
-    f.indent                 = INDENT_WIDTH;
-    f.number_of_columns      = 5;
-    f.spaces_between_columns = 1;
-    result += string_list_to_columns(init_table_elems, f) + "\n};\n\n";
-    return result;
-}
-
-std::string generate_Elem(const std::string& s){
-    std::string result = R"~(struct Elem {
-    /** Указатель на строку , состоящую из символов , по которым
-        возможен переход. */
-    char32_t*       symbols;
-    /** код лексемы */
-    )~" + s + R"~( code;
-    /** Если текущий символ совпадает с symbols[0], то
-        выполняется переход в состояние first_state;
-        если текущий символ совпадает с symbols[1], то
-        выполняется переход в состояние first_state+1;
-        если текущий символ совпадает с symbols[2], то
-        выполняется переход в состояние first_state+2,
-        и так далее. */
-    uint16_t        first_state;
-};
-
-)~";
-    return result;
-}
-
-static const std::string del_jump_table_name = "delim_jump_table";
-static const std::string del_init_table_name = "init_table_for_delimiters";
-
-std::string Main_parser::delim_table_gen(const Jumps_and_inits& ji,
-                                         const std::string&     table_name){
-    std::string result = "static const Elem " + table_name + "[] = {\n";
-    std::vector<std::string> del_jumps;
-    for(const auto& j : ji.jumps){
-        std::string temp = "{const_cast<char32_t*>(U\"" +
-                           u32string_to_utf8(j.jump_chars) + "\"), " +
-                           idx_to_string(et_.ids_trie, codes[j.code]) + ", " +
-                           std::to_string(j.first_state) + "}";
-        del_jumps.push_back(temp);
-    }
-
-    Format f;
-    f.indent                 = INDENT_WIDTH;
-    f.number_of_columns      = 1;
-    f.spaces_between_columns = 1;
-    result += string_list_to_columns(del_jumps, f) + "\n};\n\n";
-    return result;
-}
-
-std::string Main_parser::jump_table_string_repres(const Jumps_and_inits& ji,
-                                                  const std::string&     table_name,
-                                                  const std::string&     init_table_name){
-    auto result = delim_init_table(ji, init_table_name);
-    auto temp   = delim_table_gen(ji, table_name);
-    if(!there_is_Elem_definition){
-        result += generate_Elem(codes_type_name) + temp;
-        there_is_Elem_definition = true;
-    }else{
-        result += temp;
-    }
-    return result;
-}
-
-static const std::string delim_proc_body_ = R"~(::delimiter_proc(){
-    bool t = false;
-    if(-1 == state){
-        state = get_init_state(ch, init_table_for_delimiters,
-                               sizeof(init_table_for_delimiters)/sizeof(State_for_char));
-        token.code = delim_jump_table[state].code;
-        t = true;
-        return t;
-    }
-    Elem elem = delim_jump_table[state];
-    token.code = delim_jump_table[state].code;
-    int y = search_char(ch, elem.symbols);
-    if(y != THERE_IS_NO_CHAR){
-        state = elem.first_state + y; t = true;
-    })~";
-
-static std::string delim_proc_body(const std::string& s){
-    std::string result;
-    result = delim_proc_body_;
-    if(s.empty()){
-        result += "\n" + indent + "return t;\n}";
-    }else{
-        result += "\n" +
-                  indent + "if(!t){\n" +
-                  double_indent + s + "\n" +
-                  indent + "}\n" +
-                  indent + "return t;\n}";
-    }
-    return result;
-}
-
+// std::string generate_Elem(const std::string& s){
+//     std::string result = R"~(struct Elem {
+//     /** Указатель на строку , состоящую из символов , по которым
+//         возможен переход. */
+//     char32_t*       symbols;
+//     /** код лексемы */
+//     )~" + s + R"~( code;
+//     /** Если текущий символ совпадает с symbols[0], то
+//         выполняется переход в состояние first_state;
+//         если текущий символ совпадает с symbols[1], то
+//         выполняется переход в состояние first_state+1;
+//         если текущий символ совпадает с symbols[2], то
+//         выполняется переход в состояние first_state+2,
+//         и так далее. */
+//     uint16_t        first_state;
+// };
+//
+// )~";
+//     return result;
+// }
+//
+// static const std::string del_jump_table_name = "delim_jump_table";
+// static const std::string del_init_table_name = "init_table_for_delimiters";
+//
+// std::string Main_parser::delim_table_gen(const Jumps_and_inits& ji,
+//                                          const std::string&     table_name){
+//     std::string result = "static const Elem " + table_name + "[] = {\n";
+//     std::vector<std::string> del_jumps;
+//     for(const auto& j : ji.jumps){
+//         std::string temp = "{const_cast<char32_t*>(U\"" +
+//                            u32string_to_utf8(j.jump_chars) + "\"), " +
+//                            idx_to_string(et_.ids_trie, codes[j.code]) + ", " +
+//                            std::to_string(j.first_state) + "}";
+//         del_jumps.push_back(temp);
+//     }
+//
+//     Format f;
+//     f.indent                 = INDENT_WIDTH;
+//     f.number_of_columns      = 1;
+//     f.spaces_between_columns = 1;
+//     result += string_list_to_columns(del_jumps, f) + "\n};\n\n";
+//     return result;
+// }
+//
+// std::string Main_parser::jump_table_string_repres(const Jumps_and_inits& ji,
+//                                                   const std::string&     table_name,
+//                                                   const std::string&     init_table_name){
+//     auto result = delim_init_table(ji, init_table_name);
+//     auto temp   = delim_table_gen(ji, table_name);
+//     if(!there_is_Elem_definition){
+//         result += generate_Elem(codes_type_name) + temp;
+//         there_is_Elem_definition = true;
+//     }else{
+//         result += temp;
+//     }
+//     return result;
+// }
+//
+// static const std::string delim_proc_body_ = R"~(::delimiter_proc(){
+//     bool t = false;
+//     if(-1 == state){
+//         state = get_init_state(ch, init_table_for_delimiters,
+//                                sizeof(init_table_for_delimiters)/sizeof(State_for_char));
+//         token.code = delim_jump_table[state].code;
+//         t = true;
+//         return t;
+//     }
+//     Elem elem = delim_jump_table[state];
+//     token.code = delim_jump_table[state].code;
+//     int y = search_char(ch, elem.symbols);
+//     if(y != THERE_IS_NO_CHAR){
+//         state = elem.first_state + y; t = true;
+//     })~";
+//
+// static std::string delim_proc_body(const std::string& s){
+//     std::string result;
+//     result = delim_proc_body_;
+//     if(s.empty()){
+//         result += "\n" + indent + "return t;\n}";
+//     }else{
+//         result += "\n" +
+//                   indent + "if(!t){\n" +
+//                   double_indent + s + "\n" +
+//                   indent + "}\n" +
+//                   indent + "return t;\n}";
+//     }
+//     return result;
+// }
+//
 // static const std::string del_begin_cat_name_by_default = "DELIMITER_BEGIN";
-
-void Main_parser::generate_delim_automaton_impl(){
-    /* Данная функция строит реализацию автомата, обрабатывающего разделители. */
-    if(!belongs(Delimiter_aut, set_of_used_automata)){
-        return;
-    }
-
-    std::set<char32_t>          first_chars_for_delims; /* Это множество
-       состоит из символов, с которых могут начинаться разделители. */
-    Attributed_char_trie        atrie;
-
-    for(size_t del_idx : del_repres){
-        auto delimiter = et_.strs_trie->get_string(del_idx);
-        delimiter_strings.push_back(delimiter);
-        first_chars_for_delims.insert(delimiter[0]);
-    }
-    size_t counter = 0;
-    for(size_t del_idx : del_repres){
-        Attributed_cstring atrib_cstr;
-        atrib_cstr.str       = const_cast<char32_t*>(delimiter_strings[counter].c_str());
-        atrib_cstr.attribute = (scope_->strsc[del_idx]).code;
-        atrie.insert(attributed_cstring2string(atrib_cstr, 1));
-        counter++;
-    }
-
-    Jumps_and_inits jmps = atrie.jumps(); /* построили заготовку под таблицу переходов */
-    /* теперь нужно дописать нужный текст в реализацию стартового автомата
-       и сгенерировать функцию, обрабатывающую разделители */
-    auto cat_res = add_category(first_chars_for_delims, del_begin_cat_name_by_default);
-    std::string delimiter_begin_cat_name = cat_res.second;
-
-    aut_impl[Start_aut] += "\n    if(belongs(" + delimiter_begin_cat_name +
-        ", char_categories)){\n        (loc->pcurrent_char)--; " +
-        "automaton = A_delimiter;\n        state = -1;\n        return t;\n    }\n";
-
-    auto del_postact = get_act_repres(del_postaction);
-
-    aut_impl[Delimiter_aut] = jump_table_string_repres(jmps, del_jump_table_name,
-                                                       del_init_table_name) +
-                              "bool " + name_of_scaner_class + delim_proc_body(del_postact);
-
-    aut_impl_fin_proc[Delimiter_aut] = "void " + name_of_scaner_class +
-                                       R"~(::delimiter_final_proc(){
-    )~" + indent + del_postact +
-    R"~(
-    token.code = delim_jump_table[state].code;
-    )~" + "\n}";
-}
+//
+// void Main_parser::generate_delim_automaton_impl(){
+//     /* Данная функция строит реализацию автомата, обрабатывающего разделители. */
+//     if(!belongs(Delimiter_aut, set_of_used_automata)){
+//         return;
+//     }
+//
+//     std::set<char32_t>          first_chars_for_delims; /* Это множество
+//        состоит из символов, с которых могут начинаться разделители. */
+//     Attributed_char_trie        atrie;
+//
+//     for(size_t del_idx : del_repres){
+//         auto delimiter = et_.strs_trie->get_string(del_idx);
+//         delimiter_strings.push_back(delimiter);
+//         first_chars_for_delims.insert(delimiter[0]);
+//     }
+//     size_t counter = 0;
+//     for(size_t del_idx : del_repres){
+//         Attributed_cstring atrib_cstr;
+//         atrib_cstr.str       = const_cast<char32_t*>(delimiter_strings[counter].c_str());
+//         atrib_cstr.attribute = (scope_->strsc[del_idx]).code;
+//         atrie.insert(attributed_cstring2string(atrib_cstr, 1));
+//         counter++;
+//     }
+//
+//     Jumps_and_inits jmps = atrie.jumps(); /* построили заготовку под таблицу переходов */
+//     /* теперь нужно дописать нужный текст в реализацию стартового автомата
+//        и сгенерировать функцию, обрабатывающую разделители */
+//     auto cat_res = add_category(first_chars_for_delims, del_begin_cat_name_by_default);
+//     std::string delimiter_begin_cat_name = cat_res.second;
+//
+//     aut_impl[Start_aut] += "\n    if(belongs(" + delimiter_begin_cat_name +
+//         ", char_categories)){\n        (loc->pcurrent_char)--; " +
+//         "automaton = A_delimiter;\n        state = -1;\n        return t;\n    }\n";
+//
+//     auto del_postact = get_act_repres(del_postaction);
+//
+//     aut_impl[Delimiter_aut] = jump_table_string_repres(jmps, del_jump_table_name,
+//                                                        del_init_table_name) +
+//                               "bool " + name_of_scaner_class + delim_proc_body(del_postact);
+//
+//     aut_impl_fin_proc[Delimiter_aut] = "void " + name_of_scaner_class +
+//                                        R"~(::delimiter_final_proc(){
+//     )~" + indent + del_postact +
+//     R"~(
+//     token.code = delim_jump_table[state].code;
+//     )~" + "\n}";
+// }
 
 std::string str_repres_for_set_of_size_t_const(const std::set<size_t>& s,
                                                const std::string& const_name){

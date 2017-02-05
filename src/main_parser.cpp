@@ -155,13 +155,18 @@ void Main_parser::compile(){
     constr_info.scope                        = scope_;
     constr_info.del_postaction               = del_postaction;
     constr_info.there_is_Elem_definition     = there_is_Elem_definition;
-    constr_info.codes_type_name              = idx_to_string(et_.ids_trie, codes_type_name_idx);
+    constr_info.codes_type_name              = codes_type_name_idx ?
+                                                idx_to_string(et_.ids_trie, codes_type_name_idx) : "Codes";
     constr_info.begin_chars                  = begin_chars;
     constr_info.acts_for_strings             = acts_for_strings;
     constr_info.acts_for_numbers             = acts_for_numbers;
     constr_info.possible_automata_name_str   = const_cast<std::string*>(possible_automata_name_str);
     constr_info.possible_proc_ptr            = const_cast<std::string*>(possible_proc_ptr);
     constr_info.possible_fin_proc_ptr        = const_cast<std::string*>(possible_fin_proc_ptr);
+    constr_info.kw_repres                    = kw_repres;
+    constr_info.keyword_postaction           = keyword_postaction;
+    constr_info.write_action_name_idx        = write_action_name_idx;
+    constr_info.codes                        = codes;
 
     if(newline_is_lexem){
         constr_info.aut_impl[Start_aut] += start_proc_newline_is_lexem;
@@ -1108,144 +1113,144 @@ std::string add_newline_if_str_is_not_empty(const std::string& s){
 //     aut_impl[Number_aut]          = automata_repres(num_GDFA, f);
 //     aut_impl_fin_proc[Number_aut] = temp;
 // }
-
-static const std::string separate_keyword_proc_body_ = R"~(::keyword_proc(){
-    bool t = false;
-    if(-1 == state){
-        state = get_init_state(ch, init_table_for_keywords,
-                               sizeof(init_table_for_keywords)/sizeof(State_for_char));
-        token.code = keywords_jump_table[state].code;
-        t = true;
-        return t;
-    }
-    Elem elem  = keywords_jump_table[state];
-    token.code = keywords_jump_table[state].code;
-    int y = search_char(ch, elem.symbols);
-    if(y != THERE_IS_NO_CHAR){
-        state = elem.first_state + y; t = true;
-    })~";
-
-std::string dindent(const std::string& s){
-    std::string result;
-    if(!s.empty()){
-        result = double_indent + s;
-    }
-    return result;
-}
-
-std::string sindent(const std::string& s){
-    std::string result;
-    if(!s.empty()){
-        result = indent + s;
-    }
-    return result;
-}
-
-static std::string separate_keyword_proc_body(const std::string& s){
-    std::string result;
-    result = separate_keyword_proc_body_;
-    if(s.empty()){
-        result += "\n" + indent + "return t;\n}";
-    }else{
-        result += "\n" +
-                  indent + "if(!t){\n" +
-                  double_indent + s + "\n" +
-                  indent + "}\n" +
-                  indent + "return t;\n}";
-    }
-    return result;
-}
-
-static const std::string keywords_begin_cat_name_by_default = "KEYWORD_BEGIN";
-
-static const std::string keyword_jump_table_name = "keyword_jump_table";
-static const std::string keyword_init_table_name = "init_table_for_keywords";
-
-void Main_parser::generate_separate_keywords_automat(){
-    /* Данная функция строит реализацию отдельного автомата, обрабатывающего
-     * ключевые слова. */
-    auto                 first_chars_for_keywords = begin_chars[Keyword_beg_char].s;
-    Attributed_char_trie atrie;
-
-    for(size_t kw_idx : kw_repres){
-        auto keyword = et_.strs_trie->get_string(kw_idx);
-        keyword_strings.push_back(keyword);
-    }
-
-    size_t counter = 0;
-    for(size_t kw_idx : kw_repres){
-        Attributed_cstring atrib_cstr;
-        atrib_cstr.str       = const_cast<char32_t*>(keyword_strings[counter].c_str());
-        atrib_cstr.attribute = (scope_->strsc[kw_idx]).code;
-        atrie.insert(attributed_cstring2string(atrib_cstr, 1));
-        counter++;
-    }
-
-    Jumps_and_inits jmps = atrie.jumps(); /* построили заготовку под таблицу переходов */
-    /* теперь нужно дописать нужный текст в реализацию стартового автомата
-       и сгенерировать функцию, обрабатывающую ключевые слова */
-    auto cat_res = add_category(first_chars_for_keywords, keywords_begin_cat_name_by_default);
-    std::string keyword_begin_cat_name = cat_res.second;
-
-    aut_impl[Start_aut] += "\n    if(belongs(" + keyword_begin_cat_name +
-        ", char_categories)){\n        (loc->pcurrent_char)--; " +
-        "automaton = A_keyword;\n        state = -1;\n        return t;\n    }\n";
-
-    auto kw_postact = get_act_repres(keyword_postaction);
-
-    aut_impl[Keyword_aut] = jump_table_string_repres(jmps, keyword_jump_table_name,
-                                                     keyword_init_table_name) +
-                              "bool " + name_of_scaner_class + separate_keyword_proc_body(kw_postact);
-
-    aut_impl_fin_proc[Keyword_aut] = "void " + name_of_scaner_class +
-                                       R"~(::keyword_final_proc(){
-    )~" + indent + kw_postact +
-    R"~(
-    token.code = keyword_jump_table[state].code;
-    )~" + "\n}";
-}
-
-static const std::string identifier_begin_cat_name_by_default = "IDENTIFIER_BEGIN";
-
-/* Построение по командам, отвечающим регуляркам a и b, команд, отвечающих регулярке ab*. */
-Command_buffer regexp1_with_regexp2ast(const Command_buffer& a, const Command_buffer& b){
-    Command_buffer x                             = a;
-    Command_buffer y                             = b;
-    size_t         num_commands_in_a             = x.size();
-    size_t         last_idx_in_a                 = num_commands_in_a -1;
-
-    for(auto& c : y){
-        switch(c.name){
-            case Cmd_or: case Cmd_concat:
-                c.args.first += num_commands_in_a; c.args.second += num_commands_in_a;
-                break;
-            case Cmd_Kleene: case Cmd_positive: case Cmd_optional:
-                c.args.first += num_commands_in_a;
-                break;
-            default:
-                ;
-        }
-    }
-    x.insert(x.end(), y.begin(), y.end());
-
-    size_t         last_idx_in_a_appended_with_b = x.size() - 1;
-    Command        com;
-    com.action_name = 0;
-    com.name        = Cmd_Kleene;
-    com.args.first  = last_idx_in_a_appended_with_b;
-    com.args.second = 0;
-
-    x.push_back(com);
-
-    com.action_name = 0;
-    com.name        = Cmd_concat;
-    com.args.first  = last_idx_in_a;
-    com.args.second = x.size() - 1;
-
-    x.push_back(com);
-
-    return x;
-}
+//
+// static const std::string separate_keyword_proc_body_ = R"~(::keyword_proc(){
+//     bool t = false;
+//     if(-1 == state){
+//         state = get_init_state(ch, init_table_for_keywords,
+//                                sizeof(init_table_for_keywords)/sizeof(State_for_char));
+//         token.code = keywords_jump_table[state].code;
+//         t = true;
+//         return t;
+//     }
+//     Elem elem  = keywords_jump_table[state];
+//     token.code = keywords_jump_table[state].code;
+//     int y = search_char(ch, elem.symbols);
+//     if(y != THERE_IS_NO_CHAR){
+//         state = elem.first_state + y; t = true;
+//     })~";
+//
+// std::string dindent(const std::string& s){
+//     std::string result;
+//     if(!s.empty()){
+//         result = double_indent + s;
+//     }
+//     return result;
+// }
+//
+// std::string sindent(const std::string& s){
+//     std::string result;
+//     if(!s.empty()){
+//         result = indent + s;
+//     }
+//     return result;
+// }
+//
+// static std::string separate_keyword_proc_body(const std::string& s){
+//     std::string result;
+//     result = separate_keyword_proc_body_;
+//     if(s.empty()){
+//         result += "\n" + indent + "return t;\n}";
+//     }else{
+//         result += "\n" +
+//                   indent + "if(!t){\n" +
+//                   double_indent + s + "\n" +
+//                   indent + "}\n" +
+//                   indent + "return t;\n}";
+//     }
+//     return result;
+// }
+//
+// static const std::string keywords_begin_cat_name_by_default = "KEYWORD_BEGIN";
+//
+// static const std::string keyword_jump_table_name = "keyword_jump_table";
+// static const std::string keyword_init_table_name = "init_table_for_keywords";
+//
+// void Main_parser::generate_separate_keywords_automat(){
+//     /* Данная функция строит реализацию отдельного автомата, обрабатывающего
+//      * ключевые слова. */
+//     auto                 first_chars_for_keywords = begin_chars[Keyword_beg_char].s;
+//     Attributed_char_trie atrie;
+//
+//     for(size_t kw_idx : kw_repres){
+//         auto keyword = et_.strs_trie->get_string(kw_idx);
+//         keyword_strings.push_back(keyword);
+//     }
+//
+//     size_t counter = 0;
+//     for(size_t kw_idx : kw_repres){
+//         Attributed_cstring atrib_cstr;
+//         atrib_cstr.str       = const_cast<char32_t*>(keyword_strings[counter].c_str());
+//         atrib_cstr.attribute = (scope_->strsc[kw_idx]).code;
+//         atrie.insert(attributed_cstring2string(atrib_cstr, 1));
+//         counter++;
+//     }
+//
+//     Jumps_and_inits jmps = atrie.jumps(); /* построили заготовку под таблицу переходов */
+//     /* теперь нужно дописать нужный текст в реализацию стартового автомата
+//        и сгенерировать функцию, обрабатывающую ключевые слова */
+//     auto cat_res = add_category(first_chars_for_keywords, keywords_begin_cat_name_by_default);
+//     std::string keyword_begin_cat_name = cat_res.second;
+//
+//     aut_impl[Start_aut] += "\n    if(belongs(" + keyword_begin_cat_name +
+//         ", char_categories)){\n        (loc->pcurrent_char)--; " +
+//         "automaton = A_keyword;\n        state = -1;\n        return t;\n    }\n";
+//
+//     auto kw_postact = get_act_repres(keyword_postaction);
+//
+//     aut_impl[Keyword_aut] = jump_table_string_repres(jmps, keyword_jump_table_name,
+//                                                      keyword_init_table_name) +
+//                               "bool " + name_of_scaner_class + separate_keyword_proc_body(kw_postact);
+//
+//     aut_impl_fin_proc[Keyword_aut] = "void " + name_of_scaner_class +
+//                                        R"~(::keyword_final_proc(){
+//     )~" + indent + kw_postact +
+//     R"~(
+//     token.code = keyword_jump_table[state].code;
+//     )~" + "\n}";
+// }
+//
+// static const std::string identifier_begin_cat_name_by_default = "IDENTIFIER_BEGIN";
+//
+// /* Построение по командам, отвечающим регуляркам a и b, команд, отвечающих регулярке ab*. */
+// Command_buffer regexp1_with_regexp2ast(const Command_buffer& a, const Command_buffer& b){
+//     Command_buffer x                             = a;
+//     Command_buffer y                             = b;
+//     size_t         num_commands_in_a             = x.size();
+//     size_t         last_idx_in_a                 = num_commands_in_a -1;
+//
+//     for(auto& c : y){
+//         switch(c.name){
+//             case Cmd_or: case Cmd_concat:
+//                 c.args.first += num_commands_in_a; c.args.second += num_commands_in_a;
+//                 break;
+//             case Cmd_Kleene: case Cmd_positive: case Cmd_optional:
+//                 c.args.first += num_commands_in_a;
+//                 break;
+//             default:
+//                 ;
+//         }
+//     }
+//     x.insert(x.end(), y.begin(), y.end());
+//
+//     size_t         last_idx_in_a_appended_with_b = x.size() - 1;
+//     Command        com;
+//     com.action_name = 0;
+//     com.name        = Cmd_Kleene;
+//     com.args.first  = last_idx_in_a_appended_with_b;
+//     com.args.second = 0;
+//
+//     x.push_back(com);
+//
+//     com.action_name = 0;
+//     com.name        = Cmd_concat;
+//     com.args.first  = last_idx_in_a;
+//     com.args.second = x.size() - 1;
+//
+//     x.push_back(com);
+//
+//     return x;
+// }
 //
 // std::string qindent_string(const std::string& s){
 //     std::string result;
@@ -1379,314 +1384,314 @@ Command_buffer regexp1_with_regexp2ast(const Command_buffer& a, const Command_bu
 //              "\n\n" + proc_def;
 //     return result;
 // }
-
-void Main_parser::generate_separate_identifier_automat(){
-    auto ident_commands = regexp1_with_regexp2ast(id_begin, id_body);
-
-    for(auto& com : ident_commands){
-        com.action_name = write_action_name_idx;
-    }
-
-    G_DFA gdfa;
-    grouped_DFA_by_regexp(gdfa, ident_commands);
-
-    Str_data_for_automaton f;
-    f.automata_name         = possible_automata_name_str[Id_aut];
-    f.proc_name             = possible_proc_ptr[Id_aut];
-    f.category_name_prefix  = "IDENTIFIER";
-    f.diagnostic_msg        = "В строке %zu неожиданно закончился идентификатор.";
-    f.final_states_set_name = "final_states_for_identiers";
-    f.final_actions         = "token.ident_index = ids -> insert(buffer);";
-
-    aut_impl[Id_aut] = automata_repres(gdfa, f);
-    auto temp = "void " + name_of_scaner_class + "::" + possible_fin_proc_ptr[Id_aut] + "{\n" +
-                indent + "if(!is_elem(state, "   + f.final_states_set_name + ")){\n" +
-                double_indent + "printf(\"" + f.diagnostic_msg + "\", loc->current_line);\n" +
-                double_indent + "en->increment_number_of_errors();\n" +
-                indent + "}\n" +
-                indent + f.final_actions + "\n}";
-    aut_impl_fin_proc[Id_aut] = temp;
-
-    auto symbols = begin_chars[Id_beg_char].s;
-    auto cat_res = add_category(symbols, identifier_begin_cat_name_by_default);
-    auto id_begin_category_name = cat_res.second;
-
-    aut_impl[Start_aut] += "\n    if(belongs(" + id_begin_category_name +
-        ", char_categories)){\n        (loc->pcurrent_char)--; " +
-        "automaton = A_id;\n        state = 0;\n        return t;\n    }\n";
-}
-
-Command_buffer u32string_to_commands(const std::u32string& str){
-    Command_buffer result;
-
-    if(str.empty()){
-        return result;
-    }
-
-    Command command;
-    command.action_name = 0;
-    command.name        = Cmd_char_def;
-    command.c           = str[0];
-    result.push_back(command);
-
-    auto temp = str.substr(1);
-    if(temp.empty()){
-        return result;
-    }
-
-    for(char32_t ch : temp){
-        command.action_name      = 0;
-        command.name             = Cmd_char_def;
-        command.c                = ch;
-
-        size_t concat_first_arg  = result.size() - 1;
-        result.push_back(command);
-        size_t concat_second_arg = result.size() - 1;
-
-        command.name             = Cmd_concat;
-        command.args.first       = concat_first_arg;
-        command.args.second      = concat_second_arg;
-        result.push_back(command);
-    }
-    return result;
-}
-
-/* Возвращает команды, соответствующие регулярке a | b. */
-Command_buffer regexp1_or_regexp2(const Command_buffer& a, const Command_buffer& b){
-    if(a.empty()){
-        return b;
-    }
-    if(b.empty()){
-        return a;
-    }
-
-    Command_buffer result            = a;
-    size_t         num_commands_in_a = a.size();
-    size_t         or_first_arg      = num_commands_in_a - 1;
-
-    Command_buffer temp              = b;
-    for(auto& c : temp){
-        switch(c.name){
-            case Cmd_or: case Cmd_concat:
-                c.args.first += num_commands_in_a; c.args.second += num_commands_in_a;
-                break;
-            case Cmd_Kleene: case Cmd_positive: case Cmd_optional:
-                c.args.first += num_commands_in_a;
-                break;
-            default:
-                ;
-        }
-    }
-
-    result.insert(result.end(), temp.begin(), temp.end());
-    size_t         or_second_arg     = result.size() - 1;
-
-    Command command;
-    command.action_name = 0;
-    command.name        = Cmd_or;
-    command.args.first  = or_first_arg;
-    command.args.second = or_second_arg;
-    result.push_back(command);
-
-    return result;
-}
-
-Command_buffer u32strings_to_commands(const std::vector<std::u32string>& s){
-    Command_buffer result;
-    for(const auto& str : s){
-        auto current_commands = u32string_to_commands(str);
-        result                = regexp1_or_regexp2(result, current_commands);
-    }
-    return result;
-}
-
-using Keyword_and_code = std::pair<std::u32string, std::string>;
-/* Первый элемент этой пары --- строковое представление ключевого слова,
- * а второй элемент --- строковое представление идентификатора, являющегося
- * соответствующим кодом лексемы. */
-
-using Keywords_and_codes = std::vector<Keyword_and_code>;
-
-std::string keyword_list_elem(const std::string& codes_n){
-    std::string result = "struct Keyword_list_elem{\n    std::u32string keyword;\n    " +
-                         codes_n + " kw_code;\n};";
-    return result;
-}
-
-std::string keyword_list(const Keywords_and_codes& kwcs, const std::string& codes_n){
-    std::string result = keyword_list_elem(codes_n) +
-                         "\n\nstatic const Keyword_list_elem kwlist[] = {\n";
-
-    std::vector<std::string> kwl;
-    for(const auto& k : kwcs){
-        auto temp = "{U\"" + u32string_to_utf8(k.first) + "\", " + k.second + "}";
-        kwl.push_back(temp);
-    }
-
-    Format f;
-    f.indent                 = INDENT_WIDTH;
-    f.number_of_columns      = 2;
-    f.spaces_between_columns = 1;
-
-    result += string_list_to_columns(kwl, f) + "\n};\n\n#define NUM_OF_KEYWORDS " +
-              std::to_string(kwcs.size()) + "\n";
-
-    return result;
-}
-
-static const std::string search_keyword_proc_text =
-R"~(
-#define THERE_IS_NO_KEYWORD (-1)
-
-static int search_keyword(const std::u32string& finded_keyword){
-    int result      = THERE_IS_NO_KEYWORD;
-    int low_bound   = 0;
-    int upper_bound = NUM_OF_KEYWORDS - 1;
-    int middle;
-    while(low_bound <= upper_bound){
-        middle             = (low_bound + upper_bound) / 2;
-        auto& curr_kw      = kwlist[middle].keyword;
-        int compare_result = finded_keyword.compare(curr_kw);
-        if(0 == compare_result){
-            return middle;
-        }
-        if(compare_result < 0){
-            upper_bound = middle - 1;
-        }else{
-            low_bound   = middle + 1;
-        }
-    }
-    return result;
-})~";
-
-static std::string kwtable_data(const Keywords_and_codes& kwcs, const std::string& codes_n){
-    auto result = keyword_list(kwcs, codes_n) + search_keyword_proc_text;
-    return result;
-}
-
-static const std::string idkeyword_final_actions = R"~(
-        int search_result = search_keyword(buffer);
-        if(search_result != THERE_IS_NO_KEYWORD) {
-            token.code = kwlist[search_result].kw_code;
-        })~";
-
-static const std::string idkeyword_final_actions1 = R"~(
-    int search_result = search_keyword(buffer);
-    if(search_result != THERE_IS_NO_KEYWORD) {
-        token.code = kwlist[search_result].kw_code;
-    }
-)~";
-
-static const std::string idkeyword_begin_cat_name_by_default = "IDKEYWORD_BEGIN";
-
-void Main_parser::generate_idkeyword_automat(){
-    auto ident_commands = regexp1_with_regexp2ast(id_begin, id_body);
-
-    Keywords_and_codes kwcs;
-
-    for(size_t kw_idx : kw_repres){
-        auto keyword             = et_.strs_trie->get_string(kw_idx);
-        keyword_strings.push_back(keyword);
-        auto num_value_of_code   = (scope_->strsc[kw_idx]).code;
-        auto str_repres_for_code = idx_to_string(et_.ids_trie, codes[num_value_of_code]);
-        auto temp                = std::make_pair(keyword, str_repres_for_code);
-        kwcs.push_back(temp);
-    }
-
-    std::sort(kwcs.begin(), kwcs.end(),
-              [](const Keyword_and_code& k1, const Keyword_and_code& k2){
-                  return k1.first < k2.first;
-    });
-
-    auto keywords_commands = u32strings_to_commands(keyword_strings);
-    auto idkeyword_commands = regexp1_or_regexp2(ident_commands, keywords_commands);
-    for(auto& com : idkeyword_commands){
-        com.action_name = write_action_name_idx;
-    }
-
-    G_DFA gdfa;
-    grouped_DFA_by_regexp(gdfa, idkeyword_commands);
-
-    auto kw_postact = get_act_repres(keyword_postaction);
-    Str_data_for_automaton f;
-    f.automata_name         = possible_automata_name_str[IdKeyword_aut];
-    f.proc_name             = possible_proc_ptr[IdKeyword_aut];
-    f.category_name_prefix  = "IDKEYWORD";
-    f.diagnostic_msg        =
-        "В строке %zu неожиданно закончился идентификатор или ключевое слово.";
-    f.final_states_set_name = "final_states_for_idkeywords";
-    f.final_actions         = dindent(kw_postact) + idkeyword_final_actions;
-
-    auto kwtable = kwtable_data(kwcs, idx_to_string(et_.ids_trie, codes_type_name_idx));
-
-    using operations_with_sets::operator+;
-
-    auto symbols = begin_chars[Id_beg_char].s + begin_chars[Keyword_beg_char].s;
-    auto cat_res = add_category(symbols, idkeyword_begin_cat_name_by_default);
-    auto idkeyword_begin_category_name = cat_res.second;
-
-    aut_impl[Start_aut] += "\n    if(belongs(" + idkeyword_begin_category_name +
-        ", char_categories)){\n        (loc->pcurrent_char)--; " +
-        "automaton = A_idKeyword;\n        state = 0;\n        return t;\n    }\n";
-
-    aut_impl[IdKeyword_aut] = kwtable + "\n\n" + automata_repres(gdfa, f);
-
-    auto temp = "void " + name_of_scaner_class + "::" +
-                possible_fin_proc_ptr[IdKeyword_aut] + "{\n" +
-                indent + "if(!is_elem(state, "   + f.final_states_set_name + ")){\n" +
-                double_indent + "printf(\"" + f.diagnostic_msg + "\", loc->current_line);\n" +
-                double_indent + "en->increment_number_of_errors();\n" +
-                indent + "}\n" + sindent(kw_postact) + idkeyword_final_actions1 + "\n}";
-    aut_impl_fin_proc[IdKeyword_aut] = temp;
-}
-
-void Main_parser::generate_idents_and_keywords_automata_impl(){
-    bool t1 = belongs(Id_aut, set_of_used_automata)      != 0;
-    bool t2 = belongs(Keyword_aut, set_of_used_automata) != 0;
-
-    using operations_with_sets::operator*;
-    using operations_with_sets::print_set;
-
-    enum Idkw {
-        There_is_no_id_and_there_are_no_keywords,
-        There_is_no_id_and_there_are_keywords,
-        There_is_id_and_there_are_no_keywords,
-        There_is_id_and_there_are_keywords
-    };
-    Idkw t = static_cast<Idkw>(t1 * 2 + t2);
-    switch(t){
-        case There_is_no_id_and_there_are_no_keywords:
-            break;
-        case There_is_no_id_and_there_are_keywords:
-            /* Обработка ключевых слов будет выполняться аналогично
-             * обработке разделителей. */
-            generate_separate_keywords_automat();
-            break;
-        case There_is_id_and_there_are_no_keywords:
-            generate_separate_identifier_automat();
-            break;
-        case There_is_id_and_there_are_keywords:
-            if(!(begin_chars[Keyword_beg_char] * begin_chars[Id_beg_char])){
-                /* Если множество первых символов ключевых слов не пересекается с
-                 * множеством первых символов идентификаторов, то создать отдельный
-                 * автомат обработки идентификаторов, и отдельный автомат обработки
-                 * ключевых слов, без возможности перехода между ними. При этом обработка
-                 * ключевых слов будет выполняться аналогично обработке разделителей. */
-                generate_separate_keywords_automat();
-                generate_separate_identifier_automat();
-            }else{
-                /* Если же указанные множества пересекаются, то нужно склеить регулярку
-                 * для идентификаторов с регуляркой для ключевых слов, создать по этой
-                 * регулярке минимизированный детерминированный конечный автомат со
-                 * сгруппированными переходами, и по получившемуся автомату нужно построить
-                 * его реализацию. */
-                set_of_used_automata &= ~((1ULL << Id_aut) | (1ULL << Keyword_aut));
-                set_of_used_automata |= 1ULL << IdKeyword_aut;
-                generate_idkeyword_automat();
-            }
-            break;
-    }
-}
+//
+// void Main_parser::generate_separate_identifier_automat(){
+//     auto ident_commands = regexp1_with_regexp2ast(id_begin, id_body);
+//
+//     for(auto& com : ident_commands){
+//         com.action_name = write_action_name_idx;
+//     }
+//
+//     G_DFA gdfa;
+//     grouped_DFA_by_regexp(gdfa, ident_commands);
+//
+//     Str_data_for_automaton f;
+//     f.automata_name         = possible_automata_name_str[Id_aut];
+//     f.proc_name             = possible_proc_ptr[Id_aut];
+//     f.category_name_prefix  = "IDENTIFIER";
+//     f.diagnostic_msg        = "В строке %zu неожиданно закончился идентификатор.";
+//     f.final_states_set_name = "final_states_for_identiers";
+//     f.final_actions         = "token.ident_index = ids -> insert(buffer);";
+//
+//     aut_impl[Id_aut] = automata_repres(gdfa, f);
+//     auto temp = "void " + name_of_scaner_class + "::" + possible_fin_proc_ptr[Id_aut] + "{\n" +
+//                 indent + "if(!is_elem(state, "   + f.final_states_set_name + ")){\n" +
+//                 double_indent + "printf(\"" + f.diagnostic_msg + "\", loc->current_line);\n" +
+//                 double_indent + "en->increment_number_of_errors();\n" +
+//                 indent + "}\n" +
+//                 indent + f.final_actions + "\n}";
+//     aut_impl_fin_proc[Id_aut] = temp;
+//
+//     auto symbols = begin_chars[Id_beg_char].s;
+//     auto cat_res = add_category(symbols, identifier_begin_cat_name_by_default);
+//     auto id_begin_category_name = cat_res.second;
+//
+//     aut_impl[Start_aut] += "\n    if(belongs(" + id_begin_category_name +
+//         ", char_categories)){\n        (loc->pcurrent_char)--; " +
+//         "automaton = A_id;\n        state = 0;\n        return t;\n    }\n";
+// }
+//
+// Command_buffer u32string_to_commands(const std::u32string& str){
+//     Command_buffer result;
+//
+//     if(str.empty()){
+//         return result;
+//     }
+//
+//     Command command;
+//     command.action_name = 0;
+//     command.name        = Cmd_char_def;
+//     command.c           = str[0];
+//     result.push_back(command);
+//
+//     auto temp = str.substr(1);
+//     if(temp.empty()){
+//         return result;
+//     }
+//
+//     for(char32_t ch : temp){
+//         command.action_name      = 0;
+//         command.name             = Cmd_char_def;
+//         command.c                = ch;
+//
+//         size_t concat_first_arg  = result.size() - 1;
+//         result.push_back(command);
+//         size_t concat_second_arg = result.size() - 1;
+//
+//         command.name             = Cmd_concat;
+//         command.args.first       = concat_first_arg;
+//         command.args.second      = concat_second_arg;
+//         result.push_back(command);
+//     }
+//     return result;
+// }
+//
+// /* Возвращает команды, соответствующие регулярке a | b. */
+// Command_buffer regexp1_or_regexp2(const Command_buffer& a, const Command_buffer& b){
+//     if(a.empty()){
+//         return b;
+//     }
+//     if(b.empty()){
+//         return a;
+//     }
+//
+//     Command_buffer result            = a;
+//     size_t         num_commands_in_a = a.size();
+//     size_t         or_first_arg      = num_commands_in_a - 1;
+//
+//     Command_buffer temp              = b;
+//     for(auto& c : temp){
+//         switch(c.name){
+//             case Cmd_or: case Cmd_concat:
+//                 c.args.first += num_commands_in_a; c.args.second += num_commands_in_a;
+//                 break;
+//             case Cmd_Kleene: case Cmd_positive: case Cmd_optional:
+//                 c.args.first += num_commands_in_a;
+//                 break;
+//             default:
+//                 ;
+//         }
+//     }
+//
+//     result.insert(result.end(), temp.begin(), temp.end());
+//     size_t         or_second_arg     = result.size() - 1;
+//
+//     Command command;
+//     command.action_name = 0;
+//     command.name        = Cmd_or;
+//     command.args.first  = or_first_arg;
+//     command.args.second = or_second_arg;
+//     result.push_back(command);
+//
+//     return result;
+// }
+//
+// Command_buffer u32strings_to_commands(const std::vector<std::u32string>& s){
+//     Command_buffer result;
+//     for(const auto& str : s){
+//         auto current_commands = u32string_to_commands(str);
+//         result                = regexp1_or_regexp2(result, current_commands);
+//     }
+//     return result;
+// }
+//
+// using Keyword_and_code = std::pair<std::u32string, std::string>;
+// /* Первый элемент этой пары --- строковое представление ключевого слова,
+//  * а второй элемент --- строковое представление идентификатора, являющегося
+//  * соответствующим кодом лексемы. */
+//
+// using Keywords_and_codes = std::vector<Keyword_and_code>;
+//
+// std::string keyword_list_elem(const std::string& codes_n){
+//     std::string result = "struct Keyword_list_elem{\n    std::u32string keyword;\n    " +
+//                          codes_n + " kw_code;\n};";
+//     return result;
+// }
+//
+// std::string keyword_list(const Keywords_and_codes& kwcs, const std::string& codes_n){
+//     std::string result = keyword_list_elem(codes_n) +
+//                          "\n\nstatic const Keyword_list_elem kwlist[] = {\n";
+//
+//     std::vector<std::string> kwl;
+//     for(const auto& k : kwcs){
+//         auto temp = "{U\"" + u32string_to_utf8(k.first) + "\", " + k.second + "}";
+//         kwl.push_back(temp);
+//     }
+//
+//     Format f;
+//     f.indent                 = INDENT_WIDTH;
+//     f.number_of_columns      = 2;
+//     f.spaces_between_columns = 1;
+//
+//     result += string_list_to_columns(kwl, f) + "\n};\n\n#define NUM_OF_KEYWORDS " +
+//               std::to_string(kwcs.size()) + "\n";
+//
+//     return result;
+// }
+//
+// static const std::string search_keyword_proc_text =
+// R"~(
+// #define THERE_IS_NO_KEYWORD (-1)
+//
+// static int search_keyword(const std::u32string& finded_keyword){
+//     int result      = THERE_IS_NO_KEYWORD;
+//     int low_bound   = 0;
+//     int upper_bound = NUM_OF_KEYWORDS - 1;
+//     int middle;
+//     while(low_bound <= upper_bound){
+//         middle             = (low_bound + upper_bound) / 2;
+//         auto& curr_kw      = kwlist[middle].keyword;
+//         int compare_result = finded_keyword.compare(curr_kw);
+//         if(0 == compare_result){
+//             return middle;
+//         }
+//         if(compare_result < 0){
+//             upper_bound = middle - 1;
+//         }else{
+//             low_bound   = middle + 1;
+//         }
+//     }
+//     return result;
+// })~";
+//
+// static std::string kwtable_data(const Keywords_and_codes& kwcs, const std::string& codes_n){
+//     auto result = keyword_list(kwcs, codes_n) + search_keyword_proc_text;
+//     return result;
+// }
+//
+// static const std::string idkeyword_final_actions = R"~(
+//         int search_result = search_keyword(buffer);
+//         if(search_result != THERE_IS_NO_KEYWORD) {
+//             token.code = kwlist[search_result].kw_code;
+//         })~";
+//
+// static const std::string idkeyword_final_actions1 = R"~(
+//     int search_result = search_keyword(buffer);
+//     if(search_result != THERE_IS_NO_KEYWORD) {
+//         token.code = kwlist[search_result].kw_code;
+//     }
+// )~";
+//
+// static const std::string idkeyword_begin_cat_name_by_default = "IDKEYWORD_BEGIN";
+//
+// void Main_parser::generate_idkeyword_automat(){
+//     auto ident_commands = regexp1_with_regexp2ast(id_begin, id_body);
+//
+//     Keywords_and_codes kwcs;
+//
+//     for(size_t kw_idx : kw_repres){
+//         auto keyword             = et_.strs_trie->get_string(kw_idx);
+//         keyword_strings.push_back(keyword);
+//         auto num_value_of_code   = (scope_->strsc[kw_idx]).code;
+//         auto str_repres_for_code = idx_to_string(et_.ids_trie, codes[num_value_of_code]);
+//         auto temp                = std::make_pair(keyword, str_repres_for_code);
+//         kwcs.push_back(temp);
+//     }
+//
+//     std::sort(kwcs.begin(), kwcs.end(),
+//               [](const Keyword_and_code& k1, const Keyword_and_code& k2){
+//                   return k1.first < k2.first;
+//     });
+//
+//     auto keywords_commands = u32strings_to_commands(keyword_strings);
+//     auto idkeyword_commands = regexp1_or_regexp2(ident_commands, keywords_commands);
+//     for(auto& com : idkeyword_commands){
+//         com.action_name = write_action_name_idx;
+//     }
+//
+//     G_DFA gdfa;
+//     grouped_DFA_by_regexp(gdfa, idkeyword_commands);
+//
+//     auto kw_postact = get_act_repres(keyword_postaction);
+//     Str_data_for_automaton f;
+//     f.automata_name         = possible_automata_name_str[IdKeyword_aut];
+//     f.proc_name             = possible_proc_ptr[IdKeyword_aut];
+//     f.category_name_prefix  = "IDKEYWORD";
+//     f.diagnostic_msg        =
+//         "В строке %zu неожиданно закончился идентификатор или ключевое слово.";
+//     f.final_states_set_name = "final_states_for_idkeywords";
+//     f.final_actions         = dindent(kw_postact) + idkeyword_final_actions;
+//
+//     auto kwtable = kwtable_data(kwcs, idx_to_string(et_.ids_trie, codes_type_name_idx));
+//
+//     using operations_with_sets::operator+;
+//
+//     auto symbols = begin_chars[Id_beg_char].s + begin_chars[Keyword_beg_char].s;
+//     auto cat_res = add_category(symbols, idkeyword_begin_cat_name_by_default);
+//     auto idkeyword_begin_category_name = cat_res.second;
+//
+//     aut_impl[Start_aut] += "\n    if(belongs(" + idkeyword_begin_category_name +
+//         ", char_categories)){\n        (loc->pcurrent_char)--; " +
+//         "automaton = A_idKeyword;\n        state = 0;\n        return t;\n    }\n";
+//
+//     aut_impl[IdKeyword_aut] = kwtable + "\n\n" + automata_repres(gdfa, f);
+//
+//     auto temp = "void " + name_of_scaner_class + "::" +
+//                 possible_fin_proc_ptr[IdKeyword_aut] + "{\n" +
+//                 indent + "if(!is_elem(state, "   + f.final_states_set_name + ")){\n" +
+//                 double_indent + "printf(\"" + f.diagnostic_msg + "\", loc->current_line);\n" +
+//                 double_indent + "en->increment_number_of_errors();\n" +
+//                 indent + "}\n" + sindent(kw_postact) + idkeyword_final_actions1 + "\n}";
+//     aut_impl_fin_proc[IdKeyword_aut] = temp;
+// }
+//
+// void Main_parser::generate_idents_and_keywords_automata_impl(){
+//     bool t1 = belongs(Id_aut, set_of_used_automata)      != 0;
+//     bool t2 = belongs(Keyword_aut, set_of_used_automata) != 0;
+//
+//     using operations_with_sets::operator*;
+//     using operations_with_sets::print_set;
+//
+//     enum Idkw {
+//         There_is_no_id_and_there_are_no_keywords,
+//         There_is_no_id_and_there_are_keywords,
+//         There_is_id_and_there_are_no_keywords,
+//         There_is_id_and_there_are_keywords
+//     };
+//     Idkw t = static_cast<Idkw>(t1 * 2 + t2);
+//     switch(t){
+//         case There_is_no_id_and_there_are_no_keywords:
+//             break;
+//         case There_is_no_id_and_there_are_keywords:
+//             /* Обработка ключевых слов будет выполняться аналогично
+//              * обработке разделителей. */
+//             generate_separate_keywords_automat();
+//             break;
+//         case There_is_id_and_there_are_no_keywords:
+//             generate_separate_identifier_automat();
+//             break;
+//         case There_is_id_and_there_are_keywords:
+//             if(!(begin_chars[Keyword_beg_char] * begin_chars[Id_beg_char])){
+//                 /* Если множество первых символов ключевых слов не пересекается с
+//                  * множеством первых символов идентификаторов, то создать отдельный
+//                  * автомат обработки идентификаторов, и отдельный автомат обработки
+//                  * ключевых слов, без возможности перехода между ними. При этом обработка
+//                  * ключевых слов будет выполняться аналогично обработке разделителей. */
+//                 generate_separate_keywords_automat();
+//                 generate_separate_identifier_automat();
+//             }else{
+//                 /* Если же указанные множества пересекаются, то нужно склеить регулярку
+//                  * для идентификаторов с регуляркой для ключевых слов, создать по этой
+//                  * регулярке минимизированный детерминированный конечный автомат со
+//                  * сгруппированными переходами, и по получившемуся автомату нужно построить
+//                  * его реализацию. */
+//                 set_of_used_automata &= ~((1ULL << Id_aut) | (1ULL << Keyword_aut));
+//                 set_of_used_automata |= 1ULL << IdKeyword_aut;
+//                 generate_idkeyword_automat();
+//             }
+//             break;
+//     }
+// }
 
 void Main_parser::generate_unknown_automata_impl(){
     aut_impl[Unknown_aut] = "bool " + name_of_scaner_class + R"~(::unknown_proc(){
@@ -1768,8 +1773,8 @@ void Main_parser::add_fictive_delimiters(){
 //     aut_impl_fin_proc[Start_aut] = "void " + name_of_scaner_class + none_proc; // +
 //     generate_delim_automaton_impl();                                           // +
 //     generate_strings_automaton_impl();                                         // +
-//     generate_numbers_automaton_impl();
-//     generate_idents_and_keywords_automata_impl();
+//     generate_numbers_automaton_impl();                                         // +
+//     generate_idents_and_keywords_automata_impl();                              // +
 //     generate_unknown_automata_impl();
 // }
 

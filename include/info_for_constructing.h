@@ -38,6 +38,8 @@ struct Info_for_constructing{
     std::map<Used_automaton, std::string> aut_impl;
     std::map<Used_automaton, std::string> aut_impl_fin_proc;
     std::vector<size_t>                   del_repres;
+    std::vector<size_t>                   kw_repres;
+    std::vector<size_t>                   codes;
     Errors_and_tries                      et;
     std::shared_ptr<Scope>                scope;
     std::string                           codes_type_name;
@@ -49,6 +51,8 @@ struct Info_for_constructing{
     std::string*                          possible_fin_proc_ptr      = nullptr;
     uint64_t                              set_of_used_automata       = 0;
     size_t                                del_postaction             = 0;
+    size_t                                keyword_postaction         = 0;
+    size_t                                write_action_name_idx      = 0;
     bool                                  there_is_Elem_definition;
 
     Info_for_constructing()                             = default;

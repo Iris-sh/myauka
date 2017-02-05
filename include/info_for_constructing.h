@@ -22,6 +22,7 @@
 #include "../include/errors_and_tries.h"
 #include "../include/categories.h"
 #include "../include/init_and_final_acts.h"
+#include "../include/automaton_with_procs.h"
 
 /* Структура данных для порождения реализации сканера и заголовочного файла сканера. */
 struct Info_for_constructing{
@@ -40,19 +41,22 @@ struct Info_for_constructing{
     std::vector<size_t>                   del_repres;
     std::vector<size_t>                   kw_repres;
     std::vector<size_t>                   codes;
+    std::vector<Automaton_with_procs>     automaton_info;
     Errors_and_tries                      et;
     std::shared_ptr<Scope>                scope;
     std::string                           codes_type_name;
-    Category*                             begin_chars                = nullptr;
+    Category*                             begin_chars                        = nullptr;
     Init_and_final_acts                   acts_for_strings;
     Init_and_final_acts                   acts_for_numbers;
-    std::string*                          possible_automata_name_str = nullptr;
-    std::string*                          possible_proc_ptr          = nullptr;
-    std::string*                          possible_fin_proc_ptr      = nullptr;
-    uint64_t                              set_of_used_automata       = 0;
-    size_t                                del_postaction             = 0;
-    size_t                                keyword_postaction         = 0;
-    size_t                                write_action_name_idx      = 0;
+    std::string*                          possible_automata_name_str         = nullptr;
+    std::string*                          possible_proc_ptr                  = nullptr;
+    std::string*                          possible_fin_proc_ptr              = nullptr;
+    std::string*                          possible_automata_proc_proto       = nullptr;
+    std::string*                          possible_automata_final_proc_proto = nullptr;
+    uint64_t                              set_of_used_automata               = 0;
+    size_t                                del_postaction                     = 0;
+    size_t                                keyword_postaction                 = 0;
+    size_t                                write_action_name_idx              = 0;
     bool                                  there_is_Elem_definition;
 
     Info_for_constructing()                             = default;

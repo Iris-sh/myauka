@@ -33,6 +33,7 @@
 #include "../include/comments_parser.h"
 #include "../include/used_automaton.h"
 #include "../include/begin_chars_for_aut.h"
+#include "../include/automaton_with_procs.h"
 
 // enum Begin_chars_for_aut{
 //     Id_beg_char,     Keyword_beg_char, Delimiter_beg_char,
@@ -99,24 +100,24 @@ protected:
 
     Command_buffer id_begin, id_body;
     Command_buffer numbers_regexp, strings_regexp;
-
+//
 //     enum Used_automaton{
 //         Start_aut,     Unknown_aut,   Id_aut,     Keyword_aut,
 //         IdKeyword_aut, Delimiter_aut, Number_aut, String_aut,
 //         Comment_aut
 //     };/* Данное перечисление состоит из имён порождаемых автоматов. */
-
-    struct Automaton_with_procs{
-        std::string name;
-        std::string proc_proto;
-        std::string fin_proc_proto;
-        std::string proc_ptr;
-        std::string fin_proc_ptr;
-
-        Automaton_with_procs()                            = default;
-        ~Automaton_with_procs()                           = default;
-        Automaton_with_procs(const Automaton_with_procs&) = default;
-    };
+//
+//     struct Automaton_with_procs{
+//         std::string name;
+//         std::string proc_proto;
+//         std::string fin_proc_proto;
+//         std::string proc_ptr;
+//         std::string fin_proc_ptr;
+//
+//         Automaton_with_procs()                            = default;
+//         ~Automaton_with_procs()                           = default;
+//         Automaton_with_procs(const Automaton_with_procs&) = default;
+//     };
 
     std::vector<Automaton_with_procs> automaton_info;
     Category begin_chars[6];

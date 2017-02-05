@@ -138,35 +138,36 @@ void Main_parser::compile(){
 
     Info_for_constructing constr_info;
 
-    constr_info.id_begin                     = unwrap_commands(id_begin);
-    constr_info.id_body                      = unwrap_commands(id_body);
-    constr_info.numbers_regexp               = unwrap_commands(numbers_regexp);
-    constr_info.strings_regexp               = unwrap_commands(strings_regexp);
-    size_t sp_indeces                        = constr_info.char_cat.insertSet(spaces);
-    constr_info.category_name[sp_indeces]    = "SPACES";
-    constr_info.name_of_scaner_class         = idx_to_string(et_.ids_trie, scaner_name_idx);
-    constr_info.scaner_file_name_without_ext = tolower_case(constr_info.name_of_scaner_class);
-    constr_info.header_name                  = constr_info.scaner_file_name_without_ext + ".h";
-    constr_info.impl_file_name               = scaner_file_name_without_ext + ".cpp";
-    constr_info.aut_impl[Start_aut]          = "bool " + constr_info.name_of_scaner_class;
-    constr_info.set_of_used_automata         = set_of_used_automata;
-    constr_info.del_repres                   = del_repres;
-    constr_info.et                           = et_;
-    constr_info.scope                        = scope_;
-    constr_info.del_postaction               = del_postaction;
-    constr_info.there_is_Elem_definition     = there_is_Elem_definition;
-    constr_info.codes_type_name              = codes_type_name_idx ?
-                                                idx_to_string(et_.ids_trie, codes_type_name_idx) : "Codes";
-    constr_info.begin_chars                  = begin_chars;
-    constr_info.acts_for_strings             = acts_for_strings;
-    constr_info.acts_for_numbers             = acts_for_numbers;
-    constr_info.possible_automata_name_str   = const_cast<std::string*>(possible_automata_name_str);
-    constr_info.possible_proc_ptr            = const_cast<std::string*>(possible_proc_ptr);
-    constr_info.possible_fin_proc_ptr        = const_cast<std::string*>(possible_fin_proc_ptr);
-    constr_info.kw_repres                    = kw_repres;
-    constr_info.keyword_postaction           = keyword_postaction;
-    constr_info.write_action_name_idx        = write_action_name_idx;
-    constr_info.codes                        = codes;
+    constr_info.id_begin                           = unwrap_commands(id_begin);
+    constr_info.id_body                            = unwrap_commands(id_body);
+    constr_info.numbers_regexp                     = unwrap_commands(numbers_regexp);
+    constr_info.strings_regexp                     = unwrap_commands(strings_regexp);
+    size_t sp_indeces                              = constr_info.char_cat.insertSet(spaces);
+    constr_info.category_name[sp_indeces]          = "SPACES";
+    constr_info.name_of_scaner_class               = idx_to_string(et_.ids_trie, scaner_name_idx);
+    constr_info.scaner_file_name_without_ext       = tolower_case(constr_info.name_of_scaner_class);
+    constr_info.header_name                        = constr_info.scaner_file_name_without_ext + ".h";
+    constr_info.impl_file_name                     = scaner_file_name_without_ext + ".cpp";
+    constr_info.aut_impl[Start_aut]                = "bool " + constr_info.name_of_scaner_class;
+    constr_info.set_of_used_automata               = set_of_used_automata;
+    constr_info.del_repres                         = del_repres;
+    constr_info.et                                 = et_;
+    constr_info.scope                              = scope_;
+    constr_info.del_postaction                     = del_postaction;
+    constr_info.there_is_Elem_definition           = there_is_Elem_definition;
+    constr_info.codes_type_name                    = codes_type_name_idx ? idx_to_string(et_.ids_trie, codes_type_name_idx) : "Codes";
+    constr_info.begin_chars                        = begin_chars;
+    constr_info.acts_for_strings                   = acts_for_strings;
+    constr_info.acts_for_numbers                   = acts_for_numbers;
+    constr_info.possible_automata_name_str         = const_cast<std::string*>(possible_automata_name_str);
+    constr_info.possible_proc_ptr                  = const_cast<std::string*>(possible_proc_ptr);
+    constr_info.possible_fin_proc_ptr              = const_cast<std::string*>(possible_fin_proc_ptr);
+    constr_info.kw_repres                          = kw_repres;
+    constr_info.keyword_postaction                 = keyword_postaction;
+    constr_info.write_action_name_idx              = write_action_name_idx;
+    constr_info.codes                              = codes;
+    constr_info.possible_automata_proc_proto       = const_cast<std::string*>(possible_automata_proc_proto);
+    constr_info.possible_automata_final_proc_proto = const_cast<std::string*>(possible_automata_final_proc_proto);
 
     if(newline_is_lexem){
         constr_info.aut_impl[Start_aut] += start_proc_newline_is_lexem;
@@ -179,7 +180,7 @@ void Main_parser::compile(){
     }
 
     implement_automata(constr_info);
-
+//
 //     detalize_commands(id_begin);
 //     detalize_commands(id_body);
 //     detalize_commands(numbers_regexp);
@@ -207,8 +208,8 @@ void Main_parser::compile(){
 //     }
 //
 //     generate_automata_impl();
-    prepare_automata_info(); // -
-
+//     prepare_automata_info();
+//
     generate_scaner_implementation();
     generate_scaner_header();
 
@@ -674,28 +675,28 @@ std::string Main_parser::generate_scaner_class(){
     scaner_class += "\n};\n";
     return scaner_class;
 }
-
-void Main_parser::prepare_automata_info(){
-    set_of_used_automata |= (1ULL << Start_aut) | (1ULL << Unknown_aut);
-    bool t = belongs(Comment_aut, set_of_used_automata) != 0;
-    set_of_used_automata &= ~(1ULL << Comment_aut);
-    for(int a = Start_aut; a <= Comment_aut; a++){
-        Automaton_with_procs ap;
-        if(belongs(a, set_of_used_automata)){
-            ap.name           = possible_automata_name_str[a];
-            ap.proc_proto     = possible_automata_proc_proto[a];
-            ap.fin_proc_proto = possible_automata_final_proc_proto[a];
-            ap.proc_ptr       = "&" + name_of_scaner_class + "::" + possible_proc_ptr[a];
-            ap.fin_proc_ptr   = "&" + name_of_scaner_class + "::" +
-                                possible_fin_proc_ptr[a];
-            automaton_info.push_back(ap);
-        }
-    }
-    if(t){
-        set_of_used_automata |= 1ULL << Comment_aut;
-    }
-}
-
+//
+// void Main_parser::prepare_automata_info(){
+//     set_of_used_automata |= (1ULL << Start_aut) | (1ULL << Unknown_aut);
+//     bool t = belongs(Comment_aut, set_of_used_automata) != 0;
+//     set_of_used_automata &= ~(1ULL << Comment_aut);
+//     for(int a = Start_aut; a <= Comment_aut; a++){
+//         Automaton_with_procs ap;
+//         if(belongs(a, set_of_used_automata)){
+//             ap.name           = possible_automata_name_str[a];
+//             ap.proc_proto     = possible_automata_proc_proto[a];
+//             ap.fin_proc_proto = possible_automata_final_proc_proto[a];
+//             ap.proc_ptr       = "&" + name_of_scaner_class + "::" + possible_proc_ptr[a];
+//             ap.fin_proc_ptr   = "&" + name_of_scaner_class + "::" +
+//                                 possible_fin_proc_ptr[a];
+//             automaton_info.push_back(ap);
+//         }
+//     }
+//     if(t){
+//         set_of_used_automata |= 1ULL << Comment_aut;
+//     }
+// }
+//
 std::string Main_parser::generate_automata_enum(){
     std::string s;
     s = indent + "enum Automaton_name{\n";
@@ -1692,18 +1693,18 @@ std::string add_newline_if_str_is_not_empty(const std::string& s){
 //             break;
 //     }
 // }
-
-void Main_parser::generate_unknown_automata_impl(){
-    aut_impl[Unknown_aut] = "bool " + name_of_scaner_class + R"~(::unknown_proc(){
-    return belongs(Other, char_categories);
-})~";
-
-    aut_impl_fin_proc[Unknown_aut] = "void " + name_of_scaner_class + R"~(::unknown_final_proc(){
-    /* Данная подпрограмма будет вызвана, если по прочтении входного текста
-     * оказались в автомате A_unknown. Тогда ничего делать не нужно. */
-})~";
-}
-
+//
+// void Main_parser::generate_unknown_automata_impl(){
+//     aut_impl[Unknown_aut] = "bool " + name_of_scaner_class + R"~(::unknown_proc(){
+//     return belongs(Other, char_categories);
+// })~";
+//
+//     aut_impl_fin_proc[Unknown_aut] = "void " + name_of_scaner_class + R"~(::unknown_final_proc(){
+//     /* Данная подпрограмма будет вызвана, если по прочтении входного текста
+//      * оказались в автомате A_unknown. Тогда ничего делать не нужно. */
+// })~";
+// }
+//
 void Main_parser::add_new_lexem_code(size_t idx){
     auto s = scope_->idsc.find(idx);
     Id_attributes iattr;

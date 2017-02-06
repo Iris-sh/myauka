@@ -33,6 +33,7 @@
 #include "../include/unwrap_commands.h"
 #include "../include/conv_case.h"
 #include "../include/implement_automata.h"
+#include "../include/implement_scaner.h"
 
 // #include "../include/print_commands.h"
 // #include <bitset>
@@ -136,6 +137,10 @@ void Main_parser::compile(){
         return;
     }
 
+    if(belongs(Comment_aut, set_of_used_automata)){
+        add_fictive_delimiters();
+    }
+
     Info_for_constructing constr_info;
 
     constr_info.id_begin                           = unwrap_commands(id_begin);
@@ -147,7 +152,7 @@ void Main_parser::compile(){
     constr_info.name_of_scaner_class               = idx_to_string(et_.ids_trie, scaner_name_idx);
     constr_info.scaner_file_name_without_ext       = tolower_case(constr_info.name_of_scaner_class);
     constr_info.header_name                        = constr_info.scaner_file_name_without_ext + ".h";
-    constr_info.impl_file_name                     = scaner_file_name_without_ext + ".cpp";
+    constr_info.impl_file_name                     = constr_info.scaner_file_name_without_ext + ".cpp";
     constr_info.aut_impl[Start_aut]                = "bool " + constr_info.name_of_scaner_class;
     constr_info.set_of_used_automata               = set_of_used_automata;
     constr_info.del_repres                         = del_repres;
@@ -168,6 +173,11 @@ void Main_parser::compile(){
     constr_info.codes                              = codes;
     constr_info.possible_automata_proc_proto       = const_cast<std::string*>(possible_automata_proc_proto);
     constr_info.possible_automata_final_proc_proto = const_cast<std::string*>(possible_automata_final_proc_proto);
+    constr_info.mark_of_single_lined               = mark_of_single_lined;
+    constr_info.mark_of_multilined_begin           = mark_of_multilined_begin;
+    constr_info.mark_of_multilined_end             = mark_of_multilined_end;
+    constr_info.lexem_info_name                    = "Lexem_info";
+    constr_info.multilined_is_nested               = multilined_is_nested;
 
     if(newline_is_lexem){
         constr_info.aut_impl[Start_aut] += start_proc_newline_is_lexem;
@@ -175,11 +185,8 @@ void Main_parser::compile(){
         constr_info.aut_impl[Start_aut] += start_proc_newline_is_not_lexem;
     }
 
-    if(belongs(Comment_aut, set_of_used_automata)){
-        add_fictive_delimiters();
-    }
-
     implement_automata(constr_info);
+    implement_scaner(constr_info);
 //
 //     detalize_commands(id_begin);
 //     detalize_commands(id_body);
@@ -210,7 +217,7 @@ void Main_parser::compile(){
 //     generate_automata_impl();
 //     prepare_automata_info();
 //
-    generate_scaner_implementation();
+//     generate_scaner_implementation();
     generate_scaner_header();
 
     aux_files_generate();
@@ -751,70 +758,70 @@ std::string Main_parser::generate_automata_final_procs_protos(){
     s += string_list_to_columns(final_procs_protos, f, 0);
     return s;
 }
-
-static std::string impl_includes(const std::string& impl_hn){
-    std::string result;
-    result = "#include \"../include/" + impl_hn + "\"\n" +
-             R"~(#include "../include/get_init_state.h"
-#include "../include/search_char.h"
-#include "../include/belongs.h"
-#include <set>
-#include <string>
-#include <vector>
-#include "../include/operations_with_sets.h"
-)~";
-    return result;
-}
-
-std::string Main_parser::automata_table(){
-    std::string result = name_of_scaner_class +"::Automaton_proc " +
-                         name_of_scaner_class + "::procs[] = {\n";
-
-    std::vector<std::string> procs_list;
-    for(const auto ap : automaton_info){
-        procs_list.push_back(ap.proc_ptr);
-    }
-
-    Format f;
-    f.indent                 = INDENT_WIDTH;
-    f.number_of_columns      = 2;
-    f.spaces_between_columns = 1;
-
-    result += string_list_to_columns(procs_list, f) + "\n};";
-    return result;
-}
-
-std::string Main_parser::final_table(){
-    std::string result = name_of_scaner_class +"::Final_proc " +
-                         name_of_scaner_class + "::finals[] = {\n";
-
-    std::vector<std::string> fprocs_list;
-    for(const auto ap : automaton_info){
-        fprocs_list.push_back(ap.fin_proc_ptr);
-    }
-
-    Format f;
-    f.indent                 = INDENT_WIDTH;
-    f.number_of_columns      = 2;
-    f.spaces_between_columns = 1;
-
-    result += string_list_to_columns(fprocs_list, f) + "\n};";
-    return result;
-}
-
-std::string  Main_parser::procs_tables(){
-    std::string result = automata_table() + "\n\n" + final_table() + "\n\n";
-    return result;
-}
-
-std::string add_newline_if_str_is_not_empty(const std::string& s){
-    std::string result;
-    if(!s.empty()){
-        result = s + "\n";
-    }
-    return result;
-}
-
+//
+// static std::string impl_includes(const std::string& impl_hn){
+//     std::string result;
+//     result = "#include \"../include/" + impl_hn + "\"\n" +
+//              R"~(#include "../include/get_init_state.h"
+// #include "../include/search_char.h"
+// #include "../include/belongs.h"
+// #include <set>
+// #include <string>
+// #include <vector>
+// #include "../include/operations_with_sets.h"
+// )~";
+//     return result;
+// }
+//
+// std::string Main_parser::automata_table(){
+//     std::string result = name_of_scaner_class +"::Automaton_proc " +
+//                          name_of_scaner_class + "::procs[] = {\n";
+//
+//     std::vector<std::string> procs_list;
+//     for(const auto ap : automaton_info){
+//         procs_list.push_back(ap.proc_ptr);
+//     }
+//
+//     Format f;
+//     f.indent                 = INDENT_WIDTH;
+//     f.number_of_columns      = 2;
+//     f.spaces_between_columns = 1;
+//
+//     result += string_list_to_columns(procs_list, f) + "\n};";
+//     return result;
+// }
+//
+// std::string Main_parser::final_table(){
+//     std::string result = name_of_scaner_class +"::Final_proc " +
+//                          name_of_scaner_class + "::finals[] = {\n";
+//
+//     std::vector<std::string> fprocs_list;
+//     for(const auto ap : automaton_info){
+//         fprocs_list.push_back(ap.fin_proc_ptr);
+//     }
+//
+//     Format f;
+//     f.indent                 = INDENT_WIDTH;
+//     f.number_of_columns      = 2;
+//     f.spaces_between_columns = 1;
+//
+//     result += string_list_to_columns(fprocs_list, f) + "\n};";
+//     return result;
+// }
+//
+// std::string  Main_parser::procs_tables(){
+//     std::string result = automata_table() + "\n\n" + final_table() + "\n\n";
+//     return result;
+// }
+//
+// std::string add_newline_if_str_is_not_empty(const std::string& s){
+//     std::string result;
+//     if(!s.empty()){
+//         result = s + "\n";
+//     }
+//     return result;
+// }
+//
 // std::string delim_init_table(const Jumps_and_inits& ji,
 //                              const std::string&  init_table_name){
 //     std::string result;
@@ -1769,7 +1776,7 @@ void Main_parser::add_fictive_delimiters(){
         add_fictive_delimiter(U"MULTI_LINED_COMMENT_END", mark_of_multilined_end);
     }
 }
-
+//
 // void Main_parser::generate_automata_impl(){
 //     aut_impl_fin_proc[Start_aut] = "void " + name_of_scaner_class + none_proc; // +
 //     generate_delim_automaton_impl();                                           // +
@@ -1930,506 +1937,506 @@ void Main_parser::add_fictive_delimiters(){
 //              get_category_func_str;
 //     return result;
 // }
-
-static const std::string current_lexem_without_comments_proc = R"~(::current_lexem(){
-    automaton = A_start; token.code = None;
-    lexem_begin = loc->pcurrent_char;
-    bool t = true;
-    while((ch = *(loc->pcurrent_char)++)){
-        char_categories = get_categories_set(ch); //categories_table[ch];
-        t = (this->*procs[automaton])();
-        if(!t){
-            /* Сюда попадаем, лишь если лексема уже прочитана. При этом текущим
-             * автоматом уже прочитан символ, идущий сразу за концом прочитанной
-             * лексемы, на основании этого символа принято решение о том, что
-             * лексема прочитана, и совершён переход к следующему за ним символу.
-             * Поэтому для того, чтобы не пропустить первый символ следующей
-             * лексемы, нужно уменьшить на единицу указатель pcurrent_char. */
-            (loc->pcurrent_char)--;
-            return token;
-        }
-    }
-    /* Здесь можем оказаться, только если уже прочли весь обрабатываемый текст.
-     * При этом указатель на текущий символ указывает на байт, который находится
-     * сразу же после нулевого символа, являющегося признаком конца текста.
-     * Чтобы не выйти при последующих вызовах за пределы текста, нужно перейти
-     * обратно к нулевому символу. */
-    (loc->pcurrent_char)--;
-    /* Далее, поскольку мы находимся здесь, то конец текущей лексемы (возможно,
-     * неожиданный) ещё не обработан. Надо эту обработку выполнить, и, возможно,
-     * вывести какую-то диагностику. */
-    (this->*finals[automaton])();
-    return token;
-}
-
-)~";
-
-std::string Main_parser::current_lexem_without_comments()
-{
-    std::string result;
-    result = lexem_info_name + " " + name_of_scaner_class +
-             current_lexem_without_comments_proc;
-    return result;
-}
-
-static const std::string current_lexem__without_comments_proc = R"~(::current_lexem_(){
-    automaton = A_start; token.code = None;
-    lexem_begin = loc->pcurrent_char;
-    bool t = true;
-    while((ch = *(loc->pcurrent_char)++)){
-        char_categories = get_categories_set(ch); //categories_table[ch];
-        t = (this->*procs[automaton])();
-        if(!t){
-            /* Сюда попадаем, лишь если лексема уже прочитана. При этом текущим
-             * автоматом уже прочитан символ, идущий сразу за концом прочитанной
-             * лексемы, на основании этого символа принято решение о том, что
-             * лексема прочитана, и совершён переход к следующему за ним символу.
-             * Поэтому для того, чтобы не пропустить первый символ следующей
-             * лексемы, нужно уменьшить на единицу указатель pcurrent_char. */
-            (loc->pcurrent_char)--;
-            return token;
-        }
-    }
-    /* Здесь можем оказаться, только если уже прочли весь обрабатываемый текст.
-     * При этом указатель на текущий символ указывает на байт, который находится
-     * сразу же после нулевого символа, являющегося признаком конца текста.
-     * Чтобы не выйти при последующих вызовах за пределы текста, нужно перейти
-     * обратно к нулевому символу. */
-    (loc->pcurrent_char)--;
-    /* Далее, поскольку мы находимся здесь, то конец текущей лексемы (возможно,
-     * неожиданный) ещё не обработан. Надо эту обработку выполнить, и, возможно,
-     * вывести какую-то диагностику. */
-    (this->*finals[automaton])();
-    return token;
-}
-
-)~";
-
-static const std::string omit_singlelined_comment_proc_str =
-    R"~(::omit_singlelined_comment(){
-    while((ch = (loc->pcurrent_char)++)){
-        if('\n' == ch){
-            (loc->pcurrent_char)--;
-            return;
-        }
-    }
-    (loc->pcurrent_char)--;
-    return;
-}
-
-)~";
-
-static const std::string current_lexem_with_omitting_singlelined =
-    R"~(::current_lexem(){
-    for( ; ; ){
-        auto l = current_lexem_();
-        if(l.code == SINGLE_LINED_COMMENT_MARK){
-            omit_singlelined_comment();
-        }else{
-            return token;
-        }
-    }
-    return token;
-}
-
-)~";
-
-static const std::string current_lexem_with_omitting_multilined =
-    R"~(::current_lexem(){
-    for( ; ; ){
-        auto l = current_lexem_();
-        switch(l.code){
-            case MULTI_LINED_COMMENT_MARK:
-                omit_multilined_comment();
-                break;
-            case MULTI_LINED_COMMENT_END:
-                printf("Неожиданный конец многострочного комментария в строке %zu.\n",
-                       lexem_begin_line_number());
-                en->increment_number_of_errors();
-                break;
-            default:
-                return token;
-        }
-    }
-    return token;
-}
-
-)~";
-
-static const std::string current_lexem_with_omitting_all =
-    R"~(::current_lexem(){
-    for( ; ; ){
-        auto l = current_lexem_();
-        switch(l.code){
-            case SINGLE_LINED_COMMENT_MARK:
-                omit_singlelined_comment();
-                break;
-            case MULTI_LINED_COMMENT_MARK:
-                omit_multilined_comment();
-                break;
-            case MULTI_LINED_COMMENT_END:
-                printf("Неожиданный конец многострочного комментария в строке %zu.\n",
-                       lexem_begin_line_number());
-                en->increment_number_of_errors();
-                break;
-            default:
-                return token;
-        }
-    }
-    return token;
-}
-
-)~";
-
-static const std::string multilined_comment_jump =
-    R"~(struct Jump_for_multilined_end{
-    uint32_t next_state;
-    char32_t jump_char;
-};
-
-static const Jump_for_multilined_end multilined_jumps[] = {
-)~";
-
-static const std::string omit_not_nested_multilined_comment_proc_str =
-    R"~(::omit_multilined_comment(){
-    size_t st = 0;
-    while((ch = (loc->pcurrent_char)++)){
-        auto j  = multilined_jumps[st];
-        auto jc = j.jump_char;
-        if(!jc){
-            (loc->pcurrent_char)--;
-            return;
-        }
-        if(ch == jc){
-            st = j.next_state;
-        }else{
-            st = 0;
-        }
-    }
-    printf("В строке %zu неожиданно закончился многострочный комментарий.\n",
-           lexem_begin_line_number());
-    en->increment_number_of_errors();
-    return;
-})~";
-
-std::string Main_parser::there_is_only_singlelined()
-{
-    std::string result;
-    result = "void " + name_of_scaner_class + omit_singlelined_comment_proc_str +
-             lexem_info_name + name_of_scaner_class + current_lexem__without_comments_proc +
-             lexem_info_name + name_of_scaner_class + current_lexem_with_omitting_singlelined;
-    return result;
-}
-
-std::string Main_parser::there_is_only_multilined(){
-    std::string result;
-    result = "void " + name_of_scaner_class + omit_multilined_comment_proc() +
-             lexem_info_name + name_of_scaner_class + current_lexem__without_comments_proc +
-             lexem_info_name + name_of_scaner_class + current_lexem_with_omitting_multilined;
-    return result;
-}
-
-std::string Main_parser::there_are_all_comments(){
-    std::string result;
-    result = "void " + name_of_scaner_class + omit_multilined_comment_proc() +
-             "void " + name_of_scaner_class + omit_singlelined_comment_proc_str +
-             lexem_info_name + name_of_scaner_class + current_lexem__without_comments_proc +
-             lexem_info_name + name_of_scaner_class + current_lexem_with_omitting_all;
-    return result;
-}
-
-std::string Main_parser::omit_multilined_comment_proc(){
-    std::string result;
-    result = multilined_is_nested ? omit_nested_multilined() : omit_not_nested_multilined();
-    return result;
-}
-
-std::string Main_parser::omit_all_comment_proc(){
-    std::string result;
-    result = "void " + name_of_scaner_class + omit_multilined_comment_proc() +
-             "void " + name_of_scaner_class + omit_singlelined_comment_proc_str +
-             lexem_info_name + name_of_scaner_class + current_lexem__without_comments_proc +
-             lexem_info_name + name_of_scaner_class + current_lexem_with_omitting_all;
-    return result;
-}
-
-#define BEGIN_MARKER 1
-#define END_MARKER   2
-
-std::string generate_init_table_for_nested_comments(const Jumps_and_inits& ji){
-    std::string result;
-    std::vector<std::string> table_elems;
-    auto& inits = ji.init_table;
-    for(const auto& i : inits){
-        std::string elem = "{" + std::to_string(i.first) + ", " +
-                           char32_to_utf8(i.second) + "}";
-        table_elems.push_back(elem);
-    }
-
-    Format f;
-    f.indent                 = INDENT_WIDTH;
-    f.number_of_columns      = 3;
-    f.spaces_between_columns = 1;
-
-    result = "static const State_for_char nested_comments_init_table[] = {\n";
-    result += string_list_to_columns(table_elems, f) + "\n};\n\n"
-              "#define NUM_OF_ELEMS_OF_COMM_INIT_TABLE " +
-              std::to_string(table_elems.size()) + "\n\n";
-    return result;
-}
-
-static const std::string nested_comment_jump_struct =
-    R"~(struct Comment_jump{
-    /** Указатель на строку , состоящую из символов , по которым возможен переход. */
-    char32_t*       symbols;
-    uint16_t        marker;
-    /** Если текущий символ совпадает с symbols[0], то
-        выполняется переход в состояние first_state;
-        если текущий символ совпадает с symbols[1], то
-        выполняется переход в состояние first_state+1;
-        если текущий символ совпадает с symbols[2], то
-        выполняется переход в состояние first_state+2,
-        и так далее. */
-    uint16_t        first_state;
-};
-
-static const Comment_jump comments_jump_table[] = {\n)~";
-
-std::string generate_jump_table_for_nested_comments(const Jumps_and_inits& ji){
-    std::string result;
-    auto& jmps = ji.jumps;
-    std::vector<std::string> jmp_table_body;
-    for(const auto& j : jmps){
-        std::string jump = "{const_cast<char32_t*>(U\"" +
-                           u32string_to_utf8(j.jump_chars) + "\"), " +
-                           std::to_string(j.code) + ", " +
-                           std::to_string(j.first_state) + "}";
-        jmp_table_body.push_back(jump);
-    }
-
-    Format f;
-    f.indent                 = INDENT_WIDTH;
-    f.number_of_columns      = 3;
-    f.spaces_between_columns = 1;
-
-    result = nested_comment_jump_struct +
-             string_list_to_columns(jmp_table_body, f) + "\n};\n\n";
-    return result;
-}
-
-std::string generate_table_for_nested_comments(const Jumps_and_inits& ji){
-    std::string result;
-    result = generate_init_table_for_nested_comments(ji) +
-             generate_jump_table_for_nested_comments(ji) +
-             "#define BEGIN_MARKER 1\n" "#define END_MARKER 2\n\n";
-    return result;
-}
-
-static const std::string omit_nested_multilined_proc_str =
-    R"~(::omit_multilined_comment(){
-    ssize_t st     = -1;
-    comment_level  = 1;
-    uint16_t m;
-    while((ch = (loc->pcurrent_char)++)){
-        if(-1 == st){
-            st = get_init_state(ch, nested_comments_init_table,
-                                NUM_OF_ELEMS_OF_COMM_INIT_TABLE);
-            continue;
-        }
-        auto j   = comments_jump_table[st];
-        int  idx = search_char(ch, j.symbols);
-        m        = j.marker;
-        if(idx != THERE_IS_NO_CHAR){
-            st = j.first_state + idx;
-        }else{
-            switch(m){
-                case BEGIN_MARKER:
-                    comment_level++;
-                    (loc->pcurrent_char)--;
-                    st = -1;
-                    break;
-                case END_MARKER:
-                    comment_level--;
-                    (loc->pcurrent_char)--;
-                    st = -1;
-                    if(0 == comment_level){
-                        return;
-                    }
-                    break;
-                default:
-                    (loc->pcurrent_char)--;
-                    st = -1;
-            }
-        }
-    }
-    if(-1 == st){
-        printf("В строке %zu неожиданно закончился многострочный комментарий.\n",
-               lexem_begin_line_number());
-        en->increment_number_of_errors();
-    }else{
-        auto j   = comments_jump_table[st];
-        m        = j.marker;
-        switch(m){
-            case BEGIN_MARKER:
-                comment_level++;
-                (loc->pcurrent_char)--;
-                break;
-            case END_MARKER:
-                comment_level--;
-                (loc->pcurrent_char)--;
-                break;
-            default:
-                (loc->pcurrent_char)--;
-                printf("В строке %zu неожиданно закончился многострочный комментарий.\n",
-                       lexem_begin_line_number());
-                en->increment_number_of_errors();
-                return;
-        }
-        if(comment_level != 0){
-            printf("В строке %zu неожиданно закончился многострочный комментарий.\n",
-                   lexem_begin_line_number());
-            en->increment_number_of_errors();
-        }
-    }
-}
-
-)~";
-
-std::string Main_parser::omit_nested_multilined(){
-    std::string          result;
-    Attributed_char_trie atrie;
-    Attributed_cstring   atrib_cstr_b;
-    Attributed_cstring   atrib_cstr_e;
-
-    auto marker_b = et_.strs_trie->get_string(mark_of_multilined_begin);
-    auto marker_e = et_.strs_trie->get_string(mark_of_multilined_end);
-
-    atrib_cstr_b.str       = const_cast<char32_t*>(marker_b.c_str());
-    atrib_cstr_e.str       = const_cast<char32_t*>(marker_e.c_str());
-    atrib_cstr_b.attribute = BEGIN_MARKER;
-    atrib_cstr_e.attribute = END_MARKER;
-    atrie.insert(attributed_cstring2string(atrib_cstr_b, 0));
-    atrie.insert(attributed_cstring2string(atrib_cstr_e, 0));
-
-    Jumps_and_inits jmps = atrie.jumps();
-
-    result = generate_table_for_nested_comments(jmps) +
-             "void " + name_of_scaner_class + omit_nested_multilined_proc_str;
-    return result;
-}
-
-std::string table_for_not_nested_multilined(const std::u32string& end_of_comment){
-    std::string result;
-
-    std::vector<std::string> table_body;
-    uint32_t st = 0;
-    for(const auto c : end_of_comment){
-        st++;
-        auto temp = "{" + std::to_string(st) + ", " + show_char32(c) + "}";
-        table_body.push_back(temp);
-    }
-    auto last_elem = "{" + std::to_string(0) + ", " + show_char32(0) + "}";
-
-    Format f;
-    f.indent                 = INDENT_WIDTH;
-    f.number_of_columns      = 4;
-    f.spaces_between_columns = 1;
-
-    result = multilined_comment_jump + string_list_to_columns(table_body, f) + "\n};\n\n";
-    return result;
-}
-
-std::string Main_parser::omit_not_nested_multilined(){
-    std::string result;
-    auto multilined_end = et_.strs_trie->get_string(mark_of_multilined_end);
-    result = table_for_not_nested_multilined(multilined_end)
-             + "void " + name_of_scaner_class + omit_not_nested_multilined_comment_proc_str;
-    return result;
-}
-
-std::string Main_parser::generate_current_lexem_proc(){
-    std::string result;
-
-    enum Comment_kind {
-        No_comments,              There_is_only_singlelined,
-        There_is_only_multilined, There_are_all
-    };
-
-    bool t1 = mark_of_single_lined     != 0;
-    bool t2 = mark_of_multilined_begin != 0;
-
-    Comment_kind k = static_cast<Comment_kind>(t2 * 2 + t1);
-
-    switch(k){
-        case No_comments:
-            result = current_lexem_without_comments();
-            break;
-        case There_is_only_singlelined:
-            result                       = there_is_only_singlelined();
-            fields_for_comments_handling = "\n" + indent + lexem_info_name +
-                                         + " " + "current_lexem_();\n"
-                                         + indent + "void omit_singlelined_comment();";
-            break;
-        case There_is_only_multilined:
-            result                       = there_is_only_multilined();
-            fields_for_comments_handling = "\n" + indent + lexem_info_name +
-                                         + " " + "current_lexem_();\n"
-                                         + indent + "void omit_multilined_comment();";
-            if(multilined_is_nested){
-                fields_for_comments_handling += "\n" + indent + "int comment_level;";
-            }
-            break;
-        case There_are_all:
-            result                       = there_are_all_comments();
-            fields_for_comments_handling = "\n" + indent + lexem_info_name +
-                                         + " " + "current_lexem_();\n"
-                                         + indent + "void omit_singlelined_comment();\n"
-                                         + indent + "void omit_multilined_comment();";
-            if(multilined_is_nested){
-                fields_for_comments_handling += "\n" + indent + "int comment_level;";
-            }
-            break;
-    }
-
-    return result;
-}
-
-static const std::string start_proc_end =
-    R"~(
-    automaton = A_unknown;
-    return t;
-})~";
-
-std::string Main_parser::collect_automata_impls(){
-    std::string result;
-    aut_impl[Start_aut] += start_proc_end;
-    for(const auto s : aut_impl){
-        result += s.second + "\n\n";
-    }
-    for(const auto s : aut_impl_fin_proc){
-        result += s.second + "\n\n";
-    }
-    return result;
-}
-
-void Main_parser::generate_scaner_implementation(){
-    std::string impl_file_name = scaner_file_name_without_ext + ".cpp";
-    std::string header_name    = scaner_file_name_without_ext + ".h";
-    std::string impl_text      = impl_includes(header_name) + procs_tables();
-
-    impl_text += generate_category_table() + collect_automata_impls() +
-                 generate_current_lexem_proc();
-
-    FILE* fptr = fopen(impl_file_name.c_str(), "w");
-    if(fptr){
-        fputs(impl_text.c_str(), fptr);
-        fputs("\n",fptr);
-        fclose(fptr);
-    }else{
-        printf("Не удалось создать файл реализации сканера.\n");
-        et_.ec -> increment_number_of_errors();
-    }
-}
+//
+// static const std::string current_lexem_without_comments_proc = R"~(::current_lexem(){
+//     automaton = A_start; token.code = None;
+//     lexem_begin = loc->pcurrent_char;
+//     bool t = true;
+//     while((ch = *(loc->pcurrent_char)++)){
+//         char_categories = get_categories_set(ch); //categories_table[ch];
+//         t = (this->*procs[automaton])();
+//         if(!t){
+//             /* Сюда попадаем, лишь если лексема уже прочитана. При этом текущим
+//              * автоматом уже прочитан символ, идущий сразу за концом прочитанной
+//              * лексемы, на основании этого символа принято решение о том, что
+//              * лексема прочитана, и совершён переход к следующему за ним символу.
+//              * Поэтому для того, чтобы не пропустить первый символ следующей
+//              * лексемы, нужно уменьшить на единицу указатель pcurrent_char. */
+//             (loc->pcurrent_char)--;
+//             return token;
+//         }
+//     }
+//     /* Здесь можем оказаться, только если уже прочли весь обрабатываемый текст.
+//      * При этом указатель на текущий символ указывает на байт, который находится
+//      * сразу же после нулевого символа, являющегося признаком конца текста.
+//      * Чтобы не выйти при последующих вызовах за пределы текста, нужно перейти
+//      * обратно к нулевому символу. */
+//     (loc->pcurrent_char)--;
+//     /* Далее, поскольку мы находимся здесь, то конец текущей лексемы (возможно,
+//      * неожиданный) ещё не обработан. Надо эту обработку выполнить, и, возможно,
+//      * вывести какую-то диагностику. */
+//     (this->*finals[automaton])();
+//     return token;
+// }
+//
+// )~";
+//
+// std::string Main_parser::current_lexem_without_comments()
+// {
+//     std::string result;
+//     result = lexem_info_name + " " + name_of_scaner_class +
+//              current_lexem_without_comments_proc;
+//     return result;
+// }
+//
+// static const std::string current_lexem__without_comments_proc = R"~(::current_lexem_(){
+//     automaton = A_start; token.code = None;
+//     lexem_begin = loc->pcurrent_char;
+//     bool t = true;
+//     while((ch = *(loc->pcurrent_char)++)){
+//         char_categories = get_categories_set(ch); //categories_table[ch];
+//         t = (this->*procs[automaton])();
+//         if(!t){
+//             /* Сюда попадаем, лишь если лексема уже прочитана. При этом текущим
+//              * автоматом уже прочитан символ, идущий сразу за концом прочитанной
+//              * лексемы, на основании этого символа принято решение о том, что
+//              * лексема прочитана, и совершён переход к следующему за ним символу.
+//              * Поэтому для того, чтобы не пропустить первый символ следующей
+//              * лексемы, нужно уменьшить на единицу указатель pcurrent_char. */
+//             (loc->pcurrent_char)--;
+//             return token;
+//         }
+//     }
+//     /* Здесь можем оказаться, только если уже прочли весь обрабатываемый текст.
+//      * При этом указатель на текущий символ указывает на байт, который находится
+//      * сразу же после нулевого символа, являющегося признаком конца текста.
+//      * Чтобы не выйти при последующих вызовах за пределы текста, нужно перейти
+//      * обратно к нулевому символу. */
+//     (loc->pcurrent_char)--;
+//     /* Далее, поскольку мы находимся здесь, то конец текущей лексемы (возможно,
+//      * неожиданный) ещё не обработан. Надо эту обработку выполнить, и, возможно,
+//      * вывести какую-то диагностику. */
+//     (this->*finals[automaton])();
+//     return token;
+// }
+//
+// )~";
+//
+// static const std::string omit_singlelined_comment_proc_str =
+//     R"~(::omit_singlelined_comment(){
+//     while((ch = (loc->pcurrent_char)++)){
+//         if('\n' == ch){
+//             (loc->pcurrent_char)--;
+//             return;
+//         }
+//     }
+//     (loc->pcurrent_char)--;
+//     return;
+// }
+//
+// )~";
+//
+// static const std::string current_lexem_with_omitting_singlelined =
+//     R"~(::current_lexem(){
+//     for( ; ; ){
+//         auto l = current_lexem_();
+//         if(l.code == SINGLE_LINED_COMMENT_MARK){
+//             omit_singlelined_comment();
+//         }else{
+//             return token;
+//         }
+//     }
+//     return token;
+// }
+//
+// )~";
+//
+// static const std::string current_lexem_with_omitting_multilined =
+//     R"~(::current_lexem(){
+//     for( ; ; ){
+//         auto l = current_lexem_();
+//         switch(l.code){
+//             case MULTI_LINED_COMMENT_MARK:
+//                 omit_multilined_comment();
+//                 break;
+//             case MULTI_LINED_COMMENT_END:
+//                 printf("Неожиданный конец многострочного комментария в строке %zu.\n",
+//                        lexem_begin_line_number());
+//                 en->increment_number_of_errors();
+//                 break;
+//             default:
+//                 return token;
+//         }
+//     }
+//     return token;
+// }
+//
+// )~";
+//
+// static const std::string current_lexem_with_omitting_all =
+//     R"~(::current_lexem(){
+//     for( ; ; ){
+//         auto l = current_lexem_();
+//         switch(l.code){
+//             case SINGLE_LINED_COMMENT_MARK:
+//                 omit_singlelined_comment();
+//                 break;
+//             case MULTI_LINED_COMMENT_MARK:
+//                 omit_multilined_comment();
+//                 break;
+//             case MULTI_LINED_COMMENT_END:
+//                 printf("Неожиданный конец многострочного комментария в строке %zu.\n",
+//                        lexem_begin_line_number());
+//                 en->increment_number_of_errors();
+//                 break;
+//             default:
+//                 return token;
+//         }
+//     }
+//     return token;
+// }
+//
+// )~";
+//
+// static const std::string multilined_comment_jump =
+//     R"~(struct Jump_for_multilined_end{
+//     uint32_t next_state;
+//     char32_t jump_char;
+// };
+//
+// static const Jump_for_multilined_end multilined_jumps[] = {
+// )~";
+//
+// static const std::string omit_not_nested_multilined_comment_proc_str =
+//     R"~(::omit_multilined_comment(){
+//     size_t st = 0;
+//     while((ch = (loc->pcurrent_char)++)){
+//         auto j  = multilined_jumps[st];
+//         auto jc = j.jump_char;
+//         if(!jc){
+//             (loc->pcurrent_char)--;
+//             return;
+//         }
+//         if(ch == jc){
+//             st = j.next_state;
+//         }else{
+//             st = 0;
+//         }
+//     }
+//     printf("В строке %zu неожиданно закончился многострочный комментарий.\n",
+//            lexem_begin_line_number());
+//     en->increment_number_of_errors();
+//     return;
+// })~";
+//
+// std::string Main_parser::there_is_only_singlelined()
+// {
+//     std::string result;
+//     result = "void " + name_of_scaner_class + omit_singlelined_comment_proc_str +
+//              lexem_info_name + name_of_scaner_class + current_lexem__without_comments_proc +
+//              lexem_info_name + name_of_scaner_class + current_lexem_with_omitting_singlelined;
+//     return result;
+// }
+//
+// std::string Main_parser::there_is_only_multilined(){
+//     std::string result;
+//     result = "void " + name_of_scaner_class + omit_multilined_comment_proc() +
+//              lexem_info_name + name_of_scaner_class + current_lexem__without_comments_proc +
+//              lexem_info_name + name_of_scaner_class + current_lexem_with_omitting_multilined;
+//     return result;
+// }
+//
+// std::string Main_parser::there_are_all_comments(){
+//     std::string result;
+//     result = "void " + name_of_scaner_class + omit_multilined_comment_proc() +
+//              "void " + name_of_scaner_class + omit_singlelined_comment_proc_str +
+//              lexem_info_name + name_of_scaner_class + current_lexem__without_comments_proc +
+//              lexem_info_name + name_of_scaner_class + current_lexem_with_omitting_all;
+//     return result;
+// }
+//
+// std::string Main_parser::omit_multilined_comment_proc(){
+//     std::string result;
+//     result = multilined_is_nested ? omit_nested_multilined() : omit_not_nested_multilined();
+//     return result;
+// }
+//
+// std::string Main_parser::omit_all_comment_proc(){
+//     std::string result;
+//     result = "void " + name_of_scaner_class + omit_multilined_comment_proc() +
+//              "void " + name_of_scaner_class + omit_singlelined_comment_proc_str +
+//              lexem_info_name + name_of_scaner_class + current_lexem__without_comments_proc +
+//              lexem_info_name + name_of_scaner_class + current_lexem_with_omitting_all;
+//     return result;
+// }
+//
+// #define BEGIN_MARKER 1
+// #define END_MARKER   2
+//
+// std::string generate_init_table_for_nested_comments(const Jumps_and_inits& ji){
+//     std::string result;
+//     std::vector<std::string> table_elems;
+//     auto& inits = ji.init_table;
+//     for(const auto& i : inits){
+//         std::string elem = "{" + std::to_string(i.first) + ", " +
+//                            char32_to_utf8(i.second) + "}";
+//         table_elems.push_back(elem);
+//     }
+//
+//     Format f;
+//     f.indent                 = INDENT_WIDTH;
+//     f.number_of_columns      = 3;
+//     f.spaces_between_columns = 1;
+//
+//     result = "static const State_for_char nested_comments_init_table[] = {\n";
+//     result += string_list_to_columns(table_elems, f) + "\n};\n\n"
+//               "#define NUM_OF_ELEMS_OF_COMM_INIT_TABLE " +
+//               std::to_string(table_elems.size()) + "\n\n";
+//     return result;
+// }
+//
+// static const std::string nested_comment_jump_struct =
+//     R"~(struct Comment_jump{
+//     /** Указатель на строку , состоящую из символов , по которым возможен переход. */
+//     char32_t*       symbols;
+//     uint16_t        marker;
+//     /** Если текущий символ совпадает с symbols[0], то
+//         выполняется переход в состояние first_state;
+//         если текущий символ совпадает с symbols[1], то
+//         выполняется переход в состояние first_state+1;
+//         если текущий символ совпадает с symbols[2], то
+//         выполняется переход в состояние first_state+2,
+//         и так далее. */
+//     uint16_t        first_state;
+// };
+//
+// static const Comment_jump comments_jump_table[] = {\n)~";
+//
+// std::string generate_jump_table_for_nested_comments(const Jumps_and_inits& ji){
+//     std::string result;
+//     auto& jmps = ji.jumps;
+//     std::vector<std::string> jmp_table_body;
+//     for(const auto& j : jmps){
+//         std::string jump = "{const_cast<char32_t*>(U\"" +
+//                            u32string_to_utf8(j.jump_chars) + "\"), " +
+//                            std::to_string(j.code) + ", " +
+//                            std::to_string(j.first_state) + "}";
+//         jmp_table_body.push_back(jump);
+//     }
+//
+//     Format f;
+//     f.indent                 = INDENT_WIDTH;
+//     f.number_of_columns      = 3;
+//     f.spaces_between_columns = 1;
+//
+//     result = nested_comment_jump_struct +
+//              string_list_to_columns(jmp_table_body, f) + "\n};\n\n";
+//     return result;
+// }
+//
+// std::string generate_table_for_nested_comments(const Jumps_and_inits& ji){
+//     std::string result;
+//     result = generate_init_table_for_nested_comments(ji) +
+//              generate_jump_table_for_nested_comments(ji) +
+//              "#define BEGIN_MARKER 1\n" "#define END_MARKER 2\n\n";
+//     return result;
+// }
+//
+// static const std::string omit_nested_multilined_proc_str =
+//     R"~(::omit_multilined_comment(){
+//     ssize_t st     = -1;
+//     comment_level  = 1;
+//     uint16_t m;
+//     while((ch = (loc->pcurrent_char)++)){
+//         if(-1 == st){
+//             st = get_init_state(ch, nested_comments_init_table,
+//                                 NUM_OF_ELEMS_OF_COMM_INIT_TABLE);
+//             continue;
+//         }
+//         auto j   = comments_jump_table[st];
+//         int  idx = search_char(ch, j.symbols);
+//         m        = j.marker;
+//         if(idx != THERE_IS_NO_CHAR){
+//             st = j.first_state + idx;
+//         }else{
+//             switch(m){
+//                 case BEGIN_MARKER:
+//                     comment_level++;
+//                     (loc->pcurrent_char)--;
+//                     st = -1;
+//                     break;
+//                 case END_MARKER:
+//                     comment_level--;
+//                     (loc->pcurrent_char)--;
+//                     st = -1;
+//                     if(0 == comment_level){
+//                         return;
+//                     }
+//                     break;
+//                 default:
+//                     (loc->pcurrent_char)--;
+//                     st = -1;
+//             }
+//         }
+//     }
+//     if(-1 == st){
+//         printf("В строке %zu неожиданно закончился многострочный комментарий.\n",
+//                lexem_begin_line_number());
+//         en->increment_number_of_errors();
+//     }else{
+//         auto j   = comments_jump_table[st];
+//         m        = j.marker;
+//         switch(m){
+//             case BEGIN_MARKER:
+//                 comment_level++;
+//                 (loc->pcurrent_char)--;
+//                 break;
+//             case END_MARKER:
+//                 comment_level--;
+//                 (loc->pcurrent_char)--;
+//                 break;
+//             default:
+//                 (loc->pcurrent_char)--;
+//                 printf("В строке %zu неожиданно закончился многострочный комментарий.\n",
+//                        lexem_begin_line_number());
+//                 en->increment_number_of_errors();
+//                 return;
+//         }
+//         if(comment_level != 0){
+//             printf("В строке %zu неожиданно закончился многострочный комментарий.\n",
+//                    lexem_begin_line_number());
+//             en->increment_number_of_errors();
+//         }
+//     }
+// }
+//
+// )~";
+//
+// std::string Main_parser::omit_nested_multilined(){
+//     std::string          result;
+//     Attributed_char_trie atrie;
+//     Attributed_cstring   atrib_cstr_b;
+//     Attributed_cstring   atrib_cstr_e;
+//
+//     auto marker_b = et_.strs_trie->get_string(mark_of_multilined_begin);
+//     auto marker_e = et_.strs_trie->get_string(mark_of_multilined_end);
+//
+//     atrib_cstr_b.str       = const_cast<char32_t*>(marker_b.c_str());
+//     atrib_cstr_e.str       = const_cast<char32_t*>(marker_e.c_str());
+//     atrib_cstr_b.attribute = BEGIN_MARKER;
+//     atrib_cstr_e.attribute = END_MARKER;
+//     atrie.insert(attributed_cstring2string(atrib_cstr_b, 0));
+//     atrie.insert(attributed_cstring2string(atrib_cstr_e, 0));
+//
+//     Jumps_and_inits jmps = atrie.jumps();
+//
+//     result = generate_table_for_nested_comments(jmps) +
+//              "void " + name_of_scaner_class + omit_nested_multilined_proc_str;
+//     return result;
+// }
+//
+// std::string table_for_not_nested_multilined(const std::u32string& end_of_comment){
+//     std::string result;
+//
+//     std::vector<std::string> table_body;
+//     uint32_t st = 0;
+//     for(const auto c : end_of_comment){
+//         st++;
+//         auto temp = "{" + std::to_string(st) + ", " + show_char32(c) + "}";
+//         table_body.push_back(temp);
+//     }
+//     auto last_elem = "{" + std::to_string(0) + ", " + show_char32(0) + "}";
+//
+//     Format f;
+//     f.indent                 = INDENT_WIDTH;
+//     f.number_of_columns      = 4;
+//     f.spaces_between_columns = 1;
+//
+//     result = multilined_comment_jump + string_list_to_columns(table_body, f) + "\n};\n\n";
+//     return result;
+// }
+//
+// std::string Main_parser::omit_not_nested_multilined(){
+//     std::string result;
+//     auto multilined_end = et_.strs_trie->get_string(mark_of_multilined_end);
+//     result = table_for_not_nested_multilined(multilined_end)
+//              + "void " + name_of_scaner_class + omit_not_nested_multilined_comment_proc_str;
+//     return result;
+// }
+//
+// std::string Main_parser::generate_current_lexem_proc(){
+//     std::string result;
+//
+//     enum Comment_kind {
+//         No_comments,              There_is_only_singlelined,
+//         There_is_only_multilined, There_are_all
+//     };
+//
+//     bool t1 = mark_of_single_lined     != 0;
+//     bool t2 = mark_of_multilined_begin != 0;
+//
+//     Comment_kind k = static_cast<Comment_kind>(t2 * 2 + t1);
+//
+//     switch(k){
+//         case No_comments:
+//             result = current_lexem_without_comments();
+//             break;
+//         case There_is_only_singlelined:
+//             result                       = there_is_only_singlelined();
+//             fields_for_comments_handling = "\n" + indent + lexem_info_name +
+//                                          + " " + "current_lexem_();\n"
+//                                          + indent + "void omit_singlelined_comment();";
+//             break;
+//         case There_is_only_multilined:
+//             result                       = there_is_only_multilined();
+//             fields_for_comments_handling = "\n" + indent + lexem_info_name +
+//                                          + " " + "current_lexem_();\n"
+//                                          + indent + "void omit_multilined_comment();";
+//             if(multilined_is_nested){
+//                 fields_for_comments_handling += "\n" + indent + "int comment_level;";
+//             }
+//             break;
+//         case There_are_all:
+//             result                       = there_are_all_comments();
+//             fields_for_comments_handling = "\n" + indent + lexem_info_name +
+//                                          + " " + "current_lexem_();\n"
+//                                          + indent + "void omit_singlelined_comment();\n"
+//                                          + indent + "void omit_multilined_comment();";
+//             if(multilined_is_nested){
+//                 fields_for_comments_handling += "\n" + indent + "int comment_level;";
+//             }
+//             break;
+//     }
+//
+//     return result;
+// }
+//
+// static const std::string start_proc_end =
+//     R"~(
+//     automaton = A_unknown;
+//     return t;
+// })~";
+//
+// std::string Main_parser::collect_automata_impls(){
+//     std::string result;
+//     aut_impl[Start_aut] += start_proc_end;
+//     for(const auto s : aut_impl){
+//         result += s.second + "\n\n";
+//     }
+//     for(const auto s : aut_impl_fin_proc){
+//         result += s.second + "\n\n";
+//     }
+//     return result;
+// }
+//
+// void Main_parser::generate_scaner_implementation(){
+//     std::string impl_file_name = scaner_file_name_without_ext + ".cpp";
+//     std::string header_name    = scaner_file_name_without_ext + ".h";
+//     std::string impl_text      = impl_includes(header_name) + procs_tables();
+//
+//     impl_text += generate_category_table() + collect_automata_impls() +
+//                  generate_current_lexem_proc();
+//
+//     FILE* fptr = fopen(impl_file_name.c_str(), "w");
+//     if(fptr){
+//         fputs(impl_text.c_str(), fptr);
+//         fputs("\n",fptr);
+//         fclose(fptr);
+//     }else{
+//         printf("Не удалось создать файл реализации сканера.\n");
+//         et_.ec -> increment_number_of_errors();
+//     }
+// }
 
 int Main_parser::get_number_of_errors(){
     return et_.ec -> get_number_of_errors();

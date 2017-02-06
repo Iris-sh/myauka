@@ -13,7 +13,7 @@
 #include "../include/categories.h"
 #include "../include/operations_with_sets.h"
 #include "../include/char_conv.h" // для отладочной печати
-#include "../include/print_char32.h" // для отладочной печати
+#include "../include/print_char32.h" //
 
 using operations_with_sets::operator+;
 using operations_with_sets::operator*;

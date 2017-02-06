@@ -44,6 +44,23 @@ namespace operations_with_sets{
         putchar('}');
     }
 
+    template<typename T>
+    void print_set(const std::set<T>& a, void (*print_elem)(const T)){
+        if(a.empty()){
+            printf("{}");
+            return;
+        }
+        auto first       = a.begin();
+        auto before_last = --a.end();
+        putchar('{');
+        for(auto i = first; i != before_last; ++i){
+            print_elem(*i);
+            putchar(',');
+        }
+        print_elem(*before_last);
+        putchar('}');
+    }
+
     /** Проверка принадлежности элемента x множеству a. Если элемент x
         множеству a принадлежит, то возвращается true, иначе ---
         возвращается false. */

@@ -44,7 +44,7 @@ std::string delim_table_gen(const Info_for_constructing& info, const Jumps_and_i
     for(const auto& j : ji.jumps){
         std::string temp = "{const_cast<char32_t*>(U\"" +
                            u32string_to_utf8(j.jump_chars) + "\"), " +
-                           idx_to_string(info.et.ids_trie, codes[j.code]) + ", " +
+                           idx_to_string(info.et.ids_trie, info.codes[j.code]) + ", " +
                            std::to_string(j.first_state) + "}";
         del_jumps.push_back(temp);
     }
@@ -83,7 +83,7 @@ std::string jump_table_string_repres(Info_for_constructing& info,
                                      const std::string&     init_table_name)
 {
     auto result = init_table(ji, init_table_name);
-    auto temp   = delim_table_gen(ji, table_name);
+    auto temp   = delim_table_gen(info, ji, table_name);
     if(!info.there_is_Elem_definition){
         result += generate_Elem(info.codes_type_name) + temp;
         info.there_is_Elem_definition = true;

@@ -45,9 +45,11 @@ struct Info_for_constructing{
     Errors_and_tries                      et;
     std::shared_ptr<Scope>                scope;
     std::string                           codes_type_name;
-    Category*                             begin_chars                        = nullptr;
+    std::string                           lexem_info_name;
+    std::string                           fields_for_comments_handling;
     Init_and_final_acts                   acts_for_strings;
     Init_and_final_acts                   acts_for_numbers;
+    Category*                             begin_chars                        = nullptr;
     std::string*                          possible_automata_name_str         = nullptr;
     std::string*                          possible_proc_ptr                  = nullptr;
     std::string*                          possible_fin_proc_ptr              = nullptr;
@@ -57,7 +59,11 @@ struct Info_for_constructing{
     size_t                                del_postaction                     = 0;
     size_t                                keyword_postaction                 = 0;
     size_t                                write_action_name_idx              = 0;
+    size_t                                mark_of_single_lined               = 0;
+    size_t                                mark_of_multilined_begin           = 0;
+    size_t                                mark_of_multilined_end             = 0;
     bool                                  there_is_Elem_definition;
+    bool                                  multilined_is_nested;
 
     Info_for_constructing()                             = default;
     Info_for_constructing(const Info_for_constructing&) = default;

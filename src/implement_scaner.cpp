@@ -550,8 +550,6 @@ static std::string collect_automata_impls(Info_for_constructing& info){
 }
 
 void implement_scaner(Info_for_constructing& info){
-//     std::string impl_file_name = scaner_file_name_without_ext + ".cpp";
-//     std::string header_name    = scaner_file_name_without_ext + ".h";
     std::string impl_text      = impl_includes(info.header_name) + procs_tables(info);
 
     impl_text += generate_category_table(info) + collect_automata_impls(info) +

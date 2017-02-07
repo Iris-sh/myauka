@@ -62,6 +62,7 @@ struct Info_for_constructing{
     size_t                                mark_of_single_lined               = 0;
     size_t                                mark_of_multilined_begin           = 0;
     size_t                                mark_of_multilined_end             = 0;
+    size_t                                token_fields_idx                   = 0;
     bool                                  there_is_Elem_definition;
     bool                                  multilined_is_nested;
 

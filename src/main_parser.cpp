@@ -34,6 +34,7 @@
 #include "../include/conv_case.h"
 #include "../include/implement_automata.h"
 #include "../include/implement_scaner.h"
+#include "../include/scaner_header.h"
 
 // #include "../include/print_commands.h"
 // #include <bitset>
@@ -178,6 +179,7 @@ void Main_parser::compile(){
     constr_info.mark_of_multilined_end             = mark_of_multilined_end;
     constr_info.lexem_info_name                    = "Lexem_info";
     constr_info.multilined_is_nested               = multilined_is_nested;
+    constr_info.token_fields_idx                   = token_fields_idx;
 
     if(newline_is_lexem){
         constr_info.aut_impl[Start_aut] += start_proc_newline_is_lexem;
@@ -187,6 +189,7 @@ void Main_parser::compile(){
 
     implement_automata(constr_info);
     implement_scaner(constr_info);
+    scaner_header(constr_info);
 //
 //     detalize_commands(id_begin);
 //     detalize_commands(id_body);
@@ -218,7 +221,7 @@ void Main_parser::compile(){
 //     prepare_automata_info();
 //
 //     generate_scaner_implementation();
-    generate_scaner_header();
+//     generate_scaner_header();
 
     aux_files_generate();
 }
@@ -557,131 +560,131 @@ static const std::string indent           = std::string(INDENT_WIDTH,           
 static const std::string double_indent    = std::string(DOUBLE_INDENT_WIDTH,    ' ');
 static const std::string triple_indent    = std::string(TRIPLE_INDENT_WIDTH,    ' ');
 static const std::string quadruple_indent = std::string(QUADRUPLE_INDENT_WIDTH, ' ');
-
-const char* header_includes =
-    R"~(#include "../include/abstract_scaner.h"
-#include "../include/error_count.h"
-#include "../include/location.h"
-#include <string>")~";
-
-void Main_parser::generate_scaner_header(){
-    std::string sentinel = name_of_scaner_class;
-    for(char& c : sentinel){
-        c = toupper(c);
-    }
-    sentinel += "_H";
-
-    std::string header_name = scaner_file_name_without_ext + ".h";
-    std::string header = "#ifndef " + sentinel + "\n#define " +
-                         sentinel + "\n\n" + header_includes + "\n\n";
-
-    lexem_info_name = "Lexem_info";
-
-    header += generate_lexem_codes_enum();
-    header += generate_lexem_info();
-    header += generate_scaner_class();
-
-    if(!fields_for_comments_handling.empty()){
-        header += "\n" + fields_for_comments_handling + "\n";
-    }
-
-    header += "#endif";
-
-    FILE* fptr = fopen(header_name.c_str(), "w");
-    if(fptr){
-        fputs(header.c_str(), fptr);
-        fputs("\n",fptr);
-        fclose(fptr);
-    }else{
-        printf("Не удалось создать заголовочный файл сканера.\n");
-        et_.ec -> increment_number_of_errors();
-    }
-}
-
-std::string Main_parser::generate_lexem_codes_enum(){
-    std::string s;
-    codes_type_name = idx_to_string(et_.ids_trie, codes_type_name_idx);
-    s = "enum " + codes_type_name + " : unsigned short {\n";
-    std::vector<std::string> lexem_codes_names;
-    for(const size_t c : codes){
-        lexem_codes_names.push_back(idx_to_string(et_.ids_trie,c));
-    }
-    Format f;
-    f.indent                 = INDENT_WIDTH;
-    f.number_of_columns      = 3;
-    f.spaces_between_columns = 0;
-    s += string_list_to_columns(lexem_codes_names, f);
-    s += "\n};\n\n";
-    return s;
-}
-
-std::string Main_parser::generate_lexem_info(){
-    std::string s;
-    s = "struct " + lexem_info_name + "{\n" +
-        indent + idx_to_string(et_.ids_trie, codes_type_name_idx) +
-        " code;\n" + indent + "union{\n";
-
-    bool t = belongs(Id_aut, set_of_used_automata) ||
-             belongs(IdKeyword_aut, set_of_used_automata);
-
-    if(t){
-        s += double_indent + "size_t    ident_index;\n";
-    };
-    if(belongs(String_aut, set_of_used_automata)){
-        s += double_indent + "size_t    string_index;\n" +
-             double_indent + "char32_t  c;\n";
-    };
-
-    s += idx_to_string(et_.strs_trie, token_fields_idx) +
-         "\n" + indent + "};\n};\n\n";
-    return s;
-}
-
-static std::string automaton_procs_typedefs(const std::string& s){
-    std::string result;
-    result = "   typedef bool (" + s +
-        R"~(::*Automaton_proc)();
-    /* Это тип указателя на функцию--член, реализующую
-     * конечный автомат, обрабатывающий лексему. Функция
-     * эта должна возвращать true, если лексема ещё не
-     * разобрана до конца, и false --- в противном случае. */
-
-    typedef void ()~" + s +
-    R"~(::*Final_proc)();
-    /* А это -- тип указателя на функцию-член, выполняющую
-     * необходимые действия в случае неожиданного окончания
-     * лексемы. */
-
-    static Automaton_proc procs[];
-    static Final_proc     finals[];
-
-    /* функции обработки лексем: */
-)~";
-    return result;
-}
-
-std::string Main_parser::generate_scaner_class(){
-    std::string scaner_class;
-    scaner_class = "class " + name_of_scaner_class +
-        " : public Abstract_scaner<" + lexem_info_name + "> {\npublic:\n" +
-        indent + name_of_scaner_class + "() = default;\n" +
-        indent + name_of_scaner_class +
-        "(Location* location, const Errors_and_tries& et) :\n" +
-        double_indent + "Abstract_scaner<" + lexem_info_name +
-        ">(location, et) {};\n" +
-        indent + name_of_scaner_class +"(const " +
-        name_of_scaner_class + "& orig) = default;\n" +
-        indent + "virtual ~" + name_of_scaner_class +
-        "() = default;\n" +
-        indent + "virtual " + lexem_info_name + " current_lexem();\n" +
-        "private:\n";
-    scaner_class += generate_automata_enum() +
-                    automaton_procs_typedefs(name_of_scaner_class) +
-                    generate_automata_proc_protos() +
-                    generate_automata_final_procs_protos();
-    scaner_class += "\n};\n";
-    return scaner_class;
-}
+//
+// const char* header_includes =
+//     R"~(#include "../include/abstract_scaner.h"
+// #include "../include/error_count.h"
+// #include "../include/location.h"
+// #include <string>")~";
+//
+// void Main_parser::generate_scaner_header(){
+//     std::string sentinel = name_of_scaner_class;
+//     for(char& c : sentinel){
+//         c = toupper(c);
+//     }
+//     sentinel += "_H";
+//
+//     std::string header_name = scaner_file_name_without_ext + ".h";
+//     std::string header = "#ifndef " + sentinel + "\n#define " +
+//                          sentinel + "\n\n" + header_includes + "\n\n";
+//
+//     lexem_info_name = "Lexem_info";
+//
+//     header += generate_lexem_codes_enum();
+//     header += generate_lexem_info();
+//     header += generate_scaner_class();
+//
+//     if(!fields_for_comments_handling.empty()){
+//         header += "\n" + fields_for_comments_handling + "\n";
+//     }
+//
+//     header += "#endif";
+//
+//     FILE* fptr = fopen(header_name.c_str(), "w");
+//     if(fptr){
+//         fputs(header.c_str(), fptr);
+//         fputs("\n",fptr);
+//         fclose(fptr);
+//     }else{
+//         printf("Не удалось создать заголовочный файл сканера.\n");
+//         et_.ec -> increment_number_of_errors();
+//     }
+// }
+//
+// std::string Main_parser::generate_lexem_codes_enum(){
+//     std::string s;
+//     codes_type_name = idx_to_string(et_.ids_trie, codes_type_name_idx);
+//     s = "enum " + codes_type_name + " : unsigned short {\n";
+//     std::vector<std::string> lexem_codes_names;
+//     for(const size_t c : codes){
+//         lexem_codes_names.push_back(idx_to_string(et_.ids_trie,c));
+//     }
+//     Format f;
+//     f.indent                 = INDENT_WIDTH;
+//     f.number_of_columns      = 3;
+//     f.spaces_between_columns = 0;
+//     s += string_list_to_columns(lexem_codes_names, f);
+//     s += "\n};\n\n";
+//     return s;
+// }
+//
+// std::string Main_parser::generate_lexem_info(){
+//     std::string s;
+//     s = "struct " + lexem_info_name + "{\n" +
+//         indent + idx_to_string(et_.ids_trie, codes_type_name_idx) +
+//         " code;\n" + indent + "union{\n";
+//
+//     bool t = belongs(Id_aut, set_of_used_automata) ||
+//              belongs(IdKeyword_aut, set_of_used_automata);
+//
+//     if(t){
+//         s += double_indent + "size_t    ident_index;\n";
+//     };
+//     if(belongs(String_aut, set_of_used_automata)){
+//         s += double_indent + "size_t    string_index;\n" +
+//              double_indent + "char32_t  c;\n";
+//     };
+//
+//     s += idx_to_string(et_.strs_trie, token_fields_idx) +
+//          "\n" + indent + "};\n};\n\n";
+//     return s;
+// }
+//
+// static std::string automaton_procs_typedefs(const std::string& s){
+//     std::string result;
+//     result = "   typedef bool (" + s +
+//         R"~(::*Automaton_proc)();
+//     /* Это тип указателя на функцию--член, реализующую
+//      * конечный автомат, обрабатывающий лексему. Функция
+//      * эта должна возвращать true, если лексема ещё не
+//      * разобрана до конца, и false --- в противном случае. */
+//
+//     typedef void ()~" + s +
+//     R"~(::*Final_proc)();
+//     /* А это -- тип указателя на функцию-член, выполняющую
+//      * необходимые действия в случае неожиданного окончания
+//      * лексемы. */
+//
+//     static Automaton_proc procs[];
+//     static Final_proc     finals[];
+//
+//     /* функции обработки лексем: */
+// )~";
+//     return result;
+// }
+//
+// std::string Main_parser::generate_scaner_class(){
+//     std::string scaner_class;
+//     scaner_class = "class " + name_of_scaner_class +
+//         " : public Abstract_scaner<" + lexem_info_name + "> {\npublic:\n" +
+//         indent + name_of_scaner_class + "() = default;\n" +
+//         indent + name_of_scaner_class +
+//         "(Location* location, const Errors_and_tries& et) :\n" +
+//         double_indent + "Abstract_scaner<" + lexem_info_name +
+//         ">(location, et) {};\n" +
+//         indent + name_of_scaner_class +"(const " +
+//         name_of_scaner_class + "& orig) = default;\n" +
+//         indent + "virtual ~" + name_of_scaner_class +
+//         "() = default;\n" +
+//         indent + "virtual " + lexem_info_name + " current_lexem();\n" +
+//         "private:\n";
+//     scaner_class += generate_automata_enum() +
+//                     automaton_procs_typedefs(name_of_scaner_class) +
+//                     generate_automata_proc_protos() +
+//                     generate_automata_final_procs_protos();
+//     scaner_class += "\n};\n";
+//     return scaner_class;
+// }
 //
 // void Main_parser::prepare_automata_info(){
 //     set_of_used_automata |= (1ULL << Start_aut) | (1ULL << Unknown_aut);
@@ -704,60 +707,60 @@ std::string Main_parser::generate_scaner_class(){
 //     }
 // }
 //
-std::string Main_parser::generate_automata_enum(){
-    std::string s;
-    s = indent + "enum Automaton_name{\n";
-    std::vector<std::string> automata_names;
-    for(const auto& ap : automaton_info){
-        automata_names.push_back(ap.name);
-    }
-
-    Format f;
-    f.indent                 = DOUBLE_INDENT_WIDTH;
-    f.number_of_columns      = 3;
-    f.spaces_between_columns = 1;
-
-    s += string_list_to_columns(automata_names, f);
-    s += "\n" + indent + "};\n" + indent +
-         "Automaton_name automaton; /* текущий автомат */\n\n";
-    return s;
-}
-
-std::string Main_parser::generate_automata_proc_protos(){
-    std::string s;
-    std::vector<std::string> automata_protos;
-    for(const auto ap : automaton_info){
-        automata_protos.push_back(ap.proc_proto);
-    }
-
-    Format f;
-    f.indent                 = INDENT_WIDTH;
-    f.number_of_columns      = 2;
-    f.spaces_between_columns = 1;
-
-    s += string_list_to_columns(automata_protos, f, 0);
-    s += '\n';
-    s += R"~(    /* функции для выполнения действий в случае неожиданного
-     * окончания лексемы */
-)~";
-    return s;
-}
-
-std::string Main_parser::generate_automata_final_procs_protos(){
-    std::string s;
-    std::vector<std::string> final_procs_protos;
-    for(const auto ap : automaton_info){
-        final_procs_protos.push_back(ap.fin_proc_proto);
-    }
-
-    Format f;
-    f.indent                 = INDENT_WIDTH;
-    f.number_of_columns      = 2;
-    f.spaces_between_columns = 1;
-
-    s += string_list_to_columns(final_procs_protos, f, 0);
-    return s;
-}
+// std::string Main_parser::generate_automata_enum(){
+//     std::string s;
+//     s = indent + "enum Automaton_name{\n";
+//     std::vector<std::string> automata_names;
+//     for(const auto& ap : automaton_info){
+//         automata_names.push_back(ap.name);
+//     }
+//
+//     Format f;
+//     f.indent                 = DOUBLE_INDENT_WIDTH;
+//     f.number_of_columns      = 3;
+//     f.spaces_between_columns = 1;
+//
+//     s += string_list_to_columns(automata_names, f);
+//     s += "\n" + indent + "};\n" + indent +
+//          "Automaton_name automaton; /* текущий автомат */\n\n";
+//     return s;
+// }
+//
+// std::string Main_parser::generate_automata_proc_protos(){
+//     std::string s;
+//     std::vector<std::string> automata_protos;
+//     for(const auto ap : automaton_info){
+//         automata_protos.push_back(ap.proc_proto);
+//     }
+//
+//     Format f;
+//     f.indent                 = INDENT_WIDTH;
+//     f.number_of_columns      = 2;
+//     f.spaces_between_columns = 1;
+//
+//     s += string_list_to_columns(automata_protos, f, 0);
+//     s += '\n';
+//     s += R"~(    /* функции для выполнения действий в случае неожиданного
+//      * окончания лексемы */
+// )~";
+//     return s;
+// }
+//
+// std::string Main_parser::generate_automata_final_procs_protos(){
+//     std::string s;
+//     std::vector<std::string> final_procs_protos;
+//     for(const auto ap : automaton_info){
+//         final_procs_protos.push_back(ap.fin_proc_proto);
+//     }
+//
+//     Format f;
+//     f.indent                 = INDENT_WIDTH;
+//     f.number_of_columns      = 2;
+//     f.spaces_between_columns = 1;
+//
+//     s += string_list_to_columns(final_procs_protos, f, 0);
+//     return s;
+// }
 //
 // static std::string impl_includes(const std::string& impl_hn){
 //     std::string result;

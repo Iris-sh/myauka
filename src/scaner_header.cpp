@@ -23,7 +23,7 @@ static const std::string header_includes =
 #include "../include/location.h"
 #include <string>")~";
 
-static std::string generate_lexem_info(){
+static std::string generate_lexem_info(Info_for_constructing& info){
     std::string s;
     s = "struct " + info.lexem_info_name + "{\n" +
         indent + info.codes_type_name +

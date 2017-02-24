@@ -9,8 +9,6 @@
 
 #include "../include/act_expr_parser.h"
 #include "../include/belongs.h"
-// #include "../include/idx_to_string.h"
-//#include "test_expr_scaner.h"
 #include <map>
 #include <cstdio>
 #include <cstdlib>
@@ -119,7 +117,6 @@ void Act_expr_parser::shift(size_t shifted_state, Expr_lexem_info e){
     selem.attr.eli = e;
     parser_stack.push(selem);
     (this->*checker)(e);
-//     printf("shift %zu\n", shifted_state); /* отладочная печать*/
 }
 
 void Act_expr_parser::reduce(Rule r){
@@ -140,26 +137,6 @@ size_t next_state(size_t s, Non_terminal n){
     return goto_for_n -> to;
 }
 
-// static const char* rule_str[] = {
-    // "S->pTq", "T->TbE", "T->E",
-    // "E->EF",  "E->F",   "F->Gc",
-    // "F->G",   "G->Ha",  "G->H",
-    // "H->d",   "H->(T)"
-// };
-// static const size_t states_for_shift = 1 << 2  | 1 << 8  | 1 << 9  |
-                                       // 1 << 10 | 1 << 11 | 1 << 13 |
-                                       // 1 << 14 | 1 << 17;
-// void print_stack_elem(Stack_elem se){
-    // if(belongs(se.st_num, states_for_shift)){
-        // printf("{st_num = %zu, attr : eli = {", se.st_num);
-        // print_expr_lexem(se.attr.eli); printf("}}");
-    // }else{
-        // printf("{st_num = %zu, attr : indeces = {begin_index = "
-               // "%zu, end_index = %zu}}", se.st_num,
-               // se.attr.indeces.begin_index, se.attr.indeces.end_index);
-    // }
-// }
-
 void Act_expr_parser::reduce_without_back(Rule r){
     size_t rule_len = rules[r].len;
     parser_stack.get_elems_from_top(rule_body, rule_len);
@@ -170,11 +147,7 @@ void Act_expr_parser::reduce_without_back(Rule r){
     parser_stack.multi_pop(rule_len);
     Stack_elem top_elem = parser_stack.top();
     se.st_num           = next_state(top_elem.st_num, rules[r].nt);
-    // puts("Calculated stack elem is");
-    // print_stack_elem(se);
     parser_stack.push(se);
-    // printf("\n");
-    // printf("reduce %s\n", rule_str[r]);
 }
 
 #define ERROR     {Act_error, 0}
@@ -182,7 +155,6 @@ void Act_expr_parser::reduce_without_back(Rule r){
 #define REDUCE(r) {Act_reduce, r}
 #define ACCESS    {Act_OK, 0}
 
-//using Terminal_to_action = std::map<Terminal, Parser_action_info>;
 using State_and_terminal  = std::pair<size_t, Terminal>;
 using Parser_action_table = std::map<State_and_terminal, Parser_action_info>;
 
@@ -252,14 +224,7 @@ void Act_expr_parser::compile(Command_buffer& buf, Number_or_string kind_of_expr
     for( ; ; ){
         eli_ = esc_->current_lexem();
         t = lexem2terminal(eli_);
-        // printf("Current lexem is\n");
-        // print_expr_lexem(eli_);
-        //system("pause");
         current_state = parser_stack.top().st_num;
-//         printf("\nCurrent state is %zu\n", current_state);
-        //system("pause");
-        // Terminal_to_action ta = action_table[current_state];
-        // Terminal_to_action::iterator it = ta.find(t);
         auto it = action_table.find({current_state, t});
         Parser_action_info pai;
         if(it != action_table.end()){
@@ -278,12 +243,10 @@ void Act_expr_parser::compile(Command_buffer& buf, Number_or_string kind_of_expr
                 reduce_without_back(static_cast<Rule>(pai.arg));
                 break;
             case Act_OK:
-//                 puts("access");
                 buf = buf_;
                 esc_->back();
                 return;
         }
-//         puts("*******************");
     }
 }
 
@@ -510,7 +473,6 @@ Parser_action_info Act_expr_parser::state03_error_handler(){
     Parser_action_info pa;
     pa.kind = Act_shift; pa.arg = 10;
     return pa;
-//     shift(10, eli_);
 }
 
 Parser_action_info Act_expr_parser::state04_error_handler(){

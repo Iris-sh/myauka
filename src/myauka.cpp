@@ -17,7 +17,7 @@ std::u32string init_testing(const char* name){
     switch(contents.first){
         case Get_contents_return_code::Normal:
             if(!str.length()){
-                puts("Длина файла равна нулю.");
+                puts("File length is equal to zero.");
                 return U"";
             }else{
                 return utf8_to_u32string(str.c_str());
@@ -25,11 +25,11 @@ std::u32string init_testing(const char* name){
             break;
 
         case Get_contents_return_code::Impossible_open:
-            puts("Невозможно открыть файл.");
+            puts("Unable to open file.");
             return U"";
 
         case Get_contents_return_code::Read_error:
-            puts("Ошибка при чтении файла.");
+            puts("Error reading file.");
             return U"";
     }
     return U"";
@@ -42,8 +42,8 @@ Options:
     --version Display version information)~";
 
 static const char* version_str =
-    R"~(Myauka, lexical analyzer generator, v.1.0.0
-(c) Gavrilov Vladimir Sergeevich 2016)~";
+    R"~(Myauka, lexical analyzer generator, v.1.1.0
+(c) Gavrilov Vladimir Sergeevich 2016--2017)~";
 
 typedef void (*FuncForKey)();
 
@@ -62,7 +62,7 @@ std::map<std::string, FuncForKey> option_func = {
 
 int main(int argc, char* argv[]){
     if(1 == argc){
-        puts("Не заданы аргументы.");
+        puts("Arguments are not specified.");
         help();
         return 0;
     }
@@ -83,11 +83,11 @@ int main(int argc, char* argv[]){
         if(!errors){
             bool t = move_by_ext_from_curr_dir("src", "cpp");
             if(!t){
-                puts("Перемещение файлов *.cpp не удалось.");
+                puts("Moving files *.cpp failed.");
             }else{
                  t = move_by_ext_from_curr_dir("include", "h");
                  if(!t){
-                     puts("Перемещение файлов *.h не удалось.");
+                     puts("Moving files *.h failed.");
                 }
             }
         }

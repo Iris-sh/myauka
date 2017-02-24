@@ -71,7 +71,3 @@ struct Info_for_constructing{
     ~Info_for_constructing()                            = default;
 };
 #endif
-//     detalize_commands();
-//     detalize_commands();
-//     detalize_commands();
-//     detalize_commands();

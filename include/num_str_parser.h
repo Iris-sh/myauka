@@ -21,16 +21,6 @@
 #include "../include/init_and_final_acts.h"
 #include <utility>
 
-// /* Пользовательские действия, выполняемые при инициализации и при завершении
-//    автомата обработки строк (или автомата обработки чисел), порождённого из
-//    описания сканера.
-// */
-//
-// struct Init_and_final_acts{
-//     size_t init_acts = 0;
-//     size_t fin_acts  = 0;
-// };
-
 using NS_settings = std::pair<Main_lexem_code, Number_or_string>;
 
 class NS_parser {
@@ -138,27 +128,22 @@ private:
      * противном случае. */
     bool begin_of_num_or_str_sec();
 
-//      bool is_other_section;
-//      /* Данная переменная используется функцией begin_of_num_or_str_sec
-//         и вызываемыми ею функциями, реализующими обработку состояний
-//         ДКА. Она устанавливается равной true, если текущий раздел ---
-//         не тот, который предполагалось, и равной false в противном случае. */
 
-     void add_action_definition(size_t action_id, size_t action_def_idx);
+    void add_action_definition(size_t action_id, size_t action_def_idx);
 
-     /* Ниже приводится таблица функций, реализующих выполнение действий в
-        каждом из состояний автомата, который реализует функция
-        begin_of_num_or_str_sec */
-     typedef bool (NS_parser::*State_proc)();
+    /* Ниже приводится таблица функций, реализующих выполнение действий в
+       каждом из состояний автомата, который реализует функция
+       begin_of_num_or_str_sec */
+    typedef bool (NS_parser::*State_proc)();
 
-     static State_proc procs[];
+    static State_proc procs[];
 
-     bool num_str_kw_proc();    bool maybe_init_acts_proc();
-     bool init_acts_proc();     bool maybe_final_acts_proc();
-     bool final_acts_proc();    bool action_sec_proc();
-     bool act_expr_beg_proc();  bool act_def_proc();
+    bool num_str_kw_proc();    bool maybe_init_acts_proc();
+    bool init_acts_proc();     bool maybe_final_acts_proc();
+    bool final_acts_proc();    bool action_sec_proc();
+    bool act_expr_beg_proc();  bool act_def_proc();
 
-     size_t current_action_name_idx = 0;
+    size_t current_action_name_idx = 0;
 };
 
 class String_parser : public NS_parser {

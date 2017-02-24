@@ -14,4 +14,3 @@
  * fptr != NULL, и (-1) в противном случае. */
 long fsize(FILE* fptr);
 #endif
-

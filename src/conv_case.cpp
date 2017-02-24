@@ -16,6 +16,7 @@ std::string tolower_case(const std::string& s){
     }
     return result;
 }
+
 std::string toupper_case(const std::string& s){
     std::string result = s;
     for(char& c : result){

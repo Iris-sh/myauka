@@ -10,8 +10,6 @@
 #include "../include/grouped_DFA_by_uwrapped_regexp.h"
 #include "../include/ndfa.h"
 #include "../include/dfa.h"
-// #include "../include/unwrapped_command.h"
-// #include "../include/unwrap_commands.h"
 #include "../include/fuse_unwrapped_commands.h"
 #include <algorithm>
 #include "../include/operations_with_sets.h"

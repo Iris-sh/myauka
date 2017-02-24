@@ -6,6 +6,7 @@
              gavrilov.vladimir.s@mail.ru
              gavvs1977@yandex.ru
 */
+
 #include <string>
 #include "../include/implement_automata.h"
 #include "../include/generate_delim_automaton_impl.h"

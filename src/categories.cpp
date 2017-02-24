@@ -12,8 +12,9 @@
 #include <utility>
 #include "../include/categories.h"
 #include "../include/operations_with_sets.h"
-#include "../include/char_conv.h" // для отладочной печати
-#include "../include/print_char32.h" //
+#include "../include/sets_for_classes.h"
+#include "../include/char_conv.h"    // для отладочной печати
+#include "../include/print_char32.h" // для отладочной печати
 
 using operations_with_sets::operator+;
 using operations_with_sets::operator*;
@@ -21,38 +22,6 @@ using operations_with_sets::is_elem;
 using operations_with_sets::is_subseteq;
 
 using operations_with_sets::print_set; // для отладочной печати
-
-static const std::u32string latin_upper_letters   = U"ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-static const std::u32string latin_lower_letters   = U"abcdefghijklmnopqrstuvwxyz";
-static const std::u32string russian_upper_letters = U"АБВГДЕЁЖЗИЙКЛМНОПРСТУФХЦЧШЩЪЫЬЭЮЯ";
-static const std::u32string russian_lower_letters = U"абвгдеёжзийклмнопрстуфхцчшщъыьэюя";
-static const std::u32string binary_digits         = U"01";
-static const std::u32string octal_digits          = U"01234567";
-static const std::u32string decimal_digits        = U"0123456789";
-static const std::u32string hexadecimal_digits    = U"0123456789ABCDEFabcdef";
-static const std::u32string upper_letters         =
-    latin_upper_letters + russian_upper_letters;
-static const std::u32string lower_letters =
-    latin_lower_letters + russian_lower_letters;
-
-/* Данная функция строит множество, состоящее из символов строки str.
- * В качестве представления множества используется std::set<char32_t>. */
-Set_of_char string2set(const std::u32string& str){
-    Set_of_char s;
-    for(const auto c : str){
-        s.insert(c);
-    }
-    return s;
-}
-
-static const Set_of_char sets_for_char_classes[] = {
-    string2set(latin_upper_letters),    string2set(upper_letters),
-    string2set(russian_upper_letters),  string2set(binary_digits),
-    string2set(decimal_digits),         string2set(latin_lower_letters),
-    string2set(lower_letters),          string2set(octal_digits),
-    string2set(russian_lower_letters),  string2set(hexadecimal_digits),
-    Set_of_char(),                      Set_of_char()
-};
 
 const char* category_kind_as_str[] = {
     "All_chars", "Not_single_quote", "Not_double_quote", "Set_of_cs"
@@ -94,7 +63,8 @@ Category gc2category(const Generalized_char& gc){
                     break;
 
                 default:
-                    ;
+                    categ.kind = Set_of_cs;
+                    categ.s    = sets_for_char_classes[gc.cls];
             }
             break;
 

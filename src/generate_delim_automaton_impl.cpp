@@ -53,54 +53,6 @@ static std::string delim_proc_body(const std::string& s){
     return result;
 }
 
-//
-// /* Данная функция на вход получает индекс имени действия, i, в префиксном дереве
-//  * идентификаторов, а в качестве результата выдаёт строковое представление
-//  * определения действия. */
-// std::string get_act_repres(Info_for_constructing& info, size_t i){
-//     /* Непустая строка возвращается только в том случае, когда действие
-//      * с таким индексом имени есть. */
-//     std::string result;
-//     if(!i){
-//         return result;
-//     }
-//     auto isc = info.scope->idsc;
-//     auto iti = isc.find(i);
-//     if(iti != isc.end()){
-//         size_t act_str_idx = iti->second.act_string;
-//         result = idx_to_string(info.et.strs_trie, act_str_idx);
-//     }
-//     return result;
-// }
-//
-// /*
-//  * Добавляет в ассоциативный массив std::map<size_t, std::string> category_name
-//  * категорию (множество) символов с именем default_name. Если такого множества ещё
-//  * нет, то добавляем с таким названием, и возвращаем его и true. Если же есть, то
-//  * возвращаем имеющееся название и false.
-// */
-// std::pair<bool, std::string> add_category(Info_for_constructing&    info,
-//                                           const std::set<char32_t>& s,
-//                                           const std::string&        default_name)
-// {
-//     std::string result_str;
-//     bool        result_bool;
-//
-//     size_t i = info.char_cat.insertSet(s);
-//     auto it  = info.category_name.find(i);
-//     if(it != info.category_name.end()){
-//         result_str            = it->second;
-//         result_bool           = false;
-//     }else{
-//         info.category_name[i] = default_name;
-//         result_str            = default_name;
-//         result_bool           = true;
-//     }
-//
-//     auto result = std::make_pair(result_bool, result_str);
-//     return result;
-// }
-
 void generate_delim_automaton_impl(Info_for_constructing& info){
     /* Данная функция строит реализацию автомата, обрабатывающего разделители. */
     if(!belongs(Delimiter_aut, info.set_of_used_automata)){

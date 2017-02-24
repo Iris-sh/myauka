@@ -65,4 +65,3 @@ void Char_trie::print(size_t idx){
 size_t Char_trie::get_length(size_t idx){
     return node_buffer[idx].path_len;
 }
-

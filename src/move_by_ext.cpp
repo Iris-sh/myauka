@@ -6,6 +6,7 @@
              gavrilov.vladimir.s@mail.ru
              gavvs1977@yandex.ru
 */
+
 #include "../include/move_by_ext.h"
 
 namespace fs = boost::filesystem;

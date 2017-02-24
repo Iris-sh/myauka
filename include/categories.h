@@ -43,6 +43,4 @@ bool operator * (const Category& c1, const Category& c2);
 bool is_subcategory(const Category& c1, const Category& c2);
 
 void print_category(const Category& c);
-
-void print_char32_t(const char32_t& c);
 #endif

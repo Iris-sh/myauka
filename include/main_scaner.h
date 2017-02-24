@@ -1,4 +1,4 @@
-/* 
+/*
     Файл:    main_scaner.h
     Создан:  14 декабря 2015г. в 15:25 (по Москве)
     Автор:   Гаврилов Владимир Сергеевич
@@ -13,7 +13,6 @@
 #include "../include/abstract_scaner.h"
 #include "../include/error_count.h"
 #include <string>
-// #include "../include/trie.h"
 
 enum Main_lexem_code : uint16_t {
     None,                  Unknown,            Id,

@@ -62,16 +62,6 @@ void NS_parser::compile(Command_buffer& buf, Init_and_final_acts& acts){
     a_parser_->compile(buf_, kind);
     buf  = buf_;
     acts = acts_;
-//     sec_begin = Kw_numbers;
-//
-//     begin_of_num_or_str_sec(acts_for_numbers);
-// //     printf("is_other_section = %s.\n", is_other_section  ? "true" : "false");
-//      if(is_other_section){
-//          return;
-//      }
-//
-//     set_of_used_automata |= 1ULL << Number_aut;
-//     num_and_str_parser->compile(numbers_regexp, Number_expr);
 }
 
 bool NS_parser::begin_of_num_or_str_sec(){
@@ -90,7 +80,6 @@ bool NS_parser::begin_of_num_or_str_sec(){
     state = Num_str_kw;
     t     = true;
     while((lc = (li = msc->current_lexem()).code)){
-//         printf("state = %s.\n", state_name[state]);
         t = (this->*procs[state])();
         if(!t){
             return t;
@@ -117,7 +106,6 @@ NS_parser::State_proc NS_parser::procs[] = {
 };
 
 bool NS_parser::num_str_kw_proc(){
-//     printf("sec_begin == lic is %s.\n", (sec_begin == lic) ? "true" : "false");
     bool t = true;
     if(sec_begin == lc){
         state = Maybe_init_acts;

@@ -177,21 +177,6 @@ void convert_NDFA_to_DFA(DFA& a, const NDFA& ndfa){
     a.number_of_states = current_nom_of_DFA_state;
 }
 
-// void print_DFA(const DFA& a){
-    // printf("Begin state is %zu.\n", a.begin_state);
-    // puts("Final states are:");
-    // print_set(a.final_states, print_size_t);
-    // printf("\nDFA jumps:\n");
-    // for(auto j : a.jumps){
-        // auto sgc   = j.first;
-        // auto where = j.second;
-        // printf("delta(%zu, ", sgc.first);
-        // print_generalized_char(sgc.second);
-        // printf(") = %zu with action %zu\n", where.st, where.action_idx);
-    // }
-    // printf("Number of states: %zu.\n", a.number_of_states);
-// }
-
 /* далее приводится реализация функции, строящей минимизированный ДКА,
  * а также необходимые для этого вспомогательные функции и типы данных */
 
@@ -328,7 +313,6 @@ States_classification group_states_classificate(const Partition_as_vector& pv,
 Partition_as_sets split_group_by_gc(const Partition_as_vector& pv, const Min_DFA_jumps& j,
                                     const Group& group,            Generalized_char gc){
     Partition_as_sets partition;
-//     using State_and_group_numb = std::pair<size_t, size_t>;
     auto states_classification = group_states_classificate(pv, j, group, gc);
 
     /* а теперь собственно и строим разбиение группы group, пользуясь для этого
@@ -398,7 +382,6 @@ Partition_as_sets split_states_into_equivalence_classes(const Min_DFA_jumps& j,
 
 size_t action_for_group(const Min_DFA_jumps& j, const Group& g,
                         const Generalized_char& gc){
-//     size_t result = 0;
     for(const size_t state : g){
         auto& state_j = j[state];
         auto  it      = state_j.find(gc);
@@ -438,19 +421,6 @@ Min_DFA_jumps minimal_DFA_jumps(const Partition_as_sets& equivalence_classes,
     }
     return result;
 }
-
-// void print_minimal_jumps(const Min_DFA_jumps& j){
-    // size_t s = j.size();
-    // for(size_t i = 0; i < s; i++){
-        // auto& m = j[i];
-        // for(const auto& x : m){
-            // printf("delta(%zu, ", i);
-            // print_generalized_char(x.first);
-            // auto sa = x.second;
-            // printf(") = %zu with action having index %zu\n", sa.st, sa.action_idx);
-        // }
-    // }
-// }
 
 using Permutation = std::vector<size_t>;
 Permutation build_state_permutation(const Min_DFA_jumps& j, size_t begin_state){
@@ -532,12 +502,3 @@ void minimize_DFA(Min_DFA& minimal, const DFA& source){
     minimal.final_states = fs;
     minimal              = reordered_DFA(minimal);
 }
-
-// void print_minimal_DFA(const Min_DFA& a){
-    // printf("Begin state of minimal DFA is %zu.\n", a.begin_state);
-    // puts("Final states of minimal DFA are:");
-    // print_set(a.final_states, print_size_t);
-    // printf("\nNumber of jumps: %zu\n", a.jumps.size());
-    // printf("\nMinimal DFA jumps:\n");
-    // print_minimal_jumps(a.jumps);
-// }

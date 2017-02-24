@@ -14,10 +14,8 @@ const char32_t* newline_lexem_str = U"Newline";
 
 void Codes_and_newline::newline_is_lexem_sec(){
     li = msc->current_lexem();
-    // newline_is_lexem = true;
     size_t idx       = et_.ids_trie->insert(newline_lexem_str);
     add_new_lexem_code(idx);
-    // return true;
 }
 
 void Codes_and_newline::add_new_lexem_code(size_t idx){
@@ -48,7 +46,6 @@ void Codes_and_newline::codes_sec(std::vector<size_t>& codes_, size_t& last_code
 
 void Codes_and_newline::codes_sec_(){
     lc = (li = msc-> current_lexem()).code;
-    //li = msc->current_lexem();
     if(lc != Kw_codes){
         printf("В строке %zu ожидается %%codes.\n", msc->lexem_begin_line_number());
         et_.ec -> increment_number_of_errors();
@@ -66,7 +63,6 @@ void Codes_and_newline::codes_sec_(){
 
 bool Codes_and_newline::codes_id_proc(){
     bool t = true;
-    //Main_lexem_code c = li.code;
     if(Id == lc){
         add_new_lexem_code(li.ident_index);
         state = Codes_comma_sep;

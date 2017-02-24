@@ -60,7 +60,6 @@ Simple_regex_parser::Proc Simple_regex_parser::state_proc[] = {
 };
 
 void Simple_regex_parser::state_begin_expr_proc(Command_buffer& buf){
-//     Expr_lexem_code elc = eli.code;
     state = State_begin_concat;
     if(Begin_expression == elc){
         return;

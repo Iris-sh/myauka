@@ -14,15 +14,15 @@
 
 KW_parser::State_proc KW_parser::procs[] = {
     &KW_parser::maybe_repres_str_proc,     &KW_parser::colon_sep0_proc,
-    &KW_parser::maybe_code_kw_or_del_proc, &KW_parser::repres_str_proc,       
-    &KW_parser::code_kw_or_del_proc,       &KW_parser::colon_sep_proc,  
+    &KW_parser::maybe_code_kw_or_del_proc, &KW_parser::repres_str_proc,
+    &KW_parser::code_kw_or_del_proc,       &KW_parser::colon_sep_proc,
     &KW_parser::kw_del_comma_sep_proc
 };
 
-static const std::string defined_keyword = 
+static const std::string defined_keyword =
     "В строке %zu повторно определено ключевое слово ";
 
-static const std::string defined_delimiter = 
+static const std::string defined_delimiter =
     "В строке %zu повторно определён разделитель ";
 
 Settings Keyword_parser::settings(){
@@ -35,8 +35,8 @@ Settings Delimiter_parser::settings(){
 
 void KW_parser::add_new_string(const size_t idx, const size_t code_){
 /* Первый аргумент данной функции --- индекс строкового литерала, представляющего
- * ключевое слово или разделитель, в префиксном дереве строковых литералов, а 
- * второй аргумент --- индекс идентификатора, являющегося соответствующим кодом лексемы, 
+ * ключевое слово или разделитель, в префиксном дереве строковых литералов, а
+ * второй аргумент --- индекс идентификатора, являющегося соответствующим кодом лексемы,
  * в префиксном дереве идентификаторов. */
     auto s = scope_->strsc.find(idx);
     Str_attributes sattr;
@@ -62,7 +62,7 @@ void KW_parser::add_new_string(const size_t idx, const size_t code_){
     }
 }
 
-size_t KW_parser::compile(std::vector<size_t>& repres_, std::vector<size_t>& codes_, 
+size_t KW_parser::compile(std::vector<size_t>& repres_, std::vector<size_t>& codes_,
                           size_t& last_code){
     last_code_val = last_code;
     repres        = repres_;
@@ -98,26 +98,26 @@ void KW_parser::compile_(){
 }
 
 bool KW_parser::maybe_repres_str_proc(){
-    bool t = true;    
+    bool t = true;
     if(String == lc){
             maybe_repres_str_idx = li.string_index;
             state = Colon_sep0;
-            return t;        
+            return t;
     }
     if(belongs(lc, 1ULL << Colon | 1ULL << Id | 1ULL << Comma)){
         printf("В строке %zu ожидается строковый литерал, являющийся либо действием "
                 "по завершении, либо представлением ключевого слова или разделителя.\n",
                 msc->lexem_begin_line_number());
-        et_.ec -> increment_number_of_errors(); 
+        et_.ec -> increment_number_of_errors();
         switch(lc){
             case Colon:
                 state = Maybe_code_kw_or_del;
                 break;
-            case Id:  
+            case Id:
                 idx = maybe_repres_str_idx;
                 add_new_string(idx, li.ident_index);
                 state = Code_kw_or_del;
-                break;            
+                break;
             case Comma:
                 state = Kw_del_comma_sep;
                 break;
@@ -129,7 +129,7 @@ bool KW_parser::maybe_repres_str_proc(){
     }
     return t;
 }
-     
+
 bool KW_parser::colon_sep0_proc(){
     bool t = true;
     if(Colon == lc){
@@ -220,7 +220,7 @@ bool KW_parser::repres_str_proc(){
     }else{
         msc->back(); t = false;
     }
-    return t;    
+    return t;
 }
 
 bool KW_parser::colon_sep_proc(){
@@ -271,7 +271,7 @@ bool KW_parser::code_kw_or_del_proc(){
                 break;
             default:
                 ;
-        }        
+        }
     }else{
         msc->back(); t = false;
     }
@@ -283,21 +283,21 @@ bool KW_parser::kw_del_comma_sep_proc(){
     if(String == lc){
         idx = li.string_index;
         state = Repres_str;
-        return t;        
+        return t;
     }
     if(belongs(lc, 1ULL << Colon | 1ULL << Id | 1ULL << Comma)){
         printf("В строке %zu ожидается строковый литерал, являющийся либо действием "
                 "по завершении, либо представлением ключевого слова или разделителя.\n",
                 msc->lexem_begin_line_number());
-        et_.ec -> increment_number_of_errors(); 
+        et_.ec -> increment_number_of_errors();
         switch(lc){
             case Colon:
                 state = Colon_sep;
                 break;
-            case Id:  
+            case Id:
                 add_new_string(idx, li.ident_index);
                 state = Code_kw_or_del;
-                break;            
+                break;
             case Comma:
                 break;
             default:

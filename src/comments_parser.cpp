@@ -464,9 +464,6 @@ bool Comments_parser::beg_end_delim_proc(){
 
 bool Comments_parser::multilined_end_proc(){
     bool t;
-    // printf("В строке %zu встречен неожиданный вид лексемы.\n",
-           // msc->lexem_begin_line_number());
-    // et_.ec -> increment_number_of_errors();
     t = false;
     return t;
 }

@@ -13,8 +13,8 @@
 #define DOUBLE_INDENT_WIDTH    ((INDENT_WIDTH) * 2)
 #define TRIPLE_INDENT_WIDTH    ((INDENT_WIDTH) * 3)
 #define QUADRUPLE_INDENT_WIDTH ((INDENT_WIDTH) * 4)
-extern const std::string indent;           //= std::string(INDENT_WIDTH,           ' ');
-extern const std::string double_indent;    //= std::string(DOUBLE_INDENT_WIDTH,    ' ');
-extern const std::string triple_indent;    //= std::string(TRIPLE_INDENT_WIDTH,    ' ');
-extern const std::string quadruple_indent; //= std::string(QUADRUPLE_INDENT_WIDTH, ' ');
+extern const std::string indent;
+extern const std::string double_indent;
+extern const std::string triple_indent;
+extern const std::string quadruple_indent;
 #endif

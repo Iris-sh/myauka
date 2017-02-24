@@ -108,4 +108,3 @@ std::u32string utf8_to_u32string(const char* utf8str){
     }
     return s;
 }
-

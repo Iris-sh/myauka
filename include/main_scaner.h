@@ -13,22 +13,25 @@
 #include "../include/abstract_scaner.h"
 #include "../include/error_count.h"
 #include <string>
+// #include "../include/trie.h"
 
 enum Main_lexem_code : uint16_t {
-    None,                  Unknown,            Id,
-    Kw_action,             Kw_class_members,   Kw_codes,
-    Kw_codes_type,         Kw_comments,        Kw_delimiters,
-    Kw_ident_name,         Kw_idents,          Kw_keywords,
-    Kw_multilined,         Kw_nested,          Kw_newline_is_lexem,
-    Kw_numbers,            Kw_scaner_name,     Kw_single_lined,
-    Kw_strings,            Kw_token_fields,    Comma,
-    Colon,                 Opened_fig_brack,   Closed_fig_brack,
-    String,                M_Kw_action,        M_Kw_class_members,
-    M_Kw_codes,            M_Kw_codes_type,    M_Kw_comments,
-    M_Kw_delimiters,       M_Kw_ident_name,    M_Kw_idents,
-    M_Kw_keywords,         M_Kw_multilined,    M_Kw_nested,
-    M_Kw_newline_is_lexem, M_Kw_numbers,       M_Kw_scaner_name,
-    M_Kw_single_lined,     M_Kw_strings,       M_Kw_token_fields
+    None,                  Unknown,             Id,
+    Kw_action,             Kw_class_members,    Kw_codes,
+    Kw_codes_type,         Kw_comments,         Kw_delimiters,
+    Kw_ident_name,         Kw_idents,           Kw_keywords,
+    Kw_multilined,         Kw_nested,           Kw_newline_is_lexem,
+    Kw_numbers,            Kw_scaner_name,      Kw_single_lined,
+    Kw_strings,            Kw_token_fields,     Kw_header_additions,
+    Kw_impl_additions,     Kw_lexem_info_name,  Comma,
+    Colon,                 Opened_fig_brack,    Closed_fig_brack,
+    String,                M_Kw_action,         M_Kw_class_members,
+    M_Kw_codes,            M_Kw_codes_type,     M_Kw_comments,
+    M_Kw_delimiters,       M_Kw_ident_name,     M_Kw_idents,
+    M_Kw_keywords,         M_Kw_multilined,     M_Kw_nested,
+    M_Kw_newline_is_lexem, M_Kw_numbers,        M_Kw_scaner_name,
+    M_Kw_single_lined,     M_Kw_strings,        M_Kw_token_fields,
+    M_Kw_header_additions, M_Kw_impl_additions, M_Kw_lexem_info_name
 };
 
 struct Main_lexem_info{

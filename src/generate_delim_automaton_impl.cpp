@@ -1,7 +1,7 @@
 /*
-    Файл:    generate_delim_automaton_impl.cpp
-    Создан:  03 февраля 2017г. в 15:49 (по Москве)
-    Автор:   Гаврилов Владимир Сергеевич
+    File:    generate_delim_automaton_impl.cpp
+    Created: 03 февраля 2017г. в 15:49 (по Москве)
+    Author:  Гаврилов Владимир Сергеевич
     E-mails: vladimir.s.gavrilov@gmail.com
              gavrilov.vladimir.s@mail.ru
              gavvs1977@yandex.ru

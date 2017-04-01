@@ -1,7 +1,7 @@
 /*
-    Файл:    grouped_DFA_by_uwrapped_regexp.cpp
-    Создан:  2 февраля 2017г. в 10:30 (по Москве)
-    Автор:   Гаврилов Владимир Сергеевич
+    File:    grouped_DFA_by_uwrapped_regexp.cpp
+    Created: 2 февраля 2017г. в 10:30 (по Москве)
+    Author:  Гаврилов Владимир Сергеевич
     E-mails: vladimir.s.gavrilov@gmail.com
              gavrilov.vladimir.s@mail.ru
              gavvs1977@yandex.ru

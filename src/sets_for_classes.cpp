@@ -1,7 +1,7 @@
 /*
-    Файл:    sets_for_classes.cpp
-    Создан:  12 февраля 2017г. в 20:55 (по Москве)
-    Автор:   Гаврилов Владимир Сергеевич
+    File:    sets_for_classes.cpp
+    Created: 12 февраля 2017г. в 20:55 (по Москве)
+    Author:  Гаврилов Владимир Сергеевич
     E-mails: vladimir.s.gavrilov@gmail.com
              gavrilov.vladimir.s@mail.ru
              gavvs1977@yandex.ru

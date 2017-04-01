@@ -1,7 +1,7 @@
 /*
-    Файл:    automata_repres.h
-    Создан:  04 февраля 2017г. в 14:59 (по Москве)
-    Автор:   Гаврилов Владимир Сергеевич
+    File:    automata_repres.h
+    Created: 04 февраля 2017г. в 14:59 (по Москве)
+    Author:  Гаврилов Владимир Сергеевич
     E-mails: vladimir.s.gavrilov@gmail.com
              gavrilov.vladimir.s@mail.ru
              gavvs1977@yandex.ru

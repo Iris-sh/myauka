@@ -1,7 +1,7 @@
 /*
-    Файл:    num_str_parser.h
-    Создан:  06 ноября 2016г. в 12:20 (по Москве)
-    Автор:   Гаврилов Владимир Сергеевич
+    File:    num_str_parser.h
+    Created: 06 ноября 2016г. в 12:20 (по Москве)
+    Author:  Гаврилов Владимир Сергеевич
     E-mails: vladimir.s.gavrilov@gmail.com
              gavrilov.vladimir.s@mail.ru
              gavvs1977@yandex.ru

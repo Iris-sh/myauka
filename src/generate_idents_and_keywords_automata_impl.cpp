@@ -1,7 +1,7 @@
 /*
-    Файл:    generate_idents_and_keywords_automata_impl.cpp
-    Создан:  05 февраля 2017г. в 10:45 (по Москве)
-    Автор:   Гаврилов Владимир Сергеевич
+    File:    generate_idents_and_keywords_automata_impl.cpp
+    Created: 05 февраля 2017г. в 10:45 (по Москве)
+    Author:  Гаврилов Владимир Сергеевич
     E-mails: vladimir.s.gavrilov@gmail.com
              gavrilov.vladimir.s@mail.ru
              gavvs1977@yandex.ru

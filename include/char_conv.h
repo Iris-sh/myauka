@@ -1,7 +1,7 @@
 /*
-     Файл:    char_conv.h
+     File:    char_conv.h
      Создано: 28 января 2016г.
-     Автор:   Гаврилов Владимир Сергеевич
+     Author:  Гаврилов Владимир Сергеевич
      E-mails: vladimir.s.gavrilov@gmail.com
               gavrilov.vladimir.s@mail.ru
               gavvs1977@yandex.ru

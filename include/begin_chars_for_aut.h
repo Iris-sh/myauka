@@ -1,7 +1,7 @@
 /*
-    Файл:    begin_chars_for_aut.h
-    Создан:  04 февраля 2017г. в 14:26 (по Москве)
-    Автор:   Гаврилов Владимир Сергеевич
+    File:    begin_chars_for_aut.h
+    Created: 04 февраля 2017г. в 14:26 (по Москве)
+    Author:  Гаврилов Владимир Сергеевич
     E-mails: vladimir.s.gavrilov@gmail.com
              gavrilov.vladimir.s@mail.ru
              gavvs1977@yandex.ru

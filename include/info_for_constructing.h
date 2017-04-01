@@ -1,7 +1,7 @@
 /*
-    Файл:    info_for_constructing.h
-    Создан:  02 февраля 2017г. в 10:36 (по Москве)
-    Автор:   Гаврилов Владимир Сергеевич
+    File:    info_for_constructing.h
+    Created: 02 февраля 2017г. в 10:36 (по Москве)
+    Author:  Гаврилов Владимир Сергеевич
     E-mails: vladimir.s.gavrilov@gmail.com
              gavrilov.vladimir.s@mail.ru
              gavvs1977@yandex.ru

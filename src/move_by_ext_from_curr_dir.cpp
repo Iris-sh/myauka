@@ -1,7 +1,7 @@
 /*
-    Файл:    move_by_ext_from_curr_dir.cpp
-    Создан:  5 ноября 2016г. в 13:41 (по Москве)
-    Автор:   Гаврилов Владимир Сергеевич
+    File:    move_by_ext_from_curr_dir.cpp
+    Created: 5 ноября 2016г. в 13:41 (по Москве)
+    Author:  Гаврилов Владимир Сергеевич
     E-mails: vladimir.s.gavrilov@gmail.com
              gavrilov.vladimir.s@mail.ru
              gavvs1977@yandex.ru

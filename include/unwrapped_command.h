@@ -1,7 +1,7 @@
 /*
-    Файл:    unwrapped_command.h
-    Создан:  24 января 2017г. в 17:29 (по Москве)
-    Автор:   Гаврилов Владимир Сергеевич
+    File:    unwrapped_command.h
+    Created: 24 января 2017г. в 17:29 (по Москве)
+    Author:  Гаврилов Владимир Сергеевич
     E-mails: vladimir.s.gavrilov@gmail.com
              gavrilov.vladimir.s@mail.ru
              gavvs1977@yandex.ru

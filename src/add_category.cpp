@@ -1,7 +1,7 @@
 /*
-    Файл:    add_category.cpp
-    Создан:  04 февраля 2017г. в 13:10 (по Москве)
-    Автор:   Гаврилов Владимир Сергеевич
+    File:    add_category.cpp
+    Created: 04 февраля 2017г. в 13:10 (по Москве)
+    Author:  Гаврилов Владимир Сергеевич
     E-mails: vladimir.s.gavrilov@gmail.com
              gavrilov.vladimir.s@mail.ru
              gavvs1977@yandex.ru

@@ -1,7 +1,7 @@
 /*
-    Файл:    unwrap_commands.cpp
-    Создан:  24 января 2017г. в 16:17 (по Москве)
-    Автор:   Гаврилов Владимир Сергеевич
+    File:    unwrap_commands.cpp
+    Created: 24 января 2017г. в 16:17 (по Москве)
+    Author:  Гаврилов Владимир Сергеевич
     E-mails: vladimir.s.gavrilov@gmail.com
              gavrilov.vladimir.s@mail.ru
              gavvs1977@yandex.ru

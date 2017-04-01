@@ -1,7 +1,7 @@
 /*
-    Файл:    automaton_with_procs.h
-    Создан:  05 февраля 2017г. в 21:21 (по Москве)
-    Автор:   Гаврилов Владимир Сергеевич
+    File:    automaton_with_procs.h
+    Created: 05 февраля 2017г. в 21:21 (по Москве)
+    Author:  Гаврилов Владимир Сергеевич
     E-mails: vladimir.s.gavrilov@gmail.com
              gavrilov.vladimir.s@mail.ru
              gavvs1977@yandex.ru

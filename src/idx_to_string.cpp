@@ -1,7 +1,7 @@
 /* 
-    Файл:    idx_to_string.cpp
-    Создан:  13 декабря 2015г. в 09:05 (по Москве)
-    Автор:   Гаврилов Владимир Сергеевич
+    File:    idx_to_string.cpp
+    Created: 13 декабря 2015г. в 09:05 (по Москве)
+    Author:  Гаврилов Владимир Сергеевич
     E-mails: vladimir.s.gavrilov@gmail.com
              gavrilov.vladimir.s@mail.ru
              gavvs1977@yandex.ru

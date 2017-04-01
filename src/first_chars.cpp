@@ -1,7 +1,7 @@
 /*
-    Файл:    first_chars.cpp
-    Создан:  13 января 2016г. в 16:04 (по Москве)
-    Автор:   Гаврилов Владимир Сергеевич
+    File:    first_chars.cpp
+    Created: 13 января 2016г. в 16:04 (по Москве)
+    Author:  Гаврилов Владимир Сергеевич
     E-mails: vladimir.s.gavrilov@gmail.com
              gavrilov.vladimir.s@mail.ru
              gavvs1977@yandex.ru

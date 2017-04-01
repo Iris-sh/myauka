@@ -1,7 +1,7 @@
 /*
-    Файл:    generate_strings_automaton_impl.h
-    Создан:  04 февраля 2017г. в 13:34 (по Москве)
-    Автор:   Гаврилов Владимир Сергеевич
+    File:    generate_strings_automaton_impl.h
+    Created: 04 февраля 2017г. в 13:34 (по Москве)
+    Author:  Гаврилов Владимир Сергеевич
     E-mails: vladimir.s.gavrilov@gmail.com
              gavrilov.vladimir.s@mail.ru
              gavvs1977@yandex.ru

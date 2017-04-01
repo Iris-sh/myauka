@@ -1,7 +1,7 @@
 /*
-    Файл:    main_parser_data.cpp
-    Создан:  14 декабря 2015г. в 15:25 (по Москве)
-    Автор:   Гаврилов Владимир Сергеевич
+    File:    main_parser_data.cpp
+    Created: 14 декабря 2015г. в 15:25 (по Москве)
+    Author:  Гаврилов Владимир Сергеевич
     E-mails: vladimir.s.gavrilov@gmail.com
              gavrilov.vladimir.s@mail.ru
              gavvs1977@yandex.ru

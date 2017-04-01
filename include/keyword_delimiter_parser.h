@@ -1,7 +1,7 @@
 /*
-    Файл:    keyword_delimiter_parser.h
-    Создан:  12 августа 2016г. в 09:41 (по Москве)
-    Автор:   Гаврилов Владимир Сергеевич
+    File:    keyword_delimiter_parser.h
+    Created: 12 августа 2016г. в 09:41 (по Москве)
+    Author:  Гаврилов Владимир Сергеевич
     E-mails: vladimir.s.gavrilov@gmail.com
              gavrilov.vladimir.s@mail.ru
              gavvs1977@yandex.ru

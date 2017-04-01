@@ -1,7 +1,7 @@
 /*
-    Файл:    fuse_unwrapped_commands.cpp
-    Создан:  25 января 2017г. в 17:09 (по Москве)
-    Автор:   Гаврилов Владимир Сергеевич
+    File:    fuse_unwrapped_commands.cpp
+    Created: 25 января 2017г. в 17:09 (по Москве)
+    Author:  Гаврилов Владимир Сергеевич
     E-mails: vladimir.s.gavrilov@gmail.com
              gavrilov.vladimir.s@mail.ru
              gavvs1977@yandex.ru

@@ -1,7 +1,7 @@
 /*
-    Файл:    add_category.h
-    Создан:  04 февраля 2017г. в 13:01 (по Москве)
-    Автор:   Гаврилов Владимир Сергеевич
+    File:    add_category.h
+    Created: 04 февраля 2017г. в 13:01 (по Москве)
+    Author:  Гаврилов Владимир Сергеевич
     E-mails: vladimir.s.gavrilov@gmail.com
              gavrilov.vladimir.s@mail.ru
              gavvs1977@yandex.ru

@@ -1,7 +1,7 @@
 /*
-    Файл:    categories.cpp
-    Создан:  10 января 2015г. в 10:47 (по Москве)
-    Автор:   Гаврилов Владимир Сергеевич
+    File:    categories.cpp
+    Created: 10 января 2015г. в 10:47 (по Москве)
+    Author:  Гаврилов Владимир Сергеевич
     E-mails: vladimir.s.gavrilov@gmail.com
              gavrilov.vladimir.s@mail.ru
              gavvs1977@yandex.ru

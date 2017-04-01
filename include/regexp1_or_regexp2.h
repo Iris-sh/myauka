@@ -1,7 +1,7 @@
 /*
-    Файл:    regexp1_or_regexp2.h
-    Создан:  05 февраля 2017г. в 17:37 (по Москве)
-    Автор:   Гаврилов Владимир Сергеевич
+    File:    regexp1_or_regexp2.h
+    Created: 05 февраля 2017г. в 17:37 (по Москве)
+    Author:  Гаврилов Владимир Сергеевич
     E-mails: vladimir.s.gavrilov@gmail.com
              gavrilov.vladimir.s@mail.ru
              gavvs1977@yandex.ru

@@ -1,7 +1,7 @@
 /*
-    Файл:    print_char32.h
-    Создан:  19 января 2017г. в 11:47 (по Москве)
-    Автор:   Гаврилов Владимир Сергеевич
+    File:    print_char32.h
+    Created: 19 января 2017г. в 11:47 (по Москве)
+    Author:  Гаврилов Владимир Сергеевич
     E-mails: vladimir.s.gavrilov@gmail.com
              gavrilov.vladimir.s@mail.ru
              gavvs1977@yandex.ru

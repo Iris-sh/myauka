@@ -1,7 +1,7 @@
 /*
-    Файл:    regexp1_with_regexp2ast.cpp
-    Создан:  05 февраля 2017г. в 11:20 (по Москве)
-    Автор:   Гаврилов Владимир Сергеевич
+    File:    regexp1_with_regexp2ast.cpp
+    Created: 05 февраля 2017г. в 11:20 (по Москве)
+    Author:  Гаврилов Владимир Сергеевич
     E-mails: vladimir.s.gavrilov@gmail.com
              gavrilov.vladimir.s@mail.ru
              gavvs1977@yandex.ru

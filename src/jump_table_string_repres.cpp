@@ -1,7 +1,7 @@
 /*
-    Файл:    jump_table_string_repres.cpp
-    Создан:  04 февраля 2017г. в 11:43 (по Москве)
-    Автор:   Гаврилов Владимир Сергеевич
+    File:    jump_table_string_repres.cpp
+    Created: 04 февраля 2017г. в 11:43 (по Москве)
+    Author:  Гаврилов Владимир Сергеевич
     E-mails: vladimir.s.gavrilov@gmail.com
              gavrilov.vladimir.s@mail.ru
              gavvs1977@yandex.ru

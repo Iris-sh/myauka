@@ -1,7 +1,7 @@
 /*
-    Файл:    scaner_header.h
-    Создан:  07 февраля 2017г. в 11:34 (по Москве)
-    Автор:   Гаврилов Владимир Сергеевич
+    File:    scaner_header.h
+    Created: 07 февраля 2017г. в 11:34 (по Москве)
+    Author:  Гаврилов Владимир Сергеевич
     E-mails: vladimir.s.gavrilov@gmail.com
              gavrilov.vladimir.s@mail.ru
              gavvs1977@yandex.ru

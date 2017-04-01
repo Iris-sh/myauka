@@ -1,7 +1,7 @@
 /*
-    Файл:    u32strings_to_commands.cpp
-    Создан:  05 февраля 2017г. в 17:56 (по Москве)
-    Автор:   Гаврилов Владимир Сергеевич
+    File:    u32strings_to_commands.cpp
+    Created: 05 февраля 2017г. в 17:56 (по Москве)
+    Author:  Гаврилов Владимир Сергеевич
     E-mails: vladimir.s.gavrilov@gmail.com
              gavrilov.vladimir.s@mail.ru
              gavvs1977@yandex.ru

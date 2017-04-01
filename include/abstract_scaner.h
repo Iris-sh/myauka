@@ -1,4 +1,4 @@
-/* 
+/*
     File:    abstract_scaner.h
     Created: 13 декабря 2015г. в 09:05 (по Москве)
     Author:  Гаврилов Владимир Сергеевич
@@ -24,40 +24,38 @@ public:
     Scaner(Location_ptr location, const Errors_and_tries& et);
     Scaner(const Scaner<Lexem_type>& orig) = default;
     virtual ~Scaner() = default;
-    /* Функция back() возвращает текущую лексему во входной поток.*/
+    /*  Function back() return the current lexem into the input stream. */
     void back();
-    /* Функция current_lexem() возвращает сведения о текущей
-     * лексеме (код лексемы и значение лексемы). */
+    /* Function current_lexem() returns information about current lexem,
+     * i.e. returns a lexem code and a lexem value. */
     virtual Lexem_type current_lexem() = 0;
-    /* Функция lexem_begin_line_number() возвращает номер строки
-     * обрабатываемого текста, с которой начинается лексема,
-     * сведения о которой возвращены функцией current_lexem(). */
+    /* Function lexem_begin_line_number() returns the line number
+     * at which the lexem starts. */
     size_t lexem_begin_line_number();
 protected:
-    int                          state; /* текущее состояние текущего автомата */
+    int                          state; /* the current state of the current automaton */
 
     Location_ptr                 loc;
-    char32_t*                    lexem_begin; /* указатель на начало лексемы */
-    char32_t                     ch;          /* текущий символ */
+    char32_t*                    lexem_begin; /* pointer to the lexem begin */
+    char32_t                     ch;          /* current character */
 
-    /* множество категорий символов, которым принадлежит
-     * текущий символ */
+    /* set of categories for the current character */
     uint64_t                     char_categories;
 
-    /* промежуточное значение сведений о лексеме */
+    /* intermediate value of the lexem information */
     Lexem_type                   token;
 
-    /* номер строки, с которой начинается текущая лексема */
+    /* the line number at which the current lexem starts */
     size_t                       lexem_begin_line;
 
-    /* указатель на класс, подсчитывающий количество ошибок: */
+    /* a pointer to a class that counts the number of errors: */
     std::shared_ptr<Error_count> en;
-    /* указатель на префиксное дерево для идентификаторов: */
+    /* a pointer to the prefix tree for identifiers: */
     std::shared_ptr<Char_trie>   ids;
-    /* указатель на префиксное дерево для строк: */
+    /* a pointer to the prefix tree for string literals: */
     std::shared_ptr<Char_trie>   strs;
 
-    /*буфер для записи обрабатываемого идентификатора или строки: */
+    /* buffer for writing the processed identifier or string: */
     std::u32string               buffer;
 };
 

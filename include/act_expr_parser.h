@@ -84,8 +84,8 @@ private:
     static Error_handler error_hadler[];
 
     struct Rule_info{
-        Non_terminal nt; /* во что сворачиваем */
-        uint8_t      len; /* длина правила */
+        Non_terminal nt;  /* target for reducing */
+        uint8_t      len; /* rule length */
     };
     static Rule_info rules[];
 

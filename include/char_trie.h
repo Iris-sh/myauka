@@ -1,6 +1,6 @@
 /*
     File:    char_trie.h
-    Created: 06 ноября 2016г. в 12:20 (по Москве)
+    Created: 06 November 2016г. в 12:20 (по Москве)
     Author:  Гаврилов Владимир Сергеевич
     E-mails: vladimir.s.gavrilov@gmail.com
              gavrilov.vladimir.s@mail.ru

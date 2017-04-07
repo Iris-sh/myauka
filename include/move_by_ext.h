@@ -1,6 +1,6 @@
 /*
     File:    move_by_ext.h
-    Created: 5 ноября 2016г. в 12:44 (по Москве)
+    Created: 5 November 2016г. в 12:44 (по Москве)
     Author:  Гаврилов Владимир Сергеевич
     E-mails: vladimir.s.gavrilov@gmail.com
              gavrilov.vladimir.s@mail.ru

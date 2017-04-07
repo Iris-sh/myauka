@@ -1,6 +1,6 @@
 /*
     File:    scaner_header.cpp
-    Created: 07 февраля 2017г. в 11:47 (по Москве)
+    Created: 07 February 2017г. в 11:47 (по Москве)
     Author:  Гаврилов Владимир Сергеевич
     E-mails: vladimir.s.gavrilov@gmail.com
              gavrilov.vladimir.s@mail.ru

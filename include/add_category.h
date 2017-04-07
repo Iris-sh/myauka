@@ -1,6 +1,6 @@
 /*
     File:    add_category.h
-    Created: 04 февраля 2017г. в 13:01 (по Москве)
+    Created: 04 February 2017г. в 13:01 (по Москве)
     Author:  Гаврилов Владимир Сергеевич
     E-mails: vladimir.s.gavrilov@gmail.com
              gavrilov.vladimir.s@mail.ru
@@ -14,10 +14,11 @@
 #include <string>
 #include "../include/info_for_constructing.h"
 /*
- * Добавляет в ассоциативный массив std::map<size_t, std::string> category_name
- * категорию (множество) символов с именем default_name. Если такого множества ещё
- * нет, то добавляем с таким названием, и возвращаем его и true. Если же есть, то
- * возвращаем имеющееся название и false.
+ * Insert a character category with the name default_name into the associative array
+ * std::map<size_t, std::string> category_name. A character category is a set of
+ * characters. If such set did't belong to the set, then the function inserts
+ * the category with the name default_name and returns the pair <true, default_name>;
+ * else the function returns the pair <false, the current name of the set>.
 */
 std::pair<bool, std::string> add_category(Info_for_constructing&    info,
                                           const std::set<char32_t>& s,

@@ -1,6 +1,6 @@
 /*
     File:    categories.h
-    Created: 10 января 2015г. в 10:32 (по Москве)
+    Created: 10 January 2015г. в 10:32 (по Москве)
     Author:  Гаврилов Владимир Сергеевич
     E-mails: vladimir.s.gavrilov@gmail.com
              gavrilov.vladimir.s@mail.ru

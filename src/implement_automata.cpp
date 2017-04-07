@@ -1,6 +1,6 @@
 /*
     File:    implement_automata.cpp
-    Created: 03 февраля 2017г. в 13:45 (по Москве)
+    Created: 03 February 2017г. в 13:45 (по Москве)
     Author:  Гаврилов Владимир Сергеевич
     E-mails: vladimir.s.gavrilov@gmail.com
              gavrilov.vladimir.s@mail.ru

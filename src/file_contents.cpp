@@ -1,7 +1,7 @@
 /*
     File:    file_contents.cpp
-    Author: Гаврилов Владимир Сергеевич
-    Created:4 февраля 2016, 13:10
+    Author:  Гаврилов Владимир Сергеевич
+    Created: 4 February 2016, 13:10
     e-mails: vladimir.s.gavrilov@gmail.com,
              gavrilov.vladimir.s@mail.ru,
              gavvs1977@yandex.ru

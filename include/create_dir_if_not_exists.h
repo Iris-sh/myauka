@@ -1,6 +1,6 @@
 /*
     File:    create_dir_if_not_exists.h
-    Created: 5 ноября 2016г. в 12:33 (по Москве)
+    Created: 5 November 2016г. в 12:33 (по Москве)
     Author:  Гаврилов Владимир Сергеевич
     E-mails: vladimir.s.gavrilov@gmail.com
              gavrilov.vladimir.s@mail.ru

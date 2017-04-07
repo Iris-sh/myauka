@@ -1,6 +1,6 @@
 /*
     File:    codes_and_newline.cpp
-    Created: 11 августа 2016г. в 7:40 (по Москве)
+    Created: 11 August 2016г. в 7:40 (по Москве)
     Author:  Гаврилов Владимир Сергеевич
     E-mails: vladimir.s.gavrilov@gmail.com
              gavrilov.vladimir.s@mail.ru

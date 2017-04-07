@@ -1,6 +1,6 @@
 /*
     File:    simple_regex_parser.h
-    Created: 14 декабря 2015г. в 15:25 (по Москве)
+    Created: 14 December 2015г. в 15:25 (по Москве)
     Author:  Гаврилов Владимир Сергеевич
     E-mails: vladimir.s.gavrilov@gmail.com
              gavrilov.vladimir.s@mail.ru

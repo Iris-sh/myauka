@@ -1,6 +1,6 @@
 /*
     File:    attributed_char_trie.cpp
-    Created: 06 ноября 2016г. в 12:20 (по Москве)
+    Created: 06 November 2016г. в 12:20 (по Москве)
     Author:  Гаврилов Владимир Сергеевич
     E-mails: vladimir.s.gavrilov@gmail.com
              gavrilov.vladimir.s@mail.ru
@@ -28,12 +28,6 @@ Attributed_string attributed_cstring2string(const Attributed_cstring acstr,
     return astr;
 }
 
-Attributed_char_trie_as_map::~Attributed_char_trie_as_map(){
-    for(auto x : *m){
-        delete [] x.second.str;
-    }
-}
-
 Attributed_cstring Attributed_char_trie::get_attributed_cstring(size_t idx){
     size_t id_len = node_buffer[idx].path_len;
     char32_t* p = new char32_t[id_len + 1];
@@ -52,15 +46,6 @@ Attributed_cstring Attributed_char_trie::get_attributed_cstring(size_t idx){
     Attributed_cstring astr =
         {.str = p, .attribute = node_buffer[idx].c.attribute};
     return astr;
-}
-
-Attributed_char_trie_as_map Attributed_char_trie::as_map(){
-    Attributed_char_trie_as_map t;
-    t.m = new std::map<size_t,Attributed_cstring>();
-    for(auto x : nodes_indeces){
-        t.m -> insert({x,get_attributed_cstring(x)});
-    }
-    return t;
 }
 
 bool operator == (Attributed_char x, Attributed_char y){

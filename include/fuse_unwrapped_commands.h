@@ -1,6 +1,6 @@
 /*
     File:    fuse_unwrapped_commands.h
-    Created: 25 января 2017г. в 17:06 (по Москве)
+    Created: 25 January 2017г. в 17:06 (по Москве)
     Author:  Гаврилов Владимир Сергеевич
     E-mails: vladimir.s.gavrilov@gmail.com
              gavrilov.vladimir.s@mail.ru

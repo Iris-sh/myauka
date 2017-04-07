@@ -1,6 +1,6 @@
 /*
     File:    first_chars.h
-    Created: 13 января 2016г. в 15:00 (по Москве)
+    Created: 13 January 2016г. в 15:00 (по Москве)
     Author:  Гаврилов Владимир Сергеевич
     E-mails: vladimir.s.gavrilov@gmail.com
              gavrilov.vladimir.s@mail.ru

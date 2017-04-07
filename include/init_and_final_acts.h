@@ -1,6 +1,6 @@
 /*
     File:    init_and_final_acts.h
-    Created: 04 февраля 2017г. в 14:39 (по Москве)
+    Created: 04 February 2017г. в 14:39 (по Москве)
     Author:  Гаврилов Владимир Сергеевич
     E-mails: vladimir.s.gavrilov@gmail.com
              gavrilov.vladimir.s@mail.ru

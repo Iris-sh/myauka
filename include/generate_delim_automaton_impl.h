@@ -1,6 +1,6 @@
 /*
     File:    generate_delim_automaton_impl.h
-    Created: 03 февраля 2017г. в 15:42 (по Москве)
+    Created: 03 February 2017г. в 15:42 (по Москве)
     Author:  Гаврилов Владимир Сергеевич
     E-mails: vladimir.s.gavrilov@gmail.com
              gavrilov.vladimir.s@mail.ru

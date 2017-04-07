@@ -1,6 +1,6 @@
 /*
     File:    attributed_char_trie.h
-    Created: 06 ноября 2016г. в 12:20 (по Москве)
+    Created: 06 November 2016г. в 12:20 (по Москве)
     Author:  Гаврилов Владимир Сергеевич
     E-mails: vladimir.s.gavrilov@gmail.com
              gavrilov.vladimir.s@mail.ru
@@ -13,8 +13,8 @@
 #include "../include/trie.h"
 
 struct Attributed_char {
-    size_t         attribute; /* атрибут символа (код лексемы) */
-    char32_t       ch;        /* сам символ */
+    size_t         attribute; /* character attribute (lexem code) */
+    char32_t       ch;        /* character */
 };
 
 bool operator == (Attributed_char x, Attributed_char y);
@@ -22,17 +22,12 @@ bool operator == (Attributed_char x, Attributed_char y);
 using Attributed_string = std::basic_string<Attributed_char>;
 
 struct Attributed_cstring {
-    char32_t* str;       /* Строковое представление лексемы. */
-    size_t    attribute; /* Код лексемы. */
+    char32_t* str;       /* string representation of lexem */
+    size_t    attribute; /* lexem code */
 };
 
 Attributed_string attributed_cstring2string(const Attributed_cstring acstr,
                                             size_t default_attr);
-
-struct Attributed_char_trie_as_map {
-    std::map<size_t,Attributed_cstring> *m;
-    ~Attributed_char_trie_as_map();
-};
 
 struct Jump_chars {
     std::u32string jump_chars;
@@ -52,17 +47,17 @@ struct Jumps_and_inits {
 class Attributed_char_trie : public Trie<Attributed_char>{
 public:
     virtual ~Attributed_char_trie() { };
-    /* Конструктор по умолчанию. */
+
     Attributed_char_trie(){};
-    /* Копирующий конструктор. */
+
     Attributed_char_trie(const Attributed_char_trie& orig) = default;
-    /* Данная функция по индексу idx строит соответствующую
-     * этому индексу пару (строка в стиле C, код лексемы). */
+
+    /* Using the index idx, this function builds the corresponding pair
+     *     (C-style string, lexem code).
+     */
     Attributed_cstring get_attributed_cstring(size_t idx);
-    /* Функция, возвращающая префиксное дерево в виде отображения индексов лексем строк
-     * с кодами соответствующих в строки в стиле C, для которых указаны коды лексем. */
-    Attributed_char_trie_as_map as_map();
-    /* Функция, строящая заготовку для таблицы переходов. */
+
+    /* This function builds the intermediate repesentation of the transition table. */
     Jumps_and_inits jumps();
 private:
     void get_next_level(const std::vector<size_t>& current_level,

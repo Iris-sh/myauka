@@ -1,6 +1,6 @@
 /*
     File:    codes_and_newline.h
-    Created: 10 августа 2016г. в 21:43 (по Москве)
+    Created: 10 August 2016г. в 21:43 (по Москве)
     Author:  Гаврилов Владимир Сергеевич
     E-mails: vladimir.s.gavrilov@gmail.com
              gavrilov.vladimir.s@mail.ru

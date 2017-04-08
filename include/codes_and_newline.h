@@ -54,10 +54,10 @@ private:
 
     bool codes_id_proc(); bool codes_comma_sep_proc();
 
-    /* Следующая функция проверяет идентификатор из перечисления с кодами
-     * лексем на существование. Если такой идентификатор уже есть, то
-     * выводится диагностика. Иначе идентификатор добавляется и в
-     * вектор codes, и в ассоциативный массив идентификаторов, idsc. */
+    /* The following function checks whether the identifier in the enum of
+     * lexem codes. If the identifier already exists, then it prints a diagnostic
+     * message. Otherwise, the identifier is added in the vector codes, and
+     * is added in the associative array of identifiers idsc. */
     void add_new_lexem_code(size_t idx);
 };
 #endif

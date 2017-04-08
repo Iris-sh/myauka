@@ -12,8 +12,7 @@
 
 #include <vector>
 #include <cstddef>
-/* В этом файле определяются команды, в которые транслируются
- * регулярные выражения. */
+/* This file defines the command, in which are compiled regular expressions. */
 
 enum Command_name {
     Cmd_or,             Cmd_concat,   Cmd_Kleene,
@@ -30,9 +29,8 @@ enum Char_class {
 };
 
 struct Command {
-    size_t action_name; /* Индекс идентификатора, являющегося
-                         * именем действия, в префиксном дереве
-                         * идентификаторов. */
+    size_t action_name; /* The index of the identifier that is the name of
+                         * the action, in the prefix tree of identifiers. */
     Command_name name;
     union{
         struct {
@@ -44,5 +42,4 @@ struct Command {
 };
 
 using Command_buffer = std::vector<Command>;
-
 #endif

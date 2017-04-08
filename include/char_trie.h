@@ -11,31 +11,27 @@
 
 #include "../include/trie.h"
 
-struct Char_trie_as_map {
-    std::map<size_t,char32_t*> *m;
-    ~Char_trie_as_map();
-};
-
 class Char_trie : public Trie<char32_t>{
 public:
     virtual ~Char_trie() { };
-    /* Конструктор по умолчанию. */
+
     Char_trie(){};
-    /* Копирующий конструктор. */
+
     Char_trie(const Char_trie& orig) = default;
-    /* Функция, по индексу idx строящая строку в стиле C,
-     * соответствующую индексу idx. */
+
+    /* Using the index idx, this function builds C-style string
+     * corresponding to the index idx. */
     char32_t* get_cstring(size_t idx);
-    /* Функция, по индексу idx строящая строку типа u32string,
-       соответствующую индексу idx. */
+
+    /* Using index idx, this function builds a string of the type u32string
+     * corresponding to the index idx. */
     std::u32string get_string(size_t idx);
-    /* Функция, возвращающая префиксное дерево в виде
-     * отображения индексов строк в строки в стиле C. */
-    Char_trie_as_map as_map();
-    /* Функция вывода строки, которой соответствует индекс idx, на экран. */
+
+    /* This function outputs the string corresponding to the index idx. */
     void print(size_t idx);
-    /* Следующая функция по индексу строки возвращает длину этой строки. */
+
+    /* The following function returns the length of the string
+     * corresponding to the index idx. */
     size_t get_length(size_t idx);
 };
-
 #endif

@@ -29,16 +29,15 @@ bool operator < (const Category& c1, const Category& c2);
 
 bool operator == (const Category& c1, const Category& c2);
 
-/* Вычисление объединения категорий символов. */
+/* Calculation of the union of character categories. */
 Category operator + (const Category& c1, const Category& c2);
 
-/* Проверяется, пересекаются ли категории c1 и c2. Выдаётся true, если категории
-   пересекаются, и false в противном случае. */
+/* If categories c1 and c2 intersect, then the returned value is true;
+ * else the returned value is false. */
 bool operator * (const Category& c1, const Category& c2);
 
-/* Функция ниже проверяет, содержится ли (возможно, нестрого) множество символов,
- * описываемое категорией c1, во множестве символов, описываемых категорией c2.
- * Если содержится --- выдаётся true, иначе --- false.
+/* If the category c1 is contained in the category c2, then the returned value
+ * is true, else the returned value is false.
  */
 bool is_subcategory(const Category& c1, const Category& c2);
 

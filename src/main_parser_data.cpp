@@ -1,6 +1,6 @@
 /*
     File:    main_parser_data.cpp
-    Created: 14 December 2015г. в 15:25 (по Москве)
+    Created: 14 December 2015 at 15:25 Moscow time
     Author:  Гаврилов Владимир Сергеевич
     E-mails: vladimir.s.gavrilov@gmail.com
              gavrilov.vladimir.s@mail.ru
@@ -130,7 +130,7 @@ std::string Main_parser_data::get_act_repres(size_t i){
 
 /*
  * Добавляет в ассоциативный массив std::map<size_t, std::string> category_name
- * категорию (множество) символов с именем default_name. Если такого множества ещё
+ * категорию Moscow time символов с именем default_name. Если такого множества ещё
  * нет, то добавляем с таким названием, и возвращаем его и true. Если же есть, то
  * возвращаем имеющееся название и false.
 */

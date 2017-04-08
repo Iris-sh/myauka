@@ -1,6 +1,6 @@
 /*
     File:    jump_table_string_repres.h
-    Created: 04 February 2017г. в 11:30 (по Москве)
+    Created: 04 February 2017 at 11:30 Moscow time
     Author:  Гаврилов Владимир Сергеевич
     E-mails: vladimir.s.gavrilov@gmail.com
              gavrilov.vladimir.s@mail.ru

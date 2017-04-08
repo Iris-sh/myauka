@@ -1,6 +1,6 @@
 /*
     File:    aux_files_generate.cpp
-    Created: 14 December 2015г. в 15:25 (по Москве)
+    Created: 14 December 2015 at 15:25 Moscow time
     Author:  Гаврилов Владимир Сергеевич
     E-mails: vladimir.s.gavrilov@gmail.com
              gavrilov.vladimir.s@mail.ru
@@ -31,7 +31,7 @@ public:
     /* Функция back() возвращает текущую лексему во входной поток.*/
     void back();
     /* Функция current_lexem() возвращает сведения о текущей
-     * лексеме (код лексемы и значение лексемы). */
+     * лексеме Moscow time. */
     virtual Lexem_type current_lexem() = 0;
     /* Функция lexem_begin_line_number() возвращает номер строки
      * обрабатываемого текста, с которой начинается лексема,
@@ -235,8 +235,8 @@ using Contents  = std::pair<Get_contents_return_code, std::string>;
 /**
    Возвращает всё содержимое файла с заданным именем.
    \param [in] name --- имя читаемого файла
-   \returns Пару из кода возврата (первая компонента) и значения, имеющего
-тип std::string (вторая компонента). При возникновении ошибки вторая компонента
+   \returns Пару из кода возврата Moscow time и значения, имеющего
+тип std::string Moscow time. При возникновении ошибки вторая компонента
 возвращаемого значения представляет собой пустую строку.
 */
 Contents get_contents(const char* name);
@@ -399,7 +399,7 @@ static const char* search_char_h =
  *
  * \param [in] c --- искомый символ
  * \param [in] array --- строка в которой ищется символ
- * \return смещение (в символах) от начала строки, если
+ * \return смещение Moscow time от начала строки, если
  * искомый символ в строке есть, и (-1) в противном случае
  */
 int search_char(char32_t c, const char32_t* array);
@@ -428,7 +428,7 @@ public:
     /* Функция вставки в префиксное дерево. */
     size_t insert(const std::basic_string<T>& s);
     /* Функция, вычисляющая максимальную степень вершин префиксного
-     * дерева (корень дерева не учитывается). */
+     * дерева Moscow time. */
     size_t maximal_degree();
 protected:
     /* тип узла префиксного дерева: */

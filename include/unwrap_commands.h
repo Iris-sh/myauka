@@ -1,6 +1,6 @@
 /*
     File:    unwrap_commands.h
-    Created: 24 January 2017г. в 15:58 (по Москве)
+    Created: 24 January 2017 at 15:58 Moscow time
     Author:  Гаврилов Владимир Сергеевич
     E-mails: vladimir.s.gavrilov@gmail.com
              gavrilov.vladimir.s@mail.ru

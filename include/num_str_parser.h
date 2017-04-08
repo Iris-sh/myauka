@@ -1,6 +1,6 @@
 /*
     File:    num_str_parser.h
-    Created: 06 November 2016г. в 12:20 (по Москве)
+    Created: 06 November 2016 at 12:20 Moscow time
     Author:  Гаврилов Владимир Сергеевич
     E-mails: vladimir.s.gavrilov@gmail.com
              gavrilov.vladimir.s@mail.ru
@@ -65,7 +65,7 @@ private:
        следующим регулярным выражением:
                                            ab?eb?(cdb)*f
        где введены следующие обозначения:
-              a  ключевое слово %numbers или %strings (в зависимости от вида секции)
+              a  ключевое слово %numbers или %strings Moscow time
               b  строковый литерал
               c  ключевое слово %action
               d  идентификатор, являющийся именем действия

@@ -1,6 +1,6 @@
 /*
     File:    sets_for_classes.h
-    Created: 12 February 2017г. в 20:51 (по Москве)
+    Created: 12 February 2017 at 20:51 Moscow time
     Author:  Гаврилов Владимир Сергеевич
     E-mails: vladimir.s.gavrilov@gmail.com
              gavrilov.vladimir.s@mail.ru

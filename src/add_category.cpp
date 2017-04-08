@@ -1,6 +1,6 @@
 /*
     File:    add_category.cpp
-    Created: 04 February 2017г. в 13:10 (по Москве)
+    Created: 04 February 2017 at 13:10 Moscow time
     Author:  Гаврилов Владимир Сергеевич
     E-mails: vladimir.s.gavrilov@gmail.com
              gavrilov.vladimir.s@mail.ru
@@ -10,7 +10,7 @@
 #include "../include/add_category.h"
 /*
  * Добавляет в ассоциативный массив std::map<size_t, std::string> category_name
- * категорию (множество) символов с именем default_name. Если такого множества ещё
+ * категорию Moscow time символов с именем default_name. Если такого множества ещё
  * нет, то добавляем с таким названием, и возвращаем его и true. Если же есть, то
  * возвращаем имеющееся название и false.
 */

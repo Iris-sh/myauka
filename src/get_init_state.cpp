@@ -1,6 +1,6 @@
 /*
     File:    get_init_state.cpp
-    Created: 13 December 2015г. в 09:05 (по Москве)
+    Created: 13 December 2015 at 09:05 Moscow time
     Author:  Гаврилов Владимир Сергеевич
     E-mails: vladimir.s.gavrilov@gmail.com
              gavrilov.vladimir.s@mail.ru

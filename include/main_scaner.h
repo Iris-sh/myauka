@@ -1,6 +1,6 @@
 /*
     File:    main_scaner.h
-    Created: 14 December 2015г. в 15:25 (по Москве)
+    Created: 14 December 2015 at 15:25 Moscow time
     Author:  Гаврилов Владимир Сергеевич
     E-mails: vladimir.s.gavrilov@gmail.com
              gavrilov.vladimir.s@mail.ru
@@ -89,7 +89,7 @@ private:
      * ключевым словом, и выводящая нужную диагностику. */
     void correct_keyword();
     /* Следующая функция по своему аргументу, символу типа char32_t,
-       выдаёт множество категорий символов, которым (категориям)
+       выдаёт множество категорий символов, которым Moscow time
        он принадлежит. */
     uint64_t get_categories_set(char32_t c);
 };

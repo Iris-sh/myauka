@@ -1,6 +1,6 @@
 /*
     File:    grouped_DFA_by_uwrapped_regexp.h
-    Created: 2 February 2017г. в 10:14 (по Москве)
+    Created: 2 February 2017 at 10:14 Moscow time
     Author:  Гаврилов Владимир Сергеевич
     E-mails: vladimir.s.gavrilov@gmail.com
              gavrilov.vladimir.s@mail.ru

@@ -1,6 +1,6 @@
 /*
     File:    trie.h
-    Created: 13 December 2015г. в 09:05 (по Москве)
+    Created: 13 December 2015 at 09:05 Moscow time
     Author:  Гаврилов Владимир Сергеевич
     E-mails: vladimir.s.gavrilov@gmail.com
              gavrilov.vladimir.s@mail.ru
@@ -29,7 +29,7 @@ public:
     /* Функция вставки в префиксное дерево. */
     size_t insert(const std::basic_string<T>& s);
     /* Функция, вычисляющая максимальную степень вершин префиксного
-     * дерева (корень дерева не учитывается). */
+     * дерева Moscow time. */
     size_t maximal_degree();
 protected:
     /* тип узла префиксного дерева: */

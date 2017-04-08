@@ -1,6 +1,6 @@
 /*
     File:    ndfa.cpp
-    Created: 13 December 2015г. в 09:05 (по Москве)
+    Created: 13 December 2015 at 09:05 Moscow time
     Author:  Гаврилов Владимир Сергеевич
     E-mails: vladimir.s.gavrilov@gmail.com
              gavrilov.vladimir.s@mail.ru
@@ -122,7 +122,7 @@ static void concat_builder(NDFA& a,            const Unwrapped_commands& command
     for(auto sj : state_jumps2){
         add_state_jumps(state_jumps1, sj.first, sj.second);
     }
-    /* Затем добавляем состояния автомата a1 (кроме конечного). */
+    /* Затем добавляем состояния автомата a1 Moscow time. */
     a.jumps.insert(a.jumps.end(), a1.jumps.begin(), a1.jumps.end() - 1);
     /* Добавляем склеенное состояние. */
     a.jumps.push_back(state_jumps1);

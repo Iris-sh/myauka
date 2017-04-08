@@ -1,6 +1,6 @@
 /*
     File:    str_repres_for_set_of_size_t_const.h
-    Created: 04 February 2017г. в 18:50 (по Москве)
+    Created: 04 February 2017 at 18:50 Moscow time
     Author:  Гаврилов Владимир Сергеевич
     E-mails: vladimir.s.gavrilov@gmail.com
              gavrilov.vladimir.s@mail.ru

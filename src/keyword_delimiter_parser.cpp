@@ -1,6 +1,6 @@
 /*
     File:    keyword_delimiter_parser.cpp
-    Created: 12 August 2016г. в 10:51 (по Москве)
+    Created: 12 August 2016 at 10:51 Moscow time
     Author:  Гаврилов Владимир Сергеевич
     E-mails: vladimir.s.gavrilov@gmail.com
              gavrilov.vladimir.s@mail.ru

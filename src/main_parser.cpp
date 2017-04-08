@@ -1,6 +1,6 @@
 /*
     File:    main_parser.cpp
-    Created: 14 December 2015г. в 15:25 (по Москве)
+    Created: 14 December 2015 at 15:25 Moscow time
     Author:  Гаврилов Владимир Сергеевич
     E-mails: vladimir.s.gavrilov@gmail.com
              gavrilov.vladimir.s@mail.ru

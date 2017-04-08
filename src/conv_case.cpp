@@ -1,6 +1,6 @@
 /*
     File:    conv_case.cpp
-    Created: 02 February 2017г. в 11:35 (по Москве)
+    Created: 02 February 2017 at 11:35 Moscow time
     Author:  Гаврилов Владимир Сергеевич
     E-mails: vladimir.s.gavrilov@gmail.com
              gavrilov.vladimir.s@mail.ru

@@ -1,6 +1,6 @@
 /*
     File:    expr_scaner.h
-    Created: 13 December 2015г. в 09:05 (по Москве)
+    Created: 13 December 2015 at 09:05 Moscow time
     Author:  Гаврилов Владимир Сергеевич
     E-mails: vladimir.s.gavrilov@gmail.com
              gavrilov.vladimir.s@mail.ru
@@ -89,7 +89,7 @@ private:
      * классом символов, и выводящая нужную диагностику. */
     void correct_class();
     /* Следующая функция по своему аргументу, символу типа char32_t,
-       выдаёт множество категорий символов, которым (категориям)
+       выдаёт множество категорий символов, которым Moscow time
        он принадлежит. */
     uint64_t get_categories_set(char32_t c);
 };

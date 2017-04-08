@@ -1,6 +1,6 @@
 /*
     File:    regexp1_with_regexp2ast.h
-    Created: 05 February 2017г. в 11:15 (по Москве)
+    Created: 05 February 2017 at 11:15 Moscow time
     Author:  Гаврилов Владимир Сергеевич
     E-mails: vladimir.s.gavrilov@gmail.com
              gavrilov.vladimir.s@mail.ru

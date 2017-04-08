@@ -1,6 +1,6 @@
 /*
     File:    automata_repres.cpp
-    Created: 04 February 2017г. в 17:55 (по Москве)
+    Created: 04 February 2017 at 17:55 Moscow time
     Author:  Гаврилов Владимир Сергеевич
     E-mails: vladimir.s.gavrilov@gmail.com
              gavrilov.vladimir.s@mail.ru

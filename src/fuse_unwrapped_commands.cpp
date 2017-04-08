@@ -1,6 +1,6 @@
 /*
     File:    fuse_unwrapped_commands.cpp
-    Created: 25 January 2017г. в 17:09 (по Москве)
+    Created: 25 January 2017 at 17:09 Moscow time
     Author:  Гаврилов Владимир Сергеевич
     E-mails: vladimir.s.gavrilov@gmail.com
              gavrilov.vladimir.s@mail.ru

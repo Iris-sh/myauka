@@ -1,6 +1,6 @@
 /*
     File:    groupped_dfa.h
-    Created: 14 January 2016г. в 18:19 (по Москве)
+    Created: 14 January 2016 at 18:19 Moscow time
     Author:  Гаврилов Владимир Сергеевич
     E-mails: vladimir.s.gavrilov@gmail.com
              gavrilov.vladimir.s@mail.ru

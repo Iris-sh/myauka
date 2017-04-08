@@ -1,6 +1,6 @@
 /*
     File:    add_category.h
-    Created: 04 February 2017г. в 13:01 (по Москве)
+    Created: 04 February 2017 at 13:01 Moscow time
     Author:  Гаврилов Владимир Сергеевич
     E-mails: vladimir.s.gavrilov@gmail.com
              gavrilov.vladimir.s@mail.ru

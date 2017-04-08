@@ -1,6 +1,6 @@
 /*
     File:    indent.cpp
-    Created: 04 February 2017г. в 10:53 (по Москве)
+    Created: 04 February 2017 at 10:53 Moscow time
     Author:  Гаврилов Владимир Сергеевич
     E-mails: vladimir.s.gavrilov@gmail.com
              gavrilov.vladimir.s@mail.ru

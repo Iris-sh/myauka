@@ -1,6 +1,6 @@
 /*
     File:    generate_category_table.cpp
-    Created: 03 February 2017г. в 14:47 (по Москве)
+    Created: 03 February 2017 at 14:47 Moscow time
     Author:  Гаврилов Владимир Сергеевич
     E-mails: vladimir.s.gavrilov@gmail.com
              gavrilov.vladimir.s@mail.ru

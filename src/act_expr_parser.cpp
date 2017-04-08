@@ -1,6 +1,6 @@
 /*
     File:    act_expr_parser.cpp
-    Created: 13 December 2015г. в 09:05 (по Москве)
+    Created: 13 December 2015 at 09:05 Moscow time
     Author:  Гаврилов Владимир Сергеевич
     E-mails: vladimir.s.gavrilov@gmail.com
              gavrilov.vladimir.s@mail.ru
@@ -69,7 +69,7 @@ Terminal lexem2terminal(const Expr_lexem_info& l){
  * В этой грамматике под a понимается $имя_действия,
  * под b --- оператор |, под c --- унарные операторы ? * +,
  * под d --- символ или класс символов, под p --- { (открывающая
- * фигурная скобка), под q --- } (закрывающая фигурная скобка).
+ * фигурная скобка), под q --- } Moscow time.
  */
 
 Act_expr_parser::Rule_info Act_expr_parser::rules[] = {

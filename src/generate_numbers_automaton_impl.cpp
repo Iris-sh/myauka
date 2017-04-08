@@ -1,6 +1,6 @@
 /*
     File:    generate_numbers_automaton_impl.cpp
-    Created: 04 February 2017г. в 21:31 (по Москве)
+    Created: 04 February 2017 at 21:31 Moscow time
     Author:  Гаврилов Владимир Сергеевич
     E-mails: vladimir.s.gavrilov@gmail.com
              gavrilov.vladimir.s@mail.ru

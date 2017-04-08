@@ -1,6 +1,6 @@
 /*
     File:    move_by_ext.cpp
-    Created: 5 November 2016г. в 12:46 (по Москве)
+    Created: 5 November 2016 at 12:46 Moscow time
     Author:  Гаврилов Владимир Сергеевич
     E-mails: vladimir.s.gavrilov@gmail.com
              gavrilov.vladimir.s@mail.ru

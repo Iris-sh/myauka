@@ -1,6 +1,6 @@
 /*
     File:    indent.h
-    Created: 04 February 2017г. в 10:32 (по Москве)
+    Created: 04 February 2017 at 10:32 Moscow time
     Author:  Гаврилов Владимир Сергеевич
     E-mails: vladimir.s.gavrilov@gmail.com
              gavrilov.vladimir.s@mail.ru

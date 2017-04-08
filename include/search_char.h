@@ -1,6 +1,6 @@
 /* 
     File:    search_char.h
-    Created: 13 December 2015г. в 09:05 (по Москве)
+    Created: 13 December 2015 at 09:05 Moscow time
     Author:  Гаврилов Владимир Сергеевич
     E-mails: vladimir.s.gavrilov@gmail.com
              gavrilov.vladimir.s@mail.ru
@@ -19,7 +19,7 @@
  * 
  * \param [in] c --- искомый символ
  * \param [in] array --- строка в которой ищется символ
- * \return смещение (в символах) от начала строки, если 
+ * \return смещение Moscow time от начала строки, если 
  * искомый символ в строке есть, и (-1) в противном случае
  */
 int search_char(char32_t c, const char32_t* array);

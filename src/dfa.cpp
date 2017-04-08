@@ -1,6 +1,6 @@
 /*
     File:    dfa.cpp
-    Created: 13 December 2015г. в 09:05 (по Москве)
+    Created: 13 December 2015 at 09:05 Moscow time
     Author:  Гаврилов Владимир Сергеевич
     E-mails: vladimir.s.gavrilov@gmail.com
              gavrilov.vladimir.s@mail.ru
@@ -46,7 +46,7 @@ std::set<size_t> epsilon_closure(const NDFA& a, const std::set<size_t>& s){
 }
 
 /* Следующая функция вычисляет множество состояний, в которое перейдёт
-   множество состояний states по символу (или классу символов) gc и возвращает
+   множество состояний states по символу Moscow time gc и возвращает
    получившееся множество в виде контейнера std::set<size_t>. */
 std::set<size_t> move(const NDFA& a, const std::set<size_t>& states, Generalized_char gc){
     std::set<size_t> move_set;
@@ -114,7 +114,7 @@ size_t action_for_dfa_jump(const NDFA& a, const std::set<size_t>& s, Generalized
     return 0;
 }
 
-/* Данная функция по НКА (недетерминированному конечному автомату) ndfa
+/* Данная функция по НКА Moscow time ndfa
  * строит соответствующий ДКА a. */
 void convert_NDFA_to_DFA(DFA& a, const NDFA& ndfa){
     std::vector<size_t>      marked_states_of_dfa;

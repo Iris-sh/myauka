@@ -16,12 +16,12 @@
 #include <tuple>
 
 using Comments_parser_result = std::tuple<size_t, size_t, size_t, bool>;
-// struct Comments_parser_result {
-//     size_t mark_of_single_lined;
-//     size_t mark_of_multilined_begin;
-//     size_t mark_of_multilined_end;
-//     bool   multilined_is_nested;
-// };
+/*
+ * First component:  mark of single lined comment.
+ * Second component: mark of multilined comment begin.
+ * Third component:  mark of multilined comment end.
+ * Fourth component: can multilined comment be nested?
+ */
 
 class Comments_parser {
 public:
@@ -49,23 +49,23 @@ private:
     std::shared_ptr<Main_scaner>     msc;
 
     typedef bool (Comments_parser::*State_proc)();
-    /* Секцию описания комментариев можно описать регулярным выражением
+    /* Section of comments description can be written as a regular expression
                      a((bc)?(de?cfc)|bc)
-        где введены следующие обозначения:
-             a    ключевое слово %comments
-             b    ключевое слово %single_lined
-             c    строковый литерал
-             d    ключевое слово %multilined
-             e    ключевое слово %nested
-             f    : (то есть двоеточие)
+        where
+             a    is the keyword %comments
+             b    is the keyword %single_lined
+             c    string literal
+             d    is the keyword %multilined
+             e    is the keyword %nested
+             f    : (that is colon)
 
-        Построив для этого регулярного выражения сначала НКА, затем по этому НКА построив
-        ДКА, и минимизировав последний, получим следующую таблицу переходов:
+        If for this regular expression we first construct NDFA, then DFA,
+        and minimize the latter, we obtain the following transition table:
 
         |-----------|---|---|---|---|---|---|---------------------|
-        | Состояние | a | b | c | d | e | f | Примечание          |
+        |   state   | a | b | c | d | e | f | remark              |
         |-----------|---|---|---|---|---|---|---------------------|
-        |     A     | B |   |   |   |   |   | начальное состояние |
+        |     A     | B |   |   |   |   |   | begin state         |
         |-----------|---|---|---|---|---|---|---------------------|
         |     B     |   | C |   | D |   |   |                     |
         |-----------|---|---|---|---|---|---|---------------------|
@@ -73,7 +73,7 @@ private:
         |-----------|---|---|---|---|---|---|---------------------|
         |     D     |   |   | F |   | G |   |                     |
         |-----------|---|---|---|---|---|---|---------------------|
-        |     E     |   |   |   | D |   |   | конечное состояние  |
+        |     E     |   |   |   | D |   |   | final state         |
         |-----------|---|---|---|---|---|---|---------------------|
         |     F     |   |   |   |   |   | H |                     |
         |-----------|---|---|---|---|---|---|---------------------|
@@ -81,15 +81,16 @@ private:
         |-----------|---|---|---|---|---|---|---------------------|
         |     H     |   |   | I |   |   |   |                     |
         |-----------|---|---|---|---|---|---|---------------------|
-        |     I     |   |   |   |   |   |   | конечное состояние  |
+        |     I     |   |   |   |   |   |   | final state         |
         |-----------|---|---|---|---|---|---|---------------------|
 
-        Однако такие имена состояний неудобно использовать в коде, поэтому нужны более
-        осмысленные имена, которые и собраны в перечислении State. Ниже приведена таблица
-        соответствия имён состояний из таблицы переходов и имён из данного перечисления.
+        However, such state names are inconvenient to use in the code, so
+        more meaningful names are needed, which are collected in the State
+        enumeration. Below is a table of the correspondence of state names
+        from the table of transitions and names from this enumeration.
 
         |-----------|---------------------------------------------|
-        | Состояние |     Имя из перечисления Comment_state       |
+        |   state   |         Name from the enum State            |
         |-----------|---------------------------------------------|
         |     A     | Comments_kw                                 |
         |-----------|---------------------------------------------|

@@ -7,7 +7,6 @@
              gavvs1977@yandex.ru
 */
 
-/* Функции для преобразования регистра латинских букв. */
 #ifndef CONV_CASE_H
 #define CONV_CASE_H
 #include <string>

@@ -11,9 +11,9 @@
 #define CREATE_DIR_IF_NOT_EXISTS_H
 #include <boost/filesystem/operations.hpp>
 /**
-    Следующая функция создаёт каталог с путём p к нему, если каталог не существует.
-    Если p существует, но не является каталогом, то возвращается false.
-    Во всех остальных случаях возвращается true.
+    The following function creates a directory having a path p, if this directory
+    doesn't exists. If there exists p, but p is not directory, then the returned
+    value is false. Otherwise, the returned value is true.
 */
 bool create_dir_if_not_exists(const boost::filesystem::path& p);
 #endif

@@ -122,7 +122,7 @@ static void concat_builder(NDFA& a,            const Unwrapped_commands& command
     for(auto sj : state_jumps2){
         add_state_jumps(state_jumps1, sj.first, sj.second);
     }
-    /* Затем добавляем состояния автомата a1 Moscow time. */
+    /* Затем добавляем состояния автомата a1 (кроме конечного). */
     a.jumps.insert(a.jumps.end(), a1.jumps.begin(), a1.jumps.end() - 1);
     /* Добавляем склеенное состояние. */
     a.jumps.push_back(state_jumps1);

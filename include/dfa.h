@@ -36,7 +36,7 @@ struct DFA{
 };
 
 
-/* Данная функция по НКА Moscow time ndfa
+/* Данная функция по НКА (недетерминированному конечному автомату) ndfa
  * строит соответствующий ДКА a. */
 void convert_NDFA_to_DFA(DFA& a, const NDFA& ndfa);
 

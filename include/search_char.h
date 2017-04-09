@@ -1,4 +1,4 @@
-/* 
+/*
     File:    search_char.h
     Created: 13 December 2015 at 09:05 Moscow time
     Author:  Гаврилов Владимир Сергеевич
@@ -12,14 +12,14 @@
 
 #define THERE_IS_NO_CHAR (-1)
 /**
- * \function search_char 
+ * \function search_char
  * Данная функция ищет заданный символ типа char32_t в строке,
  * состоящей из символов такого типа и завершающейся нулевым
  * символом.
- * 
+ *
  * \param [in] c --- искомый символ
  * \param [in] array --- строка в которой ищется символ
- * \return смещение Moscow time от начала строки, если 
+ * \return смещение (в символах) от начала строки, если
  * искомый символ в строке есть, и (-1) в противном случае
  */
 int search_char(char32_t c, const char32_t* array);

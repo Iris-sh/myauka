@@ -15,13 +15,11 @@ struct State_for_char{
     char32_t c;
 };
 
-/* Функция get_init_state инициализирует конечный автомат. Делает она это так: ищет
- * символ sym в таблице sts, состоящей из пар (состояние, символ) и имеющей размер
- * n, двоичным поиском по второму компоненту пары. После нахождения выдаётся
- * первая компонента пары. В качестве алгоритма двоичного поиска используется
- * алгоритм B из раздела 6.2.1 монографии "Кнут Д.Э. Искусство программирования.
- * Т.3. Сортировка и поиск. 2-е изд.: Пер. с англ. --- М.: Вильямс, 2008.". При
- * этом в нашем случае не может быть, чтобы нужный элемент в таблице sts
- * отсутствовал. */
+/* The function get_init_state initializes a finite automaton. Namely, this function
+ * looking for the character sym in the table sts. Here sts is an array of
+ * pairs (state, character), and number of elements in sts is n. The search is
+ * performed in accordance with the binary search algorithm B from the section 6.2.1
+ * of "Knuth D.E. The Art of Computer programming. V.3. Sorting and search. 2nd ed.
+ * --- Addison Wesley, 1998.". */
 int get_init_state(char32_t sym, const State_for_char sts[], int n);
 #endif

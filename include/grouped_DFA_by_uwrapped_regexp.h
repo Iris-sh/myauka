@@ -11,13 +11,15 @@
 #define GROUPED_DFA_BY_UWRAPPED_REGEXP_H
 #include "../include/unwrapped_command.h"
 #include "../include/groupped_dfa.h"
-/*
- * @param gdfa         результирующий детерминированный конечный автомат со
- *                     сгруппированными переходами;
- * @param buf          буфер с развёрнутыми командами;
- * @param optimize_com если данный аргумент равен true, то соседние команды Or,
- *                     аргументами которых являются либо Multior, либо Char_def,
- *                     склеиваются в одну команду; иначе склейки не происходит.
+/**
+ * \param [out] gdfa         resulting deterministic finite automaton
+ *                           with groupped transitions
+ *
+ * \param [in]  buf          buffer containing unwrapped commands
+ * \param [in]  optimize_com if this argument is true, then adjacent commands Or,
+ *                           the arguments of which are either Multior, or Char_def,
+ *                           are glued together in single command.
+ *                           Otherwise, gluing is not performed
  */
 void grouped_DFA_by_uwrapped_regexp(G_DFA& gdfa, const Unwrapped_commands& buf,
                                     bool optimize_com);

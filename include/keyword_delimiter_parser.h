@@ -34,12 +34,15 @@ public:
     virtual ~KW_parser()             = default;
 
     size_t compile(std::vector<size_t>& repres_, std::vector<size_t>& codes_,
-                   size_t& last_code); // возвращается индекс действия по завершении
+                   size_t& last_code); //< return value is index of final action
 
-/* Первый аргумент данной функции --- индекс строкового литерала, представляющего
- * разделитель/ключевое слово, в префиксном дереве строковых литералов, а второй
- * аргумент --- индекс идентификатора, являющегося соответствующим кодом лексемы,
- * в префиксном дереве идентификаторов. */
+/**
+ *  \param [in] idx     index of string literal that represents delimiter/keyword
+ *                      (index in prefix tree of string literals)
+ *
+ *  \param [in] code_   index of identifier, which is corresponding lexem code
+ *                      (index in prefix tree of identifiers)
+ * */
     void add_new_string(const size_t idx, const size_t code_);
 protected:
     virtual Settings settings() = 0;
@@ -81,22 +84,22 @@ private:
 
     void compile_();
 
-    /* Тела секций определения ключевых слов и разделителей можно описать следующим
-       регулярным выражением:
+    /* Bodies of sections of definition of keywords and delimiters can be described as
+     * the following regular expression:
              (ab)?abc(dabc)*
-       где введены обозначения
-            a строковый литерал, являющийся либо представлением ключевого слова или
-              разделителя, либо действием по завершении
-            b двоеточие
-            c идентификатор, являющийся соответствующим кодом лексемы
-            d запятая
-       Построив по этому регулярному выражению ДКА с минимально возможным количеством
-       состояний, получим такую таблицу переходов:
+       here
+            a is string literal, which is either representation of keyword, or
+              representation of delimiter, or final action
+            b is colon
+            c is identifier, which is corresponding lexem code
+            d is comma
+       Constructing from this expression a DFA with the minimum possible number
+       of states, we obtain the following transition table:
 
        |-----------|---|---|---|---|---------------------|
-       | Состояние | a | b | c | d | Примечание          |
+       |   state   | a | b | c | d | Remark              |
        |-----------|---|---|---|---|---------------------|
-       |     A     | B |   |   |   | начальное состояние |
+       |     A     | B |   |   |   | begin state         |
        |-----------|---|---|---|---|---------------------|
        |     B     |   | C |   |   |                     |
        |-----------|---|---|---|---|---------------------|
@@ -104,34 +107,35 @@ private:
        |-----------|---|---|---|---|---------------------|
        |     D     |   | F |   |   |                     |
        |-----------|---|---|---|---|---------------------|
-       |     E     |   |   |   | G | конечное состояние  |
+       |     E     |   |   |   | G | final state         |
        |-----------|---|---|---|---|---------------------|
        |     F     |   |   | E |   |                     |
        |-----------|---|---|---|---|---------------------|
        |     G     | D |   |   |   |                     |
        |-----------|---|---|---|---|---------------------|
 
-       Однако такие имена состояний неудобно использовать в коде, поэтому нужны более
-       осмысленные имена, которые и собраны в перечислении State.Ниже приведена таблица
-       соответствия имён состояний из таблицы переходов и имён из данного перечисления.
+       However, such state names are inconvenient to use in the code, so you need more
+       meaningful names, which are collected in the State enum. Below is a table of the
+       correspondence of state names from the table of transitions and names from
+       this enumeration.
 
-       |-----------|-----------------------------------------------------------------|
-       | Состояние |     Имя из перечисления Keywords_and_delimiters_sec_state       |
-       |-----------|-----------------------------------------------------------------|
-       |     A     | Maybe_repres_str                                                |
-       |-----------|-----------------------------------------------------------------|
-       |     B     | Colon_sep0                                                      |
-       |-----------|-----------------------------------------------------------------|
-       |     C     | Maybe_code_kw_or_del                                            |
-       |-----------|-----------------------------------------------------------------|
-       |     D     | Repres_str                                                      |
-       |-----------|-----------------------------------------------------------------|
-       |     E     | Code_kw_or_del                                                  |
-       |-----------|-----------------------------------------------------------------|
-       |     F     | Colon_sep                                                       |
-       |-----------|-----------------------------------------------------------------|
-       |     G     | Kw_del_comma_sep                                                |
-       |-----------|-----------------------------------------------------------------|
+       |-----------|---------------------------------|
+       |   state   |      Name from enum State       |
+       |-----------|---------------------------------|
+       |     A     | Maybe_repres_str                |
+       |-----------|---------------------------------|
+       |     B     | Colon_sep0                      |
+       |-----------|---------------------------------|
+       |     C     | Maybe_code_kw_or_del            |
+       |-----------|---------------------------------|
+       |     D     | Repres_str                      |
+       |-----------|---------------------------------|
+       |     E     | Code_kw_or_del                  |
+       |-----------|---------------------------------|
+       |     F     | Colon_sep                       |
+       |-----------|---------------------------------|
+       |     G     | Kw_del_comma_sep                |
+       |-----------|---------------------------------|
 
     */
 };

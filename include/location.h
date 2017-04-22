@@ -11,24 +11,23 @@
 #define LOCATION_H
 
 #include <memory>
-/* Следующая структура описывает текущее положение в обрабатываемом тексте.
- * Связано это с тем, что, из--за конфликта лексемы 'идентификатор' и лексемы
- * 'символ', вместо одного сканера нужно сделать два: основной сканер и
- * сканер для регулярных выражений. При этом основной парсер будет вызывать
- * парсеры для регулярных выражений, которые, в свой черёд, будут вызывать
- * сканер для регулярных выражений. Поэтому обоим данным сканерам нужно
- * знать текущее положение в текущем тексте и уметь манипулировать этим
- * положением, причём каждый из этих сканеров должен продолжать работу
- * с того места в обрабатываемом тексте, на котором завершил работу
- * предыдущий сканер. Как следствие, сведения о текущем положении в
- * обрабатываемом тексте должны разделяться обоими сканерами, ввиду чего в
- * конструктор каждого из сканеров нужно передавать умный указатель на
- * разделяемые сведения о текущем местоположении. */
+/* The following structure describes the current position in the processed text.
+ * This is due to the fact that, due to the conflict of the lexem 'identifier'
+ * and the lexem 'character', instead of one scanner, two must be done: the main
+ * scanner and the scanner for regular expressions. In this case, the main parser
+ * will call parsers for regular expressions, which, in turn, will call the scanner
+ * for regular expressions. Therefore, both of these scanners need to know the
+ * current position in the current text and be able to manipulate this position,
+ * and each of these scanners must continue to work from the place in the processed
+ * text, on which the previous scanner finished work. As a consequence, the information
+ * about the current position in the processed text should be shared by both scanners,
+ * so that a smart pointer to the shared information about the current location should
+ * be sent to the constructor of each of the scanners.
+ */
 
-// #include <cstddef>
 struct Location {
-    char32_t* pcurrent_char; /* указатель на текущий символ */
-    size_t    current_line; /* номер текущей строки обрабатываемого текста */
+    char32_t* pcurrent_char; //< pointer to the current character
+    size_t    current_line;  //< number of current line
 
     Location() : pcurrent_char(nullptr), current_line(1) {};
     Location(char32_t* txt) : pcurrent_char(txt), current_line(1) {};

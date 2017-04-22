@@ -36,14 +36,14 @@ struct DFA{
 };
 
 
-/* Данная функция по НКА (недетерминированному конечному автомату) ndfa
- * строит соответствующий ДКА a. */
+/* This function builds the NFA (nondeterministic finite automaton) ndfa
+ * by the DFA (deterministic finite automaton) a. */
 void convert_NDFA_to_DFA(DFA& a, const NDFA& ndfa);
 
 using Min_DFA_state_jumps = std::map<Generalized_char, DFA_state_with_action>;
 using Min_DFA_jumps       = std::vector<Min_DFA_state_jumps>;
-/* В Min_DFA_jumps элемент с индексом j представляет собой переходы для
- * состояния с номером j. */
+/* In Min_DFA_jumps, an element having the index j is transitions
+ * for the state having number j. */
 
 struct Min_DFA{
     Min_DFA_jumps    jumps;

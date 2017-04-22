@@ -64,33 +64,31 @@ private:
                            * текущего автомата */
 
     typedef bool (Expr_scaner::*Automaton_proc)();
-    /* Это тип указателя на функцию--член, реализующую
-     * конечный автомат, обрабатывающий лексему. Функция
-     * эта должна возвращать true, если лексема ещё не
-     * разобрана до конца, и false --- в противном случае. */
+    /* It is the type of the pointer on function-member that implements
+     * the state machine that handles the lexem. The function should
+     * return true if the token has not been read to the end,
+     * and false otherwise. */
 
     typedef void (Expr_scaner::*Final_proc)();
-    /* А это -- тип указателя на функцию-член, выполняющую
-     * необходимые действия в случае неожиданного окончания
-     * лексемы. */
+    /* It is the type of the pointer on function-member that performs
+     * the necessary actions in case of unexpected end of lexem. */
 
     static Automaton_proc procs[];
     static Final_proc     finals[];
-    /* функции обработки лексем: */
+    /* functions for handling lexems: */
     bool start_proc();     bool unknown_proc();
     bool action_proc();    bool delimiter_proc();
     bool classes_proc();   bool char_proc();
-    /* функции для выполнения действий в случае неожиданного
-     * окончания лексемы */
+    /* functions to perform actions in case of unexpected end of lexem */
     void none_final_proc();      void unknown_final_proc();
     void action_final_proc();    void delimiter_final_proc();
     void classes_final_proc();   void char_final_proc();
-    /* Функция, корректирующая код лексемы, скорее всего, являющейся
-     * классом символов, и выводящая нужную диагностику. */
+    /* If the lexem most likely is character class, then the following
+     * function corrects lexem code, and displays the needed diagnostic
+     * messsage. */
     void correct_class();
-    /* Следующая функция по своему аргументу, символу типа char32_t,
-       выдаёт множество категорий символов, которым (категориям)
-       он принадлежит. */
+    /* The following function returns the set of character categories such that
+     * the character c belongs these categories. */
     uint64_t get_categories_set(char32_t c);
 };
 

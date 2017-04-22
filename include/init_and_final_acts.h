@@ -8,9 +8,9 @@
 */
 #ifndef INIT_AND_FINAL_ACTS_H
 #define INIT_AND_FINAL_ACTS_H
-/* Пользовательские действия, выполняемые при инициализации и при завершении
-   автомата обработки строк (или автомата обработки чисел), порождённого из
-   описания сканера.
+/* User actions performed during initialization and at the completion of
+ * the automaton of string handling (or numbers handling) which is generated
+ * from the description of the scanner.
 */
 
 struct Init_and_final_acts{

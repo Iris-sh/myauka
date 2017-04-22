@@ -57,41 +57,38 @@ protected:
     std::shared_ptr<NS_parser>           strs_sec_parser;
     std::shared_ptr<Comments_parser>     comments_parser;
 
-    size_t scaner_name_idx; /* Индекс идентификатора, являющегося
-                             * именем сканера, в префиксном дереве
-                             * идентификаторов. */
-    size_t codes_type_name_idx; /* Индекс идентификатора, являющегося
-                                 * именем типа кодов лексем, в
-                                 * префиксном дереве идентификаторов. */
-    size_t ident_name_idx;      /* Индекс идентификатора, являющегося
-                                 * кодом лексемы 'идентификатор', в
-                                 * префиксном дереве идентификаторов. */
+    size_t scaner_name_idx;    /* The index of the identifier, which is
+                                * the name of the scanner, in the prefix
+                                * tree of identifiers. */
+    size_t codes_type_name_idx; /* The index of the identifier, which is
+                                 * the name of the type of lexem codes,
+                                 * in the prefix tree of identifiers. */
+    size_t ident_name_idx;      /* The index of the identifier, which is
+                                 * the code of lexem 'identifier', in the
+                                 * prefix tree of identifiers. */
 
-    size_t token_fields_idx; /* Индекс строкового литерала с добавляемыми
-                              * в тип, описывающий сведения о лексеме,
-                              * полями. */
-    size_t class_members_idx; /* Индекс строкового литерала с добавляемыми
-                               * в класс сканера полями. */
+    size_t token_fields_idx;    /* Index of a string literal with fields added
+                                 * to a type that describes information
+                                 * about the lexem. */
+    size_t class_members_idx;   /* Index of a string literal with fields added to
+                                 * the scanner class. */
 
     bool newline_is_lexem;
 
-    std::vector<size_t> codes; /* Вектор из индексов идентификаторов
-                                * из перечисления, определяющего коды
-                                * лексем. */
+    std::vector<size_t> codes;  /* A vector consisting of indexes of identifiers
+                                 * from an enumeration defining lexem codes. */
 
-    size_t last_code_val; /* Последнее использованное числовое значение
-                           * кода лексемы. */
+    size_t last_code_val;       /* The last used numerical value of the lexem code. */
 
     std::string name_of_scaner_class;
     std::string scaner_file_name_without_ext;
     std::string codes_type_name;
     std::string lexem_info_name;
 
-    std::vector<size_t> kw_repres; /* Вектор из индексов строковых литералов,
-                                    * представляющих ключевые слова.*/
-    std::vector<size_t> del_repres; /* Вектор из индексов строковых литералов,
-                                     * представляющих разделители. */
-
+    std::vector<size_t> kw_repres;  /* A vector consisting of indices of string
+                                     * literals representing keywords. */
+    std::vector<size_t> del_repres; /* A vector consisting of indices of string
+                                     * literals representing delimiters. */
 
     Command_buffer id_begin, id_body;
     Command_buffer numbers_regexp, strings_regexp;

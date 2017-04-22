@@ -13,8 +13,11 @@
 #include <cstddef>
 #include <cstdint>
 #include <string>
-/* Данная функция на вход получает индекс имени действия, i, в префиксном дереве
- * идентификаторов, а в качестве результата выдаёт строковое представление
- * определения действия. */
+/**
+ *  \param [in] info information about constructing scaner
+ *  \param [in] i    index of action name in the prefix tree of identifiers
+ *
+ *  \return          string representation of action
+ */
 std::string get_act_repres(Info_for_constructing& info, size_t i);
 #endif

@@ -48,28 +48,27 @@ Terminal lexem2terminal(const Expr_lexem_info& l){
     return Term_d;
 }
 
-/* Правила грамматики:
+/* Grammar rules:
  *
- * ---------------------------------------------
- * | Номер правила | Правило    | Имя правила  |
- * |--------------------------------------------
- * | (0)           | S -> pTq   | S_is_pTq     |
- * | (1)           | T -> TbE   | T_is_TbE     |
- * | (2)           | T -> E     | T_is_E       |
- * | (3)           | E -> EF    | E_is_EF      |
- * | (4)           | E -> F     | E_is_F       |
- * | (5)           | F -> Gc    | F_is_Gc      |
- * | (6)           | F -> G     | F_is_G       |
- * | (7)           | G -> Ha    | G_is_Ha      |
- * | (8)           | G -> H     | G_is_H       |
- * | (9)           | H -> d     | H_is_d       |
- * | (10)          | H -> (T)   | H_is_LP_T_RP |
+ * -------------------------------------------
+ * | Rule number | Rule       | Rule name    |
+ * |------------------------------------------
+ * | (0)         | S -> pTq   | S_is_pTq     |
+ * | (1)         | T -> TbE   | T_is_TbE     |
+ * | (2)         | T -> E     | T_is_E       |
+ * | (3)         | E -> EF    | E_is_EF      |
+ * | (4)         | E -> F     | E_is_F       |
+ * | (5)         | F -> Gc    | F_is_Gc      |
+ * | (6)         | F -> G     | F_is_G       |
+ * | (7)         | G -> Ha    | G_is_Ha      |
+ * | (8)         | G -> H     | G_is_H       |
+ * | (9)         | H -> d     | H_is_d       |
+ * | (10)        | H -> (T)   | H_is_LP_T_RP |
  * ---------------------------------------------
  *
- * В этой грамматике под a понимается $имя_действия,
- * под b --- оператор |, под c --- унарные операторы ? * +,
- * под d --- символ или класс символов, под p --- { (открывающая
- * фигурная скобка), под q --- } (закрывающая фигурная скобка).
+ * In this grammar, a means $action_name, b means the operator |, c means unary
+ * operators ? * +, d means a character or a character class, p means { (opening
+ * curly bracket), q means } (closing curly bracket).
  */
 
 Act_expr_parser::Rule_info Act_expr_parser::rules[] = {
@@ -199,8 +198,8 @@ const Parser_action_table action_table = {
 
 void Act_expr_parser::checker_for_number_expr(Expr_lexem_info e){
     if(belongs(e.code, 1ULL << Class_ndq | 1ULL << Class_nsq)){
-        printf("Ошибка в строке %zu: в регулярном выражении для чисел "
-               "недопустимы классы символов [:nsq:] и [:ndq:].\n",
+        printf("Error on the %zu line: in the regular expression for numbers, the "
+               "character classes [:nsq:] and [:ndq:] are not allowed.\n",
                esc_->lexem_begin_line_number());
         et_.ec->increment_number_of_errors();
     }
@@ -311,9 +310,9 @@ void Act_expr_parser::generate_command(Rule r){
             break;
 
         case G_is_Ha:
-            /* Если действие a ещё не определено, то выдаём сообщение
-             * об ошибке и считаем, что никакого действия не задано.
-             * В противном случае записываем индекс имени действия. */
+            /* If the action a is not yet defined, then we display an error message and
+             * assume that no action is specified. Otherwise, write down the index of
+             * the action name. */
             act_index = rule_body[1].attr.eli.action_name_index;
             it        = scope_->idsc.find(act_index);
             if(it == scope_->idsc.end()){
@@ -416,12 +415,11 @@ Act_expr_parser::Error_handler Act_expr_parser::error_hadler[] = {
     &Act_expr_parser::state07_error_handler  // 17 +
 };
 
-/* В этом массиве собраны правила, по которым выполняется свёртка в
- * функциях обработки ошибок. Номер элемента массива --- номер
- * текущего состояния синтаксического анализатора. Если для
- * какого--либо состояния в соответствующей функции обработки
- * ошибок выполняется не свёртка, то элемент данного массива с
- * соотвествующим индексом равен (-1). */
+/* In this array, the rules are collected for which convolution is performed in
+ * error-handling functions. The number of the array element is the number of the
+ * current state of the parser. If a state in the corresponding error-handling
+ * function is not convoluted, then the element of this array with the corresponding
+ * index is (-1). */
 char reduce_rules[] = {
     -1,       -1,          -1,      -1,
     T_is_E,   E_is_F,      F_is_G,  G_is_H,
@@ -431,7 +429,7 @@ char reduce_rules[] = {
 };
 
 Parser_action_info Act_expr_parser::state00_error_handler(){
-    printf("В строке %zu ожидается открывающая фигурная скобка.\n",
+    printf("An opening curly brace is expected on the %zu line.\n",
            esc_->lexem_begin_line_number());
     et_.ec->increment_number_of_errors();
     if(eli_.code != Closed_round_brack){
@@ -450,8 +448,8 @@ Parser_action_info Act_expr_parser::state01_error_handler(){
 }
 
 Parser_action_info Act_expr_parser::state02_error_handler(){
-    printf("В строке %zu ожидается символ, класс символов, или "
-           "открывающая круглая скобка.\n",
+    printf("The %zu line expects a character, a character class, or an "
+           "opening parenthesis.\n",
            esc_->lexem_begin_line_number());
     et_.ec->increment_number_of_errors();
     esc_->back();
@@ -463,8 +461,8 @@ Parser_action_info Act_expr_parser::state02_error_handler(){
 }
 
 Parser_action_info Act_expr_parser::state03_error_handler(){
-    printf("В строке %zu ожидается оператор | либо закрывающая "
-           "фигурная скобка.\n", esc_->lexem_begin_line_number());
+    printf("The %zu line expects an operator | or closing brace.\n",
+           esc_->lexem_begin_line_number());
     et_.ec->increment_number_of_errors();
     if(t != Term_p){
         esc_->back();
@@ -480,26 +478,26 @@ Parser_action_info Act_expr_parser::state04_error_handler(){
     Parser_action_info pa;
     switch(t){
         case Term_a:
-            printf("Неожиданное действие в строке %zu.\n",
+            printf("Unexpected action on line %zu.\n",
                    esc_->lexem_begin_line_number());
             pa.kind = Act_reduce; pa.arg = r;
             break;
 
         case Term_c:
-            printf("Неожиданный постфиксный оператор в строке %zu.\n",
+            printf("Unexpected postfix operator on line %zu.\n",
                    esc_->lexem_begin_line_number());
             pa.kind = Act_reduce; pa.arg = r;
             break;
 
         case End_of_text:
-            printf("Неожиданный конец текста в строке %zu.\n",
+            printf("Unexpected end of text on line %zu.\n",
                    esc_->lexem_begin_line_number());
             pa.kind = Act_reduce; pa.arg = r;
             break;
 
         case Term_p:
-            printf("Неожиданная открывающая фигурная скобка в "
-                   "строке %zu.\n", esc_->lexem_begin_line_number());
+            printf("Unexpected opening brace on line %zu.\n",
+                   esc_->lexem_begin_line_number());
             pa.kind = Act_reduce_without_back; pa.arg = r;
             break;
 
@@ -514,19 +512,19 @@ Parser_action_info Act_expr_parser::state06_error_handler(){
     Parser_action_info pa;
     switch(t){
         case Term_a:
-            printf("Неожиданное действие в строке %zu.\n",
+            printf("Unexpected action on line %zu.\n",
                    esc_->lexem_begin_line_number());
             pa.kind = Act_reduce_without_back; pa.arg = r;
             break;
 
         case Term_p:
-            printf("Неожиданная открывающая фигурная скобка в "
-                   "строке %zu.\n", esc_->lexem_begin_line_number());
+            printf("Unexpected opening brace on line %zu.\n",
+                   esc_->lexem_begin_line_number());
             pa.kind = Act_reduce_without_back; pa.arg = r;
             break;
 
         case End_of_text:
-            printf("Неожиданный конец текста в строке %zu.\n",
+            printf("Unexpected end of text on line %zu.\n",
                    esc_->lexem_begin_line_number());
             pa.kind = Act_reduce_without_back; pa.arg = r;
             break;
@@ -541,11 +539,11 @@ Parser_action_info Act_expr_parser::state07_error_handler(){
     Rule r = static_cast<Rule>(reduce_rules[current_state]);
     Parser_action_info pa;
     if(Term_p == t){
-        printf("Неожиданная открывающая фигурная скобка в "
-               "строке %zu.\n", esc_->lexem_begin_line_number());
+        printf("Unexpected opening brace on line %zu.\n",
+               esc_->lexem_begin_line_number());
         pa.kind = Act_reduce_without_back; pa.arg = r;
     }else{
-        printf("Неожиданный конец текста в строке %zu.\n",
+        printf("Unexpected end of text on line %zu.\n",
                esc_->lexem_begin_line_number());
         pa.kind = Act_reduce_without_back; pa.arg = r;
     }
@@ -560,8 +558,8 @@ Parser_action_info Act_expr_parser::state11_error_handler(){
 }
 
 Parser_action_info Act_expr_parser::state15_error_handler(){
-    printf("В строке %zu ожидается оператор | либо закрывающая "
-           "круглая скобка.\n", esc_->lexem_begin_line_number());
+    printf("The %zu line expects an operator | or closing parenthesis.\n",
+           esc_->lexem_begin_line_number());
     et_.ec->increment_number_of_errors();
     if(t != Term_p){
         esc_->back();

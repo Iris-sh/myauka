@@ -10,7 +10,12 @@
 #ifndef REGEXP1_OR_REGEXP2_H
 #define REGEXP1_OR_REGEXP2_H
 #include "../include/unwrapped_command.h"
-/* Возвращает команды, соответствующие регулярке a | b. */
+/**
+ *  \brief Returns commands corresponding to regexp a | b.
+ *  \param [in] a The commands that define the regular expression a.
+ *  \param [in] b The commands that define the regular expression b.
+ *  \return       The commands that define the regular expression a | b.
+ */
 Unwrapped_commands regexp1_or_regexp2(const Unwrapped_commands& a,
                                       const Unwrapped_commands& b);
 #endif

@@ -10,8 +10,12 @@
 #ifndef REGEXP1_WITH_REGEXP2AST_H
 #define REGEXP1_WITH_REGEXP2AST_H
 #include "../include/unwrapped_command.h"
-/* Построение по командам, отвечающим регуляркам a и b,
- * команд, отвечающих регулярке ab*. */
+/**
+ *  \brief Returns commands corresponding to regexp ab*.
+ *  \param [in] a The commands that define the regular expression a.
+ *  \param [in] b The commands that define the regular expression b.
+ *  \return       The commands that define the regular expression ab*.
+ */
 Unwrapped_commands regexp1_with_regexp2ast(const Unwrapped_commands& a,
                                            const Unwrapped_commands& b);
 #endif

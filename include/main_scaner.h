@@ -64,33 +64,30 @@ private:
     Automaton_name automaton; /* текущий автомат */
 
     typedef bool (Main_scaner::*Automaton_proc)();
-    /* Это тип указателя на функцию--член, реализующую
-     * конечный автомат, обрабатывающий лексему. Функция
-     * эта должна возвращать true, если лексема ещё не
-     * разобрана до конца, и false --- в противном случае. */
+    /* This is the type of pointer to the member function that implements
+     * the state machine that processes the lexeme. This function must
+     * return true if the lexeme is not yet parsed, and false otherwise. */
 
     typedef void (Main_scaner::*Final_proc)();
-    /* А это -- тип указателя на функцию-член, выполняющую
-     * необходимые действия в случае неожиданного окончания
-     * лексемы. */
+    /* And this is the type of the pointer to the member function that
+     * performs the necessary actions in the event of an unexpected end
+     * of the lexeme. */
 
     static Automaton_proc procs[];
     static Final_proc     finals[];
-    /* функции обработки лексем: */
+    /* lexeme processing functions: */
     bool start_proc();     bool unknown_proc();
     bool id_proc();        bool keyword_proc();
     bool delimiter_proc(); bool string_proc();
-    /* функкции для выполнения действий в случае неожиданного
-     * окончания лексемы */
+    /*functions for performing actions in case of an unexpected end of the token: */
     void none_final_proc();      void unknown_final_proc();
     void id_final_proc();        void keyword_final_proc();
     void delimiter_final_proc(); void string_final_proc();
-    /* Функция, корректирующая код лексемы, скорее всего, являющейся
-     * ключевым словом, и выводящая нужную диагностику. */
+    /* A function that corrects a lexeme code, most likely, is a keyword, and
+     *outputs the necessary diagnostics. */
     void correct_keyword();
-    /* Следующая функция по своему аргументу, символу типа char32_t,
-       выдаёт множество категорий символов, которым (категориям)
-       он принадлежит. */
+    /* The next function, in its argument, a character of the type char32_t,
+     * produces a set of categories of characters to which it belongs (categories). */
     uint64_t get_categories_set(char32_t c);
 };
 #endif

@@ -44,20 +44,19 @@ private:
 
     void parse();
 
-    /* Следующие функции обрабатывают отдельные разделы входного текста. При этом,
-     * поскольку секции %scaner_name, %codes_type, и %ident_name имеют идентичную
-     * структуру, то для обработки этих трёх секций можно обойтись одной функцией,
-     * функцией name_section_handling, принимающей имя секции и место, в которое нужно
-     * записать индекс соответствующего идентификатора в префиксном дереве
-     * идентификаторов. */
+    /* The following functions process individual sections of the input text. In this
+     * case, since the sections %scaner_name, %codes_type, and %ident_name have the
+     * same structure, one function, name_section_handling, which takes the name of
+     * the section and the place to which the index of the corresponding identifier
+     * should be written in the prefix tree of identifiers, can be used to process
+     * these three sections. */
     void name_section_handling(size_t& ind, Name_sec section);
     void set_default_name(size_t& ind, Name_sec section);
 
     bool id_is_defined(size_t idx);
-    /* Данная функция проверяет, не определён ли уже идентификатор, индекс которого
-     * в префиксном дереве идентификаторов равен idx. Если определён, то выводится
-     * диагностика и возвращается true. Иначе ничего возвращается false и никакой
-     * диагностики не выводится. */
+    /* This function checks if an identifier is already defined, whose index in the
+     * prefix tree of identifiers is idx. If specified, diagnostics are displayed and
+     * returned true. Otherwise, false is returned and no diagnostic is output. */
 
     void token_fields_sec();
     void class_members_sec();
@@ -67,9 +66,9 @@ private:
     unsigned   state;
     typedef bool (Main_parser::*State_proc)();
 
-    /* Функция, проверяющая корректность описания сканера. Если
-     * описание корректно --- возвращается true, иначе --- false. Кроме
-     * того, данная функция выводит необходимую диагностику. */
+    /* A function that checks the correctness of the scanner description. If the
+     * description is correct, it returns true, otherwise false. In addition, this
+     * function displays the necessary diagnostics. */
     bool verify();
 
     size_t keyword_postaction, del_postaction;
@@ -145,13 +144,10 @@ private:
     void add_new_lexem_code(size_t idx);
     void add_new_string(const size_t idx, const size_t code_);
     void add_fictive_delimiters();
-    /*  Если есть описание комментариев, то
-        добавляет фиктивный разделитель. А именно, если описан однострочный
-        комментарий, то добавляется фиктивный разделитель
-            SINGLE_LINED_COMMENT_MARK
-        а если присутствует описание многострочного комментария --- то
-        фиктивный разделитель
-            MULTILINED_COMMENT_MARK */
+    /* If there is a description of the comments, then the function adds a dummy
+     * delimiter. Namely, if a single-line comment is described, a dummy delimiter
+     * SINGLE_LINED_COMMENT_MARK is added, and if there is a description of a multi-line
+     * comment, then the dummy delimiter MULTILINED_COMMENT_MARK is added. */
 
     std::string generate_current_lexem_proc();
 

@@ -136,7 +136,7 @@ private:
 
     /* Below is a table of functions that implement the execution of actions in
      * each of the states of the automaton, which is realized by the function
-     * begin_of_num_or_str_sec. */
+     * begin_of_num_or_str_sec */
     typedef bool (NS_parser::*State_proc)();
 
     static State_proc procs[];

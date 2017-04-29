@@ -13,11 +13,15 @@
 #include <set>
 #include <cstdio>
 /**
-    В данном файле определяются теоретико--множественные операции
-    со стандартными контейнерами std::set.
+ * \brief In this file, set-theoretic operations with
+ *        standard containers std :: set are defined.
 */
 namespace operations_with_sets{
-    //! Функция single_elem возвращает множество, состоящее из одного элемента.
+    /**
+     *  \brief The function single_elem returns a set consisting of one element.
+     *  \param [in] x element
+     *  \return       a set consisting of one element, x.
+     */
     template<typename T>
     std::set<T> single_elem(const T& x){
         std::set<T> s;
@@ -25,8 +29,11 @@ namespace operations_with_sets{
         return s;
     }
 
-    /** Функция печати элементов множества. Принимает в качестве
-        аргумента функцию печати элемента множества. */
+    /**
+     *  \brief Prints a set.
+     *  \param [in] a          Printed set.
+     *  \param [in] print_elem Print function of the set element.
+     */
     template<typename T>
     void print_set(const std::set<T>& a, void (*print_elem)(const T&)){
         if(a.empty()){
@@ -44,6 +51,12 @@ namespace operations_with_sets{
         putchar('}');
     }
 
+
+    /**
+     *  \brief Prints a set.
+     *  \param [in] a          Printed set.
+     *  \param [in] print_elem Print function of the set element.
+     */
     template<typename T>
     void print_set(const std::set<T>& a, void (*print_elem)(const T)){
         if(a.empty()){
@@ -61,16 +74,22 @@ namespace operations_with_sets{
         putchar('}');
     }
 
-    /** Проверка принадлежности элемента x множеству a. Если элемент x
-        множеству a принадлежит, то возвращается true, иначе ---
-        возвращается false. */
+    /**
+     *  \brief Checking the membership of x for a set a.
+     *  \param [in] a The set a.
+     *  \param [in] x The element x.
+     *  \return       true if the element x belongs to the set a, and false otherwise
+     */
     template<typename T>
     bool is_elem(const T& x, const std::set<T>& a){
         return a.find(x) != a.end();
     }
 
-    /** Объединение множеств a и b, то есть множество, содержащее и
-        элементы множества a, и элементы множества b. */
+    /**
+     *  \brief The union of the sets a and b.
+     *  \param [in] a The set a.
+     *  \param [in] b The set b.
+     *  \return       The union of the sets a and b. */
     template<typename T>
     std::set<T> operator + (const std::set<T>& a, const std::set<T>& b){
         std::set<T> s = a;
@@ -78,9 +97,15 @@ namespace operations_with_sets{
         return s;
     }
 
-    /** Теоретико--множественная разность множеств a и b (обозначается в
-        теории множеств как a \ b), то есть множество, состоящее лишь из тех
-        элементов множества a, которые не принадлежат множеству b. */
+    /**
+     *  \brief   The set-theoretic difference of the sets a and b.
+     *  \details The set-theoretic difference of the sets a and b (denoted in a set
+     *           theory as a \ b), that is, a set consisting only of those elements
+     *           of the set a that do not belong to the set b.
+     *  \param [in] a The set a.
+     *  \param [in] b The set b.
+     *  \return       The set-theoretic difference of the sets a and b.
+     */
     template<typename T>
     std::set<T> operator - (const std::set<T>& a, const std::set<T>& b){
         std::set<T> s = a;
@@ -90,8 +115,14 @@ namespace operations_with_sets{
         return s;
     }
 
-    /** Пересечение множеств a и b, то есть множество, состоящее в точности из
-        тех элементов, которые принадлежат и a, и b. */
+    /**
+     *  \brief   The intersection of the sets a and b.
+     *  \details The intersection of the sets a and b, that is, the set consisting
+     *           precisely of those elements that belong to both a and b.
+     *  \param [in] a The set a.
+     *  \param [in] b The set b.
+     *  \return       The intersection of the sets a and b.
+     */
     template<typename T>
     std::set<T> operator * (const std::set<T>& a, const std::set<T>& b){
         std::set<T> s;
@@ -103,15 +134,26 @@ namespace operations_with_sets{
         return s;
     }
 
-    /** Симметрическая разность множеств a и b, то есть объединение этих
-        множеств с выкинутыми общими элементами. */
+    /**
+     *  \brief   The symmetric difference of the sets a and b.
+     *  \details The symmetric difference of the sets a and b, that is, the union
+     *           of these sets, but with the common elements thrown out.
+     *  \param [in] a The set a.
+     *  \param [in] b The set b.
+     *  \return       The symmetric difference of the sets a and b.
+     */
     template<typename T>
     std::set<T> operator ^ (const std::set<T>& a, const std::set<T>& b){
         return (a - b) + (b - a);
     }
 
-    /** Проверяет, является ли множество a подмножеством множества b,
-        возможно, совпадающим с b. */
+    /**
+     *  \brief Checks whether the set a is a subset of the set b,
+     *         possibly coinciding with b.
+     *  \param [in] a The set a.
+     *  \param [in] b The set b.
+     *  \return       true if the set a is a subset of the set b, and false otherwise
+     */
     template<typename T>
     bool is_subseteq(const std::set<T>& a, const std::set<T>& b){
         std::set<T> s = (a * b) ^ a;

@@ -16,8 +16,13 @@ public:
     virtual ~Trie_for_set_of_char() { };
     Trie_for_set_of_char(){};
     Trie_for_set_of_char(const Trie_for_set_of_char& orig) = default;
-    /*! Функция get_set по индексу idx множества символов типа char32_t
-     * строит это же  множество, но уже как std::set<char32_t> . */
+
+    /**
+     *  \brief The function get_set on the index idx of the set of characters of
+     *         type char32_t builds the same set, but already as std::set < char32_t >.
+     *  \param [in] idx The index of the set of states in the prefix tree of such sets.
+     *  \return         The same set, but already as std::set < char32_t >.
+     */
     std::set<char32_t> get_set(size_t idx);
     size_t insertSet(const std::set<char32_t>& s);
 private:

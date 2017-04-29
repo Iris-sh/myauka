@@ -23,7 +23,7 @@ struct Attributes{
 };
 
 struct Stack_elem{
-    size_t     st_num; /* Номер состояния SLR(1)--парсера. */
-    Attributes attr;   /* Атрибуты символа грамматики, соответствующие состоянию. */
+    size_t     st_num; ///< State number of the SLR(1)-parser.
+    Attributes attr;   ///< Attributes of the grammar symbol corresponding to the state.
 };
 #endif

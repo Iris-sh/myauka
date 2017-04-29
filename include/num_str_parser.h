@@ -47,8 +47,10 @@ private:
     std::shared_ptr<Main_scaner>     msc;
     std::shared_ptr<Act_expr_parser> a_parser_;
 
-    /* В следующей переменной содержится либо код ключевого слова
-     * %numbers, либо код ключевого слова %strings. */
+    /**
+     * The following variable contains either the %numbers keyword code,
+     * or the %strings keyword code.
+     */
     Main_lexem_code                  sec_begin;
 
     Number_or_string                 kind;
@@ -61,79 +63,80 @@ private:
     State                            state;
 
     /*
-       Начало секций %numbers и %strings выглядит одинаково, и это начало можно записать
-       следующим регулярным выражением:
+       The beginning of the %numbers and %strings sections looks the same, and this
+       start can be written with the following regular expression:
                                            ab?eb?(cdb)*f
-       где введены следующие обозначения:
-              a  ключевое слово %numbers или %strings (в зависимости от вида секции)
-              b  строковый литерал
-              c  ключевое слово %action
-              d  идентификатор, являющийся именем действия
-              e  двоеточие
-              f  открывающая фигурная скобка
+       where
+              a  keyword %numbers or %strings (depending on the type of section)
+              b  string literal
+              c  keyword %action
+              d  identifier that is the name of the action
+              e  colon
+              f  opening brace
 
-        Построив для этого регулярного выражения сначала НКА, затем по этому НКА построив
-        ДКА, и минимизировав последний, получим следующую таблицу переходов:
+        After constructing the NFA for this regular expression, then after this, after
+        constructing the DFA, and by minimizing the latter, we obtain the following
+        transition table:
 
-        |-----------|---|---|---|---|---|---|---------------------|
-        | Состояние | a | b | c | d | e | f | Примечание          |
-        |-----------|---|---|---|---|---|---|---------------------|
-        |     A     | B |   |   |   |   |   | начальное состояние |
-        |-----------|---|---|---|---|---|---|---------------------|
-        |     B     |   | C |   |   | D |   |                     |
-        |-----------|---|---|---|---|---|---|---------------------|
-        |     C     |   |   |   |   | D |   |                     |
-        |-----------|---|---|---|---|---|---|---------------------|
-        |     D     |   | E | F |   |   | G |                     |
-        |-----------|---|---|---|---|---|---|---------------------|
-        |     E     |   |   | F |   |   | G |                     |
-        |-----------|---|---|---|---|---|---|---------------------|
-        |     F     |   |   |   | H |   |   |                     |
-        |-----------|---|---|---|---|---|---|---------------------|
-        |     G     |   |   |   |   |   |   | конечное состояние  |
-        |-----------|---|---|---|---|---|---|---------------------|
-        |     H     |   | E |   |   |   |   |                     |
-        |-----------|---|---|---|---|---|---|---------------------|
+        |-------|---|---|---|---|---|---|-------------|
+        | state | a | b | c | d | e | f | Remark      |
+        |-----------|---|---|---|---|---|-------------|
+        |   A   | B |   |   |   |   |   | begin state |
+        |-----------|---|---|---|---|---|-------------|
+        |   B   |   | C |   |   | D |   |             |
+        |-----------|---|---|---|---|---|-------------|
+        |   C   |   |   |   |   | D |   |             |
+        |-----------|---|---|---|---|---|-------------|
+        |   D   |   | E | F |   |   | G |             |
+        |-----------|---|---|---|---|---|-------------|
+        |   E   |   |   | F |   |   | G |             |
+        |-----------|---|---|---|---|---|-------------|
+        |   F   |   |   |   | H |   |   |             |
+        |-----------|---|---|---|---|---|-------------|
+        |   G   |   |   |   |   |   |   | final state |
+        |-----------|---|---|---|---|---|-------------|
+        |   H   |   | E |   |   |   |   |             |
+        |-------|---|---|---|---|---|---|-------------|
 
-        Однако такие имена состояний неудобно использовать в коде, поэтому нужны более
-        осмысленные имена, которые и собраны в перечислении State. Ниже приведена
-        таблица соответствия имён состояний из таблицы переходов и имён из данного
-        перечисления.
+        However, such state names are inconvenient to use in the code, so more
+        meaningful names are needed, which are collected in the State enumeration.
+        Below is a table of the correspondence of state names from the table of
+        transitions and names from this enumeration.
 
-        |-----------|---------------------------------------------|
-        | Состояние |     Имя из перечисления Num_str_state       |
-        |-----------|---------------------------------------------|
-        |     A     | Num_str_kw                                  |
-        |-----------|---------------------------------------------|
-        |     B     | Maybe_init_acts                             |
-        |-----------|---------------------------------------------|
-        |     C     | Init_acts                                   |
-        |-----------|---------------------------------------------|
-        |     D     | Maybe_final_acts                            |
-        |-----------|---------------------------------------------|
-        |     E     | Final_acts                                  |
-        |-----------|---------------------------------------------|
-        |     F     | Action_sec                                  |
-        |-----------|---------------------------------------------|
-        |     G     | Act_expr_beg                                |
-        |-----------|---------------------------------------------|
-        |     H     | Act_def                                     |
-        |-----------|---------------------------------------------|
+        |-------|-----------------------------------|
+        | state |  Name from the State enumeration  |
+        |-------|-----------------------------------|
+        |   A   | Num_str_kw                        |
+        |-------|-----------------------------------|
+        |   B   | Maybe_init_acts                   |
+        |-------|-----------------------------------|
+        |   C   | Init_acts                         |
+        |-------|-----------------------------------|
+        |   D   | Maybe_final_acts                  |
+        |-------|-----------------------------------|
+        |   E   | Final_acts                        |
+        |-------|-----------------------------------|
+        |   F   | Action_sec                        |
+        |-------|-----------------------------------|
+        |   G   | Act_expr_beg                      |
+        |-------|-----------------------------------|
+        |   H   | Act_def                           |
+        |-------|-----------------------------------|
 
      */
     Command_buffer      buf_;
     Init_and_final_acts acts_;
-    /* Следующая функция реализует вышеупомянутый автомат, и возвращает true,
-     * если текущий раздел --- тот, который предполагалось, и false в
-     * противном случае. */
+    /* The following function implements the above automaton, and returns true
+     * if the current section is the one that was supposed to be, and false
+     * otherwise. */
     bool begin_of_num_or_str_sec();
 
 
     void add_action_definition(size_t action_id, size_t action_def_idx);
 
-    /* Ниже приводится таблица функций, реализующих выполнение действий в
-       каждом из состояний автомата, который реализует функция
-       begin_of_num_or_str_sec */
+    /* Below is a table of functions that implement the execution of actions in
+     * each of the states of the automaton, which is realized by the function
+     * begin_of_num_or_str_sec. */
     typedef bool (NS_parser::*State_proc)();
 
     static State_proc procs[];

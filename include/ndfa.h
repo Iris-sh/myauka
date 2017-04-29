@@ -32,10 +32,15 @@ struct NDFA{
     NDFA(const NDFA& orig) = default;
 };
 
-/*! Данная функция строит по списку команд, соответствующему регулярному выражению,
-    недетерминированный конечный автомат, отвечающий регулярному выражению.  */
+/**
+ * \param [in]  commands The list of commands corresponding to a regular expression.
+ * \param [out] a        Corresponding non-deterministic finite automaton.
+ */
 void build_NDFA(NDFA& a, const Unwrapped_commands& commands);
 
-/*! Печать недетерминированного конечного автомата a. */
+/**
+ * \brief         Prints non-deterministic finite automaton.
+ * \param [in] a  Non-deterministic finite automaton.
+ */
 void print_NDFA(const NDFA& a);
 #endif

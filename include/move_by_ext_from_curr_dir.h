@@ -12,10 +12,11 @@
 #include <string>
 #include <boost/filesystem/operations.hpp>
 
-/** Следующая функция перемещает файлы из текущего каталога,
- *  имеющие заданное расширение ext, в каталог path_to.
- *  Функция возвращает true, если операция прошла успешно,
- *  и false в противном случае. */
+/**
+ * \param [in] path_to The directory in which to move files from the current directory
+ * \param [in] ext     Extension of moved files
+ * \return             true if the operation was successful, and false otherwise
+*/
 bool move_by_ext_from_curr_dir(const boost::filesystem::path& path_to,
                                const std::string& ext);
 #endif

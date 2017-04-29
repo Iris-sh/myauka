@@ -17,8 +17,13 @@ enum class Move_result {
     Success
 };
 
-/** Следующая функция перемещает файлы с расширением ext из каталога
-    path_from в каталог path_to. */
+/**
+ * \param [in] path_from The directory from which to move files
+ * \param [in] path_to   The directory in which to move files
+ * \param [in] ext       Extension of moved files
+ *
+ * \return               Return code of type Move_result
+ */
 Move_result move_by_ext(const boost::filesystem::path& path_from,
                         const boost::filesystem::path& path_to,
                         const std::string& ext);

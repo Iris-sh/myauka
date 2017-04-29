@@ -20,47 +20,74 @@
 template<typename T>
 class Trie {
 public:
-    /* Конструктор по умолчанию. */
     Trie<T>();
-    /* Деструктор. */
+
     ~Trie() = default;
-    /* Копирующий конструктор. */
+
     Trie(const Trie<T>& orig) = default;
-    /* Функция вставки в префиксное дерево. */
+
+    /**
+     * \brief The function of inserting into the prefix tree.
+     * \param [in] s Inserted string s.
+     * \return       Index of the string s in the prefix tree.
+     */
     size_t insert(const std::basic_string<T>& s);
-    /* Функция, вычисляющая максимальную степень вершин префиксного
-     * дерева (корень дерева не учитывается). */
+
+    /**
+     * \brief Calculation of the maximum degree of the vertices of the prefix tree
+     *        (the root of the tree is not taken into account).
+     * \return The maximum degree of the vertices of the prefix tree
+     *         (the root of the tree is not taken into account)
+     */
     size_t maximal_degree();
 protected:
-    /* тип узла префиксного дерева: */
+    /**
+     * \struct node
+     * \brief Node type of the prefix tree.
+     * \details All child nodes of the current node are organized in the form of a
+     *          simply-connected list, the first element of which is an element with
+     *          the index first_child. The  field parent contains the index of the
+     *          parent node, and in the next field the next descendant of the parent
+     *          node. If the current node has no children, then the field  first_child
+     *          contains zero. Similarly, the last element in the list of children in
+     *          the  field next contains zero. Here, the subscript is the index in the
+     *          field node_buffer, which is a vector (in the sense of the STL library)
+     *          of the nodes of the prefix tree.
+     */
     struct node{
       size_t parent, first_child, next;
-      /* Все узлы-потомки текущего узла организованы в виде односвязного списка, первым
-       * элементом которого является элемент с индексом first_child. В поле parent
-       * содержится индекс родительского узла, а в поле next -- следующего потомка
-       * родительского узла. Если у текущего узла потомков нет, то в поле first_child
-       * содержится нуль. Аналогично, последний элемент в списке потомков в поле next
-       * содержит нуль. Здесь под индексом понимается индекс в поле node_buffer,
-       * представляющем собой вектор (в смысле библиотеки STL) из узлов префиксного
-       * дерева. */
-      size_t path_len; /* в этом поле содержится длина пути
-                        * от текущего узла до корня дерева */
-      size_t degree; /* В этом поле содержится степень узла,
-                      * то есть количество выходящих из узла рёбер. */
-      T c; /* в этом поле содержится символ вставленной строки,
-            * являющийся меткой текущего узла. */
+
+      /// \brief The length of the path from the current node to the root of the tree.
+      size_t path_len;
+
+      /// \brief The degree of the node, that is, the number of edges emerging
+      /// from the node
+      size_t degree;
+
+      /// \brief The character of the inserted string that is the
+      /// label of the current node
+      T c;
+
       node(){
         next = parent = path_len = first_child = 0;
         degree = 0; c = T();
       }
     };
+
     std::vector<node>   node_buffer;
     std::vector<size_t> nodes_indeces;
-    /* Функция, добавляющая к списку потомков узла parent_idx узел, помеченный
-     * значением x типа T. Функция возвращает индекс вставленного узла. */
+
+    /**
+     * \brief This function adds a node marked with a value of x of type T to the list of
+     *        children of the node parent_idx.
+     * \param [in] parent_idx An index of a parent.
+     * \param [in] x          An inserted value.
+     * \return                The index of inserted node.
+     */
     size_t add_child(size_t parent_idx, T x);
-    /* Эта функция выполняет (возможно, необходимые) действия
-     * по окончании вставки последнего символа. */
+
+    /// \brief This function performs (possibly necessary) actions after the last
+    /// character is inserted.
     virtual void post_action(const std::basic_string<T>& s, size_t n){ };
 };
 
@@ -85,14 +112,16 @@ size_t Trie<T>::add_child(size_t parent_idx, T x){
     size_t current, previous;
     node   temp;
     current = previous = node_buffer[parent_idx].first_child;
-    /* В переменной temp содержится узел, который, возможно, придётся вставить. */
+    /* The variable temp contains a node that you might need to insert. */
     temp.c = x; temp.degree = 0;
     temp.next = 0; temp.parent = parent_idx;
     temp.path_len = node_buffer[parent_idx].path_len + 1;
     if(!current){
-        /* Здесь можем оказаться, лишь если у узла с индексом parent_idx потомков
-         * вообще нет. Значит добавляемый узел будет первым в списке потомков. При
-         * этом степень узла parent_idx увеличится на единицу, и станет равна 1. */
+        /* We can be here only if the node with the parent_idx index has no children at
+         * all. This means that the added node will be the first in the list of children.
+         * In this case the degree of node parent_idx will increase by one, and will
+         * become equal to 1.
+         */
         node_buffer.push_back(temp);
         size_t child_idx = node_buffer.size() - 1;
         node_buffer[parent_idx].first_child = child_idx;
@@ -100,18 +129,18 @@ size_t Trie<T>::add_child(size_t parent_idx, T x){
         return child_idx;
     }
     while(current){
-        // Если же потомки есть, то нужно пройти по списку потомков.
+        // If there are children, then you need to go through the list of children.
         node current_node = node_buffer[current];
         if(current_node.c == x){
-          /* Если потомок, помеченный нужным символом (символом x),
-           * есть, то нужно вернуть индекс этого потомка. */
+          /* If there is a child marked with the desired symbol (the symbol x),
+           * then we need to return the index of this child. */
           return current;
         }else{
           previous = current; current = current_node.next;
         }
     }
-    /* Если же такого потомка нет, то нужно этого потомка добавить
-     * в конец списка потомков.*/
+    /* If there is no such child, then we need to add this child to the end
+     * of the list of children. */
     node_buffer.push_back(temp);
     size_t next_child = node_buffer.size() - 1;
     node_buffer[previous].next = next_child;

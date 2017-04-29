@@ -12,8 +12,11 @@
 #define UNWRAP_COMMANDS_H
 #include "../include/unwrapped_command.h"
 #include "../include/command.h"
-
+/**
+ * \brief This function converts the buffer with the written commands, unwrapping
+ *        the symbol classes (except the classes [: nsq:] and [: ndq:]).
+ * \param [in] buf Buffer containing commands.
+ * \return         Buffer containing unwrapped commands.
+ */
 Unwrapped_commands unwrap_commands(const Command_buffer& buf);
-/* Данная функция преобразует буфер с записанными командами, разворачивая
- * классы символов (кроме классов [:nsq:] и [:ndq:]). */
 #endif

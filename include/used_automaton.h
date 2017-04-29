@@ -8,9 +8,12 @@
 */
 #ifndef USED_AUTOMATON_H
 #define USED_AUTOMATON_H
+/**
+ * \brief This enumeration consists of the names of the generated automata.
+ */
 enum Used_automaton{
     Start_aut,     Unknown_aut,   Id_aut,     Keyword_aut,
     IdKeyword_aut, Delimiter_aut, Number_aut, String_aut,
     Comment_aut
-};/* Данное перечисление состоит из имён порождаемых автоматов. */
+};
 #endif

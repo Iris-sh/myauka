@@ -12,15 +12,14 @@
 
 #define THERE_IS_NO_CHAR (-1)
 /**
- * \function search_char
- * Данная функция ищет заданный символ типа char32_t в строке,
- * состоящей из символов такого типа и завершающейся нулевым
- * символом.
+ * \brief This function searches for a given character of type char32_t
+ *        in a string consisting of characters of this type and ending
+ *        with a null character.
  *
- * \param [in] c --- искомый символ
- * \param [in] array --- строка в которой ищется символ
- * \return смещение (в символах) от начала строки, если
- * искомый символ в строке есть, и (-1) в противном случае
+ * \param [in] c     The wanted character.
+ * \param [in] array The string in which the symbol is searched for.
+ * \return           Offset (in characters) from the beginning of the line, if the
+ *                   desired character is in the string, and (-1) otherwise
  */
 int search_char(char32_t c, const char32_t* array);
 #endif

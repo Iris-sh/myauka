@@ -1,4 +1,4 @@
-/* 
+/*
     File:    scope.h
     Created: 13 December 2015 at 09:05 Moscow time
     Author:  Гаврилов Владимир Сергеевич
@@ -24,31 +24,41 @@ enum Str_kind {
 };
 
 struct Id_attributes{
-    Id_kind kind; /* Вид идентификатора, то есть является
-                   * ли этот идентификатор именем сканера,
-                   * именем типа кодов лексем, кодом лексемы,
-                   * или именем действия. */
+    /**
+     * The kind of identifier, that is, whether this identifier is the name of the
+     * scanner, the name of the type of lexeme codes, the lexeme code, or the name
+     * of the action.
+     */
+    Id_kind kind;
     union {
-        size_t code; /* числовое значение кода лексемы,
-                      * если идентификатор --- код лексемы */
-        size_t act_string; /* индекс строкового литерала,
-                            * являющегося определением
-                            * действия, в префиксном дереве
-                            * строковых литералов*/
+        /**
+         * The numerical value of the lexeme code,
+         * if the identifier is the lexem code.
+         */
+        size_t code;
+        /**
+         * The index of the string literal, which is the definition of the action,
+         * in the prefix tree of string literals, if the identifier is the name of
+         * the action.
+         */
+        size_t act_string;
     };
 };
 
 struct Str_attributes{
-    Str_kind kind; /* Вид строкового литерала, то есть является
-                    * строковым представлением ключевого слова,
-                    * строковым представлением разделителя,
-                    * списком добавляемых в класс сканера членов,
-                    * определением действия, началом однострочного
-                    * комментария, началом многострочного
-                    * комментария, или концом многострочного
-                    * комментария. */
-    size_t code; /* код лексемы, если строковый литерал является
-                  * представлением ключевого слова или разделителя */
+    /**
+     * The type of string literal, that is, whether it is a string representation of
+     * the keyword, a string representation of the delimiter, a list of members added
+     * to the scanner class, an action definition, the beginning of a single-line
+     * comment, the beginning of a multi-line comment, or the end of a multi-line
+     * comment.
+     */
+    Str_kind kind;
+    /**
+     * The lexeme code, if the string literal is a string representation of
+     * a keyword or a delimiter.
+     */
+    size_t code;
 };
 
 using Id_scope = std::map<size_t, Id_attributes>;
@@ -57,10 +67,11 @@ using Str_scope = std::map<size_t, Str_attributes>;
 
 class Scope {
 public:
-    Id_scope  idsc; /* Отображение индексов идентификаторов в
-                     * атрибуты идентификаторов. */
-    Str_scope strsc; /* Отображение индексов строковых литералов
-                      * в атрибуты литералов. */
+    /// Mapping of indeces of identifiers in the attributes of identifiers.
+    Id_scope  idsc;
+    /// Mapping of indeces of string literals in the attributes of string literals.
+    Str_scope strsc;
+
     Scope()  = default;
     ~Scope() = default;
     Scope(const Scope& orig) = default;

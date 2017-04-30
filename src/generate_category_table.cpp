@@ -23,12 +23,12 @@ using Set_of_char           = std::set<char32_t>;
 using Category_name_and_set = std::pair<std::string, Set_of_char>;
 using Categories_info       = std::vector<Category_name_and_set>;
 
-/* Следующая функция по заданному символу типа char32_t строит множество категорий,
- * которым он принадлежит. Сведения о категориях передаются в векторе, элементы
- * которого имеют тип Category_name_and_set. Множество категорий представляется в
- * виде числа типа uint64_t: равенство нулю какого--либо разряда означает, что
- * категория с соответствующим номером этому множеству не принадлежит, а равенство
- * единице --- что принадлежит. */
+/* The next function for a given character of type char32_t builds the set of categories
+ * to which it belongs. Information about categories is transmitted in a vector whose
+ * elements are of type Category_name_and_set. The set of categories is represented as a
+ * number of the type uint64_t: the equality to zero of some category means that the
+ * category with the corresponding number does not belong to this set, and the equality
+ * to one that belongs to. */
 static uint64_t construct_categories_set_for_char(char32_t c,
                                                   const Categories_info& categories_info)
 {
@@ -122,26 +122,25 @@ std::string generate_category_table(Info_for_constructing& info){
     Categories_info categories_info;
     Set_of_char     categorized_chars;
     for(const auto& c : info.category_name){
-        /* перебираем имена всех категорий и записываем сведения о
-         * категориях символов в вектор categories_info */
+        /* Look through the names of all categories and write down information
+         * about the categories of characters in the categories_info vector. */
         auto cat_idx         = c.first;
         auto set_for_cat_idx = info.char_cat.get_set(cat_idx);
         auto x               = std::make_pair(c.second, set_for_cat_idx);
         categories_info.push_back(x);
-        /* кроме того, собираем в одно множество все символы, входящие
-         * в какую--либо категорию */
+        /* In addition, we collect in one set all the symbols belonging to a category. */
         categorized_chars    = categorized_chars + set_for_cat_idx;
     }
 
-    /* теперь для каждого символа из множества categorized_chars строим
-     * множество категорий, которым он принадлежит */
+    /* Now for each character from the set categorized_chars we build a set of
+     * categories to which it belongs */
     std::map<char32_t, uint64_t> splitting_characters_by_category;
     for(char32_t c : categorized_chars){
         splitting_characters_by_category[c] =
             construct_categories_set_for_char(c, categories_info);
     }
 
-    /* затем создаём перечисление из имён категорий символов */
+    /* Then create an enumeration of the names of the character categories. */
     auto category_enum = construct_category_enum(categories_info);
     auto cat_table_str =
         category_table_string_repres(splitting_characters_by_category,

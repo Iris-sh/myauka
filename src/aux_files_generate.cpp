@@ -874,7 +874,7 @@ void aux_files_generate(){
             fputs("\n",fptr);
             fclose(fptr);
         }else{
-            printf("Не удалось создать файл %s.\n",n.file_name);
+            printf("Could not create file %s.\n",n.file_name);
         }
     }
 }

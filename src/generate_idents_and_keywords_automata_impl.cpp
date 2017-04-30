@@ -106,9 +106,9 @@ std::string sindent(const std::string& s){
 
 
 using Keyword_and_code = std::pair<std::u32string, std::string>;
-/* Первый элемент этой пары --- строковое представление ключевого слова,
- * а второй элемент --- строковое представление идентификатора, являющегося
- * соответствующим кодом лексемы. */
+/* The first element of this pair is a string representation of the keyword, and the
+ * second element is a string representation of the identifier that is the
+ * corresponding lexeme code. */
 
 using Keywords_and_codes = std::vector<Keyword_and_code>;
 
@@ -258,8 +258,8 @@ static void generate_separate_identifier_automat(Info_for_constructing& info){
 }
 
 static void generate_separate_keywords_automat(Info_for_constructing& info){
-    /* Данная функция строит реализацию отдельного автомата, обрабатывающего
-     * ключевые слова. */
+    /* This function builds an implementation of a separate automaton that
+     * processes keywords. */
     auto                 first_chars_for_keywords = info.begin_chars[Keyword_beg_char].s;
     Attributed_char_trie atrie;
 
@@ -278,9 +278,10 @@ static void generate_separate_keywords_automat(Info_for_constructing& info){
         counter++;
     }
 
-    Jumps_and_inits jmps = atrie.jumps(); /* построили заготовку под таблицу переходов */
-    /* теперь нужно дописать нужный текст в реализацию стартового автомата
-       и сгенерировать функцию, обрабатывающую ключевые слова */
+    Jumps_and_inits jmps = atrie.jumps(); /* We built a workpiece for
+                                             the transition table. */
+    /* Now we need to add the desired text to the implementation of the start automaton
+     * and generate a function that handles the keywords. */
     auto cat_res = add_category(info, first_chars_for_keywords,
                                 keywords_begin_cat_name_by_default);
     std::string keyword_begin_cat_name = cat_res.second;
@@ -321,8 +322,7 @@ void generate_idents_and_keywords_automata_impl(Info_for_constructing& info){
         case There_is_no_id_and_there_are_no_keywords:
             break;
         case There_is_no_id_and_there_are_keywords:
-            /* Обработка ключевых слов будет выполняться аналогично
-             * обработке разделителей. */
+            /* Here keyword processing will be similar to the processing of delimiters. */
             generate_separate_keywords_automat(info);
             break;
         case There_is_id_and_there_are_no_keywords:
@@ -330,19 +330,20 @@ void generate_idents_and_keywords_automata_impl(Info_for_constructing& info){
             break;
         case There_is_id_and_there_are_keywords:
             if(!(info.begin_chars[Keyword_beg_char] * info.begin_chars[Id_beg_char])){
-                /* Если множество первых символов ключевых слов не пересекается с
-                 * множеством первых символов идентификаторов, то создать отдельный
-                 * автомат обработки идентификаторов, и отдельный автомат обработки
-                 * ключевых слов, без возможности перехода между ними. При этом обработка
-                 * ключевых слов будет выполняться аналогично обработке разделителей. */
+                /* If the set of first characters of keywords does not intersect with
+                 * the set of first characters of identifier, then create a separate
+                 * identifier handling automaton and a separate keyword processing
+                 * automaton, without the possibility of switching between them. In
+                 * this case, the processing of keywords will be performed similarly
+                 * to the processing of delimiters. */
                 generate_separate_keywords_automat(info);
                 generate_separate_identifier_automat(info);
             }else{
-                /* Если же указанные множества пересекаются, то нужно склеить регулярку
-                 * для идентификаторов с регуляркой для ключевых слов, создать по этой
-                 * регулярке минимизированный детерминированный конечный автомат со
-                 * сгруппированными переходами, и по получившемуся автомату нужно построить
-                 * его реализацию. */
+                /* If the specified sets intersect, then we need to glue the regular
+                 * expression for the identifiers with regular expression for the
+                 * keywords, create a minimized deterministic finite automaton with the
+                 * grouped transitions from this regular expression, and from the resulting
+                 * automaton we need to build its implementation. */
                 info.set_of_used_automata &= ~((1ULL << Id_aut) | (1ULL << Keyword_aut));
                 info.set_of_used_automata |= 1ULL << IdKeyword_aut;
                 generate_idkeyword_automat(info);

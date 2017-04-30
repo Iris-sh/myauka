@@ -54,13 +54,15 @@ static std::string delim_proc_body(const std::string& s){
 }
 
 void generate_delim_automaton_impl(Info_for_constructing& info){
-    /* Данная функция строит реализацию автомата, обрабатывающего разделители. */
+    /* This function builds an implementation of the automaton
+     * that processes delimiters. */
     if(!belongs(Delimiter_aut, info.set_of_used_automata)){
         return;
     }
 
-    std::set<char32_t>          first_chars_for_delims; /* Это множество
-       состоит из символов, с которых могут начинаться разделители. */
+    std::set<char32_t>          first_chars_for_delims; /* This set consists of
+                                                           characters from which
+                                                           the delimiters can begin. */
     Attributed_char_trie        atrie;
 
     std::vector<std::u32string> delimiter_strings;
@@ -80,9 +82,10 @@ void generate_delim_automaton_impl(Info_for_constructing& info){
         counter++;
     }
 
-    Jumps_and_inits jmps = atrie.jumps(); /* построили заготовку под таблицу переходов */
-    /* теперь нужно дописать нужный текст в реализацию стартового автомата
-       и сгенерировать функцию, обрабатывающую разделители */
+    Jumps_and_inits jmps = atrie.jumps(); /* We built a workpiece for
+                                             the transition table. */
+    /* Now we need to add the desired text to the implementation of the start automaton
+     * and generate a function that handles the delimiters. */
     auto cat_res = add_category(info, first_chars_for_delims, del_begin_cat_name_by_default);
     std::string delimiter_begin_cat_name = cat_res.second;
 

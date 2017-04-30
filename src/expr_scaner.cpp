@@ -61,27 +61,25 @@ uint64_t Expr_scaner::get_categories_set(char32_t c){
 }
 
 /**
- * Элемент таблицы переходов автомата обработки классов символов
+ * Element of the transitions table of the character class processing automaton.
  */
 struct Elem {
-    /** Указатель на строку , состоящую из символов , по которым
-        возможен переход. */
+    /** A pointer to a string of characters that can be passed to any state. */
     char32_t*       symbols;
-    /** код лексемы */
+    /** lexeme code */
     Expr_lexem_code code;
-    /** Если текущий символ совпадает с symbols[0], то
-        выполняется переход в состояние first_state;
-        если текущий символ совпадает с symbols[1], то
-        выполняется переход в состояние first_state+1;
-        если текущий символ совпадает с symbols[2], то
-        выполняется переход в состояние first_state+2,
-        и так далее. */
+    /** If the current character matches symbols [0], then
+     *  the transition to the state first_state;
+     *  if the current character matches symbols [1], then
+     *  the transition to the state first_state + 1;
+     *  if the current character matches symbols [2], then
+     *  the transition to the state first_state + 2, and so on. */
     uint16_t        first_state;
 };
 
-/* Для автомата обработки классов символов член state класса
- * Expr_scaner является индексом элемента в таблице переходов,
- * обозначеннойниже как a_classes_jump_table. */
+/* For the character classes handler, the state member of the Expr_scaner
+ * class is the index of the element in the navigation table, denoted below
+ * as a_classes_jump_table. */
 static const Elem a_classes_jump_table[] = {
     {const_cast<char32_t*>(U"ae"),M_Class_Latin,  1},           // 0:   [:L...
     {const_cast<char32_t*>(U"t"), M_Class_Latin,  3},           // 1:   [:La...
@@ -201,9 +199,8 @@ Expr_scaner::Final_proc Expr_scaner::finals[] = {
 bool Expr_scaner::start_proc() {
     bool t = true;
     state = -1;
-    /* Для автомата, обрабатывающего какую-либо лексему, состояние
-     * с номером (-1) является состоянием, в котором происходит
-     * инициализация этого автомата. */
+    /* For an automaton that processes a lexeme, the state with the number (-1)
+     * is the state in which this machine is initialized. */
     if(belongs(Spaces, char_categories)){
         loc->current_line += U'\n' == ch;
         return t;
@@ -241,12 +238,11 @@ static const char* class_strings[] = {
 };
 
 void Expr_scaner::correct_class(){
-    /* Данная функция корректирует код лексемы, скорее всего
-     * являющейся классом символов, и выводит необходимую
-     * диагностику. */
+    /* This function corrects the code of the token, most likely a character class,
+     * and displays the necessary diagnostics. */
     if(token.code >= M_Class_Latin){
         int y = token.code - M_Class_Latin;
-        printf("В строке %zu ожидается %s.\n",
+        printf("Line %zu expects %s.\n",
                loc->current_line,class_strings[y]);
         token.code = static_cast<Expr_lexem_code>(y + Class_Latin);
         en -> increment_number_of_errors();
@@ -261,34 +257,33 @@ Expr_lexem_info Expr_scaner::current_lexem(){
         char_categories = get_categories_set(ch); // categories_table[ch];
         t = (this->*procs[automaton])();
         if(!t){
-            /* Сюда попадаем, лишь если лексема уже прочитана При этом текущим автоматом.
-             * уже прочитан символ, идущий сразу за концом прочитанной лексемы на
-             *,основании этого символа принято решение о том, что лексема прочитана, и
-             * совершён переход к следующему за ним символу. Поэтому для того, чтобы
-             * не пропустить первый символ следующей лексемы, нужно уменьшить на
-             * единицу указатель pcurrent_char. */
+            /* We get here only if the lexeme has already been read. At the same time,
+             * the current automaton has already read the character that follows
+             * immediately after the end of the lexeme read, based on this symbol, it was
+             * decided that the lexeme was read and the transition to the next character
+             * was made. Therefore, in order to not miss the first character of the next
+             * lexeme, you need to decrease the pcurrent_char pointer by one. */
             (loc->pcurrent_char)--;
             if(Action == token.code){
-                /* Если текущая лексема является идентификатором, то этот идентификатор
-                 * нужно записать в таблицу идентификаторов. */
+                /* If the current lexeme is an identifier, then this identifier must be
+                 * written to the identifier table. */
                 token.action_name_index = ids -> insert(buffer);
             }else if(A_class == automaton){
-                /* Если закончили обрабатывать класс символов, то нужно скорректировать
-                 * его код, и, возможно, вывести диагностику. */
+                /* If you have finished processing the class of characters, you need to
+                 * adjust its code, and, possibly, output diagnostics. */
                 correct_class();
             }
             return token;
         }
     }
-    /* Здесь можем оказаться, только если уже прочли весь обрабатываемый текст. При этом
-     * указатель на текущий символ указывает на символ, который находится сразу же после
-     * нулевого символа, являющегося признаком конца текста. Чтобы не выйти при
-     * последующих вызовах за пределы текста, нужно перейти обратно к нулевому
-     * символу. */
+    /* Here we can be, only if we have already read all the processed text. In this
+     * case, the pointer to the current symbol points to a character that is immediately
+     * after the null character, which is a sign of the end of the text. To avoid entering
+     * subsequent calls outside the text, you need to go back to the null character.*/
     (loc->pcurrent_char)--;
-    /* Далее, поскольку мы находимся здесь, то конец текущей лексемы (возможно,
-     * неожиданный) ещё не обработан. Надо эту обработку выполнить, и, возможно, вывести
-     * какую-то диагностику.*/
+    /* Further, since we are here, the end of the current token (perhaps unexpected) has
+     * not yet been processed. It is necessary to perform this processing, and, probably,
+     * to display some kind of diagnostics.*/
     (this->*finals[automaton])();
     return token;
 }
@@ -297,14 +292,14 @@ bool Expr_scaner::unknown_proc(){
     return belongs(Other, char_categories);
 }
 
-/* Данный массив состоит из пар вида (состояние, символ) и используется для инициализации
- * автомата обработки классов символов. Смысл элемента массива таков: если в состоянии
- * инициализации текущий символ совпадает со второй компонентой элемента, то работа
- * начинается с состояния, которое является первой компонентой элемента. Рассмотрим,
- * например, элемент {54, U'n'}. Если текущий символ совпадает со второй компонентой
- * этого элемента, то работа начинается с состояния, являющегося первой компонентой,
- * т.е. с состояния 54. Массив должен быть отсортирован по возрастанию
- * второй компоненты.*/
+/* This array consists of pairs of the form (state, character) and is used to initialize
+ * the character class processing automaton. The sense of the element of the array is this:
+ * if the current character in the initialization state coincides with the second component
+ * of the element, the work begins with the state that is the first component of the element.
+ * Consider, for example, the element {54, U'n '}. If the current character coincides with
+ * the second component of this element, then work begins with the state being the first
+ * component, i.e. from state 54. The array must be sorted in ascending order of the
+ * second component.*/
 static const State_for_char init_table_for_classes[] = {
     {0, U'L'},  {14, U'R'}, {23, U'b'}, {32, U'd'}, {40, U'l'},
     {54, U'n'}, {63, U'o'}, {72, U'r'}, {81, U'x'}
@@ -326,8 +321,8 @@ bool Expr_scaner::classes_proc(){
                 token.code = a_classes_jump_table[state].code;
                 t = true;
             }else{
-                printf("В строке %zu ожидается один из следующих"
-                       "символов: L, R, b, d, l, n, o, r, x.\n",
+                printf("The line %zu expects one of the following characters: "
+                       "L, R, b, d, l, n, o, r, x.\n",
                        loc->current_line);
                 en -> increment_number_of_errors();
             }
@@ -387,13 +382,13 @@ bool Expr_scaner::delimiter_proc(){
 
 bool Expr_scaner::action_proc(){
     bool t = true;
-    /* Переменная t равна true, если имя действия полностью
-     * ещё не прочитано, и false в противном случае. */
+    /* The variable t is true if the action name has not yet
+     * been fully read, and false otherwise. */
     if(-1 == state){
         if(belongs(Action_name_begin, char_categories)){
             buffer += ch; state = 0;
         }else{
-            printf("В строке %zu ожидается латинская буква или знак подчёркивания.\n",
+            printf("A Latin letter or an underscore is expected on the %zu line.\n",
                     loc->current_line);
             en -> increment_number_of_errors();
             t = false;
@@ -408,19 +403,19 @@ bool Expr_scaner::action_proc(){
 }
 
 void Expr_scaner::none_final_proc(){
-    /* Данная подпрограмма будет вызвана, если по прочтении входного текста оказались
-     * в автомате A_start. Тогда ничего делать не нужно. */
+    /* This subroutine will be called if, after reading the input text, it turned out
+     * to be in the A_start automaton. Then you do not need to do anything. */
 }
 
 void Expr_scaner::unknown_final_proc(){
-    /* Данная подпрограмма будет вызвана, если по прочтении входного текста оказались
-     * в автомате A_unknown. Тогда ничего делать не нужно. */
+    /* This subroutine will be called if, after reading the input text, it turned out
+     * to be in the A_unknown automaton. Then you do not need to do anything. */
 }
 
 void Expr_scaner::action_final_proc(){
-    /* Данная функция будет вызвана, если по прочтении входного потока оказались
-     * в автомате обработки имён действий, автомате A_action. Тогда это имя
-     * нужно записать в префиксное дерево идентификаторов. */
+    /* This function will be called if, after reading the input stream, they were
+     * in the action names processing automaton, the A_action automaton. Then this
+     * name should be written in the prefix tree of identifiers. */
     token.action_name_index = ids -> insert(buffer);
 }
 

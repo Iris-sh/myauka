@@ -245,35 +245,6 @@ int get_init_state(char32_t sym, const State_for_char sts[], int n);
 #endif)~";
 
 static const char* location_h =
-
-#ifndef LOCATION_H
-#define LOCATION_H
-
-#include <memory>
-/* The following structure describes the current position in the processed text.
- * This is due to the fact that, due to the conflict of the lexem 'identifier'
- * and the lexem 'character', instead of one scanner, two must be done: the main
- * scanner and the scanner for regular expressions. In this case, the main parser
- * will call parsers for regular expressions, which, in turn, will call the scanner
- * for regular expressions. Therefore, both of these scanners need to know the
- * current position in the current text and be able to manipulate this position,
- * and each of these scanners must continue to work from the place in the processed
- * text, on which the previous scanner finished work. As a consequence, the information
- * about the current position in the processed text should be shared by both scanners,
- * so that a smart pointer to the shared information about the current location should
- * be sent to the constructor of each of the scanners.
- */
-
-struct Location {
-    char32_t* pcurrent_char; //< pointer to the current character
-    size_t    current_line;  //< number of current line
-
-    Location() : pcurrent_char(nullptr), current_line(1) {};
-    Location(char32_t* txt) : pcurrent_char(txt), current_line(1) {};
-};
-
-using Location_ptr = std::shared_ptr<Location>;
-#endif
     R"~(#ifndef LOCATION_H
 #define LOCATION_H
 
@@ -737,33 +708,19 @@ static const char* char_trie_cpp =
 #include <string>
 #include <set>
 
-Char_trie_as_map::~Char_trie_as_map(){
-    for(auto x : *m){
-        delete [] x.second;
-    }
-}
-
-Char_trie_as_map Char_trie::as_map(){
-    Char_trie_as_map t;
-    t.m = new std::map<size_t,char32_t*>();
-    for(auto x : nodes_indeces){
-        t.m -> insert({x,get_cstring(x)});
-    }
-    return t;
-}
-
 char32_t* Char_trie::get_cstring(size_t idx){
     size_t id_len = node_buffer[idx].path_len;
     char32_t* p = new char32_t[id_len + 1];
     p[id_len] = 0;
     size_t current = idx;
     size_t i       = id_len-1;
-    /* Поскольку idx -- индекс элемента в node_buffer, содержащего последний символ
-     * вставленной строки, а каждый элемент вектора node_buffer содержит поле parent,
-     * указывающее на элемент с предыдущим символом строки, то для получения
-     * вставленной строки, которой соответствует индекс idx, в виде массива символов,
-     * нужно пройтись от элемента с индексом idx к корню. При этом символы вставленной
-     * строки будут читаться от её конца к началу. */
+    /* Since idx is the index of the element in node_buffer containing the last
+     * character of the inserted string, and each element of the vector node_buffer
+     * contains the field parent that points to the element with the previous
+     * character of the string, then to get the inserted string, which corresponds
+     * to the index idx, as an array of characters, it is necessary to walk from
+     * the element with index idx to the root. The characters of the inserted
+     * string will be read from the end to the beginning. */
     for( ; current; current = node_buffer[current].parent){
         p[i--] = node_buffer[current].c;
     }

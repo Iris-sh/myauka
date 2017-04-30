@@ -91,15 +91,15 @@ size_t Attributed_char_trie::jumps_for_subtrie(size_t subtrie_root,
     /* Now we can finish the workpiece for the transition table. */
     size_t state = current_state;
     for(const auto& layer : levels){
-    /* Цикл по слоям. */
+    /* Cycle through layers. */
         for(size_t x : layer){
-        /* Цикл по текущему слою. */
+        /* Cycle through the current layer. */
             Jump_chars jc;
             jc.jump_chars = U""; jc.first_state = state + 1;
             jc.code = node_buffer[x].c.attribute;
             size_t current_child = node_buffer[x].first_child;
             while(current_child){
-            /* Цикл по потомкам текущего узла. */
+            /* Cycle through children of the current layer. */
                 jc.jump_chars += node_buffer[current_child].c.ch;
                 current_child = node_buffer[current_child].next;
             }

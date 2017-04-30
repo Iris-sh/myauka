@@ -47,7 +47,7 @@ void Codes_and_newline::codes_sec(std::vector<size_t>& codes_, size_t& last_code
 void Codes_and_newline::codes_sec_(){
     lc = (li = msc-> current_lexem()).code;
     if(lc != Kw_codes){
-        printf("В строке %zu ожидается %%codes.\n", msc->lexem_begin_line_number());
+        printf("The line %zu expects %%codes.\n", msc->lexem_begin_line_number());
         et_.ec -> increment_number_of_errors();
         msc->back();
         return;
@@ -68,7 +68,7 @@ bool Codes_and_newline::codes_id_proc(){
         state = Codes_comma_sep;
         return t;
     }
-    printf("В строке %zu пропущен идентификатор.\n", msc->lexem_begin_line_number());
+    printf("Missing identifier in line %zu.\n", msc->lexem_begin_line_number());
     et_.ec -> increment_number_of_errors();
     if(Comma == lc){
         state = Codes_comma_sep;
@@ -82,7 +82,8 @@ bool Codes_and_newline::codes_comma_sep_proc(){
     bool t = true;
     switch(lc){
         case Id:
-            printf("В строке %zu ожидается запятая.\n", msc->lexem_begin_line_number());
+            printf("In line %zu, a comma is expected.\n",
+                   msc->lexem_begin_line_number());
             et_.ec -> increment_number_of_errors();
             add_new_lexem_code(li.ident_index);
             state = Codes_comma_sep;

@@ -13,15 +13,15 @@
 #include "../include/categories.h"
 #include "../include/operations_with_sets.h"
 #include "../include/sets_for_classes.h"
-#include "../include/char_conv.h"    // для отладочной печати
-#include "../include/print_char32.h" // для отладочной печати
+#include "../include/char_conv.h"    // For debug printing.
+#include "../include/print_char32.h" // For debug printing.
 
 using operations_with_sets::operator+;
 using operations_with_sets::operator*;
 using operations_with_sets::is_elem;
 using operations_with_sets::is_subseteq;
 
-using operations_with_sets::print_set; // для отладочной печати
+using operations_with_sets::print_set; // For debug printing.
 
 const char* category_kind_as_str[] = {
     "All_chars", "Not_single_quote", "Not_double_quote", "Set_of_cs"
@@ -74,22 +74,20 @@ Category gc2category(const Generalized_char& gc){
     return categ;
 }
 
-/* Операцию сравнения категорий символов на равенство определим так.
-   1) Если c1.kind != c1.kind, то категории не равны.
-   2) Если (c1.kind == c2.kind) && (c1.kind != Set_of_cs), то категории равны.
-   3) В остальных случаях категории равны тогда и только тогда, когда
-      (c1.s == c2.s).
+/* The operation of comparing character categories to equality is defined as follows:
+   1) if c1.kind != c1.kind, then categories are not equal;
+   2) if (c1.kind == c2.kind) && (c1.kind != Set_of_cs), then categories are equal;
+   3) in other cases, the categories are equal if and only if (c1.s == c2.s).
 */
 bool operator == (const Category& c1, const Category& c2){
     return (c1.kind == c2.kind) && ((c1.kind != Set_of_cs) || (c1.s == c2.s));
 }
 
-/* Отношение порядка (<) на множестве категорий символов определим следующим
-   образом.
-   1) Если (c1.kind != c2.kind), то c1 < c2 эквивалентно (c1.kind < c2.kind).
-   2) Если (c1.kind == c2.kind) && (c1.kind != Set_of_cs), то неверно, что c1 < c2.
-   3) В остальных случаях c1 < c2 тогда и только тогда, когда (c1.s < c2.s)
-      (в смысле STL-контейнера std::set).
+/* The order relation (<) on the set of character categories is defined as follows:
+   1) if (c1.kind != c2.kind), then c1 < c2 is equivalent to (c1.kind < c2.kind);
+   2) if (c1.kind == c2.kind) && (c1.kind != Set_of_cs), then is not true that c1 < c2;
+   3) in other cases, c1 < c2 if and only if (c1.s < c2.s)
+      (in the sense of STL-container std::set).
 */
 bool operator < (const Category& c1, const Category& c2){
     if(c1.kind != c2.kind){

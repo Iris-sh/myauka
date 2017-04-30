@@ -45,9 +45,9 @@ std::set<size_t> epsilon_closure(const NDFA& a, const std::set<size_t>& s){
     return eps_clos;
 }
 
-/* Следующая функция вычисляет множество состояний, в которое перейдёт
-   множество состояний states по символу (или классу символов) gc и возвращает
-   получившееся множество в виде контейнера std::set<size_t>. */
+/* The following function computes the set of states to which it will pass a set of
+ * states, denoted by states, by the symbol (or class of characters) gc and returns
+ * the resulting set as a container std :: set <size_t>. */
 std::set<size_t> move(const NDFA& a, const std::set<size_t>& states, Generalized_char gc){
     std::set<size_t> move_set;
     for(size_t st : states){
@@ -60,9 +60,9 @@ std::set<size_t> move(const NDFA& a, const std::set<size_t>& states, Generalized
     return move_set;
 }
 
-/* Следующая функция по множеству s состояний НКА a строит множество символов,
-   по которым из хотя бы одного из состояний, принадлежащих множеству s,
-   есть переход. Эпсилон-переходы не учитываются. */
+/* The next function over the set of s states of the NFA a constructs a set of symbols
+ * from which at least one of the states belonging to the set s has a transition.
+ * Epsilon transitions are not taken into account. */
 std::set<Generalized_char> jump_chars_set(const NDFA& a, const std::set<size_t>& s){
     std::set<Generalized_char> jump_chars;
     for(size_t st : s){
@@ -79,8 +79,8 @@ std::set<Generalized_char> jump_chars_set(const NDFA& a, const std::set<size_t>&
     return jump_chars;
 }
 
-/* Данная функция записывает множество, состоящее из элементов типа size_t,
-   в префиксное дерево таких множеств, и возвращает получившийся индекс. */
+/* This function writes a set consisting of elements of type size_t into the prefix
+ * tree of such sets, and returns the resulting index. */
 size_t write_set_into_trie(Size_t_trie& trie, const std::set<size_t>& s){
     std::basic_string<size_t> str;
     for(size_t x : s){
@@ -90,15 +90,15 @@ size_t write_set_into_trie(Size_t_trie& trie, const std::set<size_t>& s){
     return set_idx;
 }
 
-/* Функция contains_final_state проверяет, содержит ли множество s состояний НКА a
-   конечное состояние этого автомата. */
+/* The contains_final_state function checks whether the set of states s of the NFA
+ * contains a finite state of this automaton. */
 bool contains_final_state(const NDFA& a, const std::set<size_t>& s){
     return s.find(a.final_state) != s.end();
 }
 
-/* Следующая функция вычисляет действие, которое нужно выполнить при переходе
-   из состояния ДКА, представленного множеством s состояний НКА a, по символу
-   или классу символов gc. */
+/* The following function calculates the action to be taken when passing from the DFA
+ * state represented by the set of s states of the NFA a, by the symbol or class of
+ *  characters gc.  */
 size_t action_for_dfa_jump(const NDFA& a, const std::set<size_t>& s, Generalized_char gc){
     for(size_t x : s){
         auto&  x_jmp  = a.jumps[x];
@@ -114,20 +114,21 @@ size_t action_for_dfa_jump(const NDFA& a, const std::set<size_t>& s, Generalized
     return 0;
 }
 
-/* Данная функция по НКА (недетерминированному конечному автомату) ndfa
- * строит соответствующий ДКА a. */
+/* This function for NFA (nondeterministic finite state machine)
+ * ndfa builds the corresponding DFA a. */
 void convert_NDFA_to_DFA(DFA& a, const NDFA& ndfa){
     std::vector<size_t>      marked_states_of_dfa;
     std::vector<size_t>      unmarked_states_of_dfa;
     Size_t_trie              sets_of_ndfa_states;
-    std::map<size_t, size_t> states_nums; /* Это отображение индексов множеств имён
-                                             состояний НКА в номера состояний ДКА.
-                                             Нумерация последних начинается с нуля,
-                                             и нумеруются они в порядке появления
-                                             в вычислениях. */
+    std::map<size_t, size_t> states_nums; /* This is a mapping of the indices of
+                                             the sets of states of the NFA to the
+                                             DFA state numbers. The numbering of the
+                                             latter starts from zero, and they are
+                                             numbered in the order of appearance in
+                                             the calculations. */
     size_t current_nom_of_DFA_state = 0;
 
-    // Вычисляем начальное состояние ДКА a.
+    // We calculate the initial state of the DFA a.
     auto begin_state       = epsilon_closure(ndfa,  {ndfa.begin_state});
     size_t begin_state_idx = write_set_into_trie(sets_of_ndfa_states, begin_state);
 
@@ -143,18 +144,19 @@ void convert_NDFA_to_DFA(DFA& a, const NDFA& ndfa){
         size_t t_idx = unmarked_states_of_dfa.back();
         marked_states_of_dfa.push_back(t_idx);
         unmarked_states_of_dfa.pop_back();
-        // Обработка непомеченного состояния
-        /* Для этого сначала получим список всех символов и классов символов,
-           по которым из обрабатываемого состояния вообще возможен переход. */
+        // Unmarked state processing.
+        /* To do this, we first get a list of all the symbols and symbol classes by
+         * which the transition from the processed state is possible at all. */
         std::set<size_t>           t          = sets_of_ndfa_states.get_set(t_idx);
         std::set<Generalized_char> jump_chars = jump_chars_set(ndfa, t);
-        /* А теперь вычислим переходы по этим символам из текущего состояния ДКА */
+        /* And now we calculate the transitions on these symbols from the
+         * current state of the DFA. */
         for(Generalized_char gc : jump_chars){
             auto u       = epsilon_closure(ndfa, move(ndfa, t, gc));
             size_t u_idx = write_set_into_trie(sets_of_ndfa_states, u);
             if(!u.empty()){
-                /* здесь оказываемся, если epsilon-замыкание не пусто,
-                 * то есть переход из t по gc имеется */
+                /* Here we find ourselves, if the epsilon-closure is not empty, that
+                 * is, there is a transition from t to gc. */
                 DFA_state_with_action sa;
                 sa.action_idx = action_for_dfa_jump(ndfa, t, gc);
                 auto it       = states_nums.find(u_idx);
@@ -169,7 +171,7 @@ void convert_NDFA_to_DFA(DFA& a, const NDFA& ndfa){
                 }else{
                     sa.st = it->second;
                 }
-                // теперь добавляем запись о переходе
+                // Now add a transition entry.
                 a.jumps[std::make_pair(states_nums[t_idx], gc)] = sa;
             }
         }
@@ -177,24 +179,26 @@ void convert_NDFA_to_DFA(DFA& a, const NDFA& ndfa){
     a.number_of_states = current_nom_of_DFA_state;
 }
 
-/* далее приводится реализация функции, строящей минимизированный ДКА,
- * а также необходимые для этого вспомогательные функции и типы данных */
+/* The following is an implementation of the function that builds a minimized DFA,
+ * as well as the auxiliary functions and data types necessary for this. */
 
 using Partition_as_vector = std::vector<size_t>;
-/* Этот тип описывает разбиение множества состояний ДКА на группы состояний. А именно,
-   значение элемента с индексом i представляет собой номер группы, которой принадлежит
-   состояние с номером i. Номера групп считаем неотрицательными целыми числами, причём
-   группа состояний с номером 0 --- фиктивная, в следующем смысле: если из состояния i
-   нет никакого перехода по некоторому символу gc, то считаем, что имеется переход из i
-   по символу gc в эту фиктивную группу. */
+/* This type describes the partition of the set of states of DFA into groups of states.
+ * Namely, the value of the element with the index i is the number of the group to
+ * which the state with the number i belongs. The group numbers are assumed to be
+ * non-negative integers, and the group of states with the number 0 is fictitious, in
+ * the following sense: if from the state i there is no transition over some symbol gc,
+ * then we assume that there is a transition from i over the symbol gc to this
+ * fictitious group. */
 
 using Partition_as_sets = std::list<std::set<size_t>>;
-/* Этот тип тоже описывает разбиение множества состояний ДКА на группы состояний, но
-   описывает несколько иначе. А именно, элемент с индексом i представляет собой
-   группу состояний с номером i + 1. При этом фиктивная группа с номером 0 в этот список
-   групп не входит. */
+/* This type also describes the partitioning of the set of states of DFA into groups of
+ * states, but describes somewhat differently. Namely, the element with the index i is
+ * a group of states with the number i + 1. In this case, the fictitious group with the
+ * number 0 is not included in this list of groups. */
 
-/* Данная функция по таблице переходов ДКА a строит ту же таблицу, но в ином формате. */
+/* This function is based on the DLC transition table a constructs the same table,
+ * but in a different format. */
 Min_DFA_jumps  convert_jumps(const DFA& a){
     Min_DFA_jumps conv_j = std::vector<Min_DFA_state_jumps>(a.number_of_states);
     for(const auto x : a.jumps){
@@ -205,8 +209,8 @@ Min_DFA_jumps  convert_jumps(const DFA& a){
     return conv_j;
 }
 
-/* Функция build_initial_partition строит начальное разбиение состояний ДКА a:
-   на состояния, являющиеся конечными, и на состояния, конечными не являющиеся. */
+/* The build_initial_partition function builds an initial partition of states of
+ * the DFA a: into states that are finite, and states that are not finite. */
 Partition_as_sets build_initial_partition(const DFA& a){
     Partition_as_sets initial;
     auto final_states_group = a.final_states;
@@ -223,14 +227,14 @@ Partition_as_sets build_initial_partition(const DFA& a){
     return initial;
 }
 
-void test_initial_partition(const DFA& a){
-    puts("Initial partition of DFA states:");
-    auto init_partition = build_initial_partition(a);
-    for(const auto& g: init_partition){
-        print_set(g, print_size_t);
-    }
-    putchar('\n');
-}
+// void test_initial_partition(const DFA& a){
+//     puts("Initial partition of DFA states:");
+//     auto init_partition = build_initial_partition(a);
+//     for(const auto& g: init_partition){
+//         print_set(g, print_size_t);
+//     }
+//     putchar('\n');
+// }
 
 Partition_as_vector convert_partition_form(const Partition_as_sets& ps, const DFA& a){
     Partition_as_vector pv = std::vector<size_t>(a.number_of_states);
@@ -246,16 +250,17 @@ Partition_as_vector convert_partition_form(const Partition_as_sets& ps, const DF
 
 using Group = std::set<size_t>;
 
-/* Следующая функция по множеству s состояний ДКА с таблицей переходов j строит множество
-   символов, по которым из хотя бы одного из состояний, принадлежащих множеству s,
-   есть переход. */
-std::set<Generalized_char> jump_chars_for_group(const Min_DFA_jumps& j, const Group& s){
+/* The next function over the set s of DFA states with a jump table j constructs
+ * a set of symbols from which at least one of the states belonging to the set s
+ * has a transition. */
+std::set<Generalized_char> jump_chars_for_group(const Min_DFA_jumps& j, const Group& s)
+{
     std::set<Generalized_char> jump_chars;
     for(size_t st : s){
         auto& st_jumps = j[st];
         for(auto m : st_jumps){
-            /* этот цикл --- по всем переходам для состояния st детерминированного
-               конечного автомата */
+            /* This cycle is over all transitions for the state st of
+             * the deterministic finite automaton */
             Generalized_char gc = m.first;
             jump_chars.insert(gc);
         }
@@ -269,40 +274,40 @@ void print_jump_chars_for_group(const Min_DFA_jumps& j, const Group& s){
 }
 
 using State_and_group_numb = std::pair<size_t, size_t>;
-/* первый элемент данной пары является состоянием, а второй --- номером группы состояний,
- * в которую переходит данное состояние */
+/* The first element of the given pair is a state, and the second is the
+ * number of the group of states into which the given state passes */
 
 using States_classification = std::vector<State_and_group_numb>;
 
-/* Следующая функция классифицирует состояния, находящиеся в группе group.
- * А именно, возвращается вектор, состоящий из пар вида
- *        (состояние; номер группы состояний, в которую переходит состояние по gc)
- * При этом все первые элементы данных пар принадлежат группе group.
+/* The following function classifies the states that are in the group 'group'.
+ * Namely, a vector is returned consisting of pairs of the form
+ *    (state; the number of the group of states into which the state passes through gc)
+ * In this case, all the first elements of these pairs belong to the group 'group'.
  */
-
 States_classification group_states_classificate(const Partition_as_vector& pv,
                                                 const Min_DFA_jumps& j,
                                                 const Group& group,
-                                                Generalized_char gc){
+                                                Generalized_char gc)
+{
     States_classification sc;
     for(size_t state : group){
-        auto& state_jumps = j[state]; // получаем map, в котором хранятся
-                                      // переходы состояния state, а ключи имеют
-                                      // тип Generalized_char
+        auto& state_jumps = j[state]; // We get a map in which state transitions are stored,
+                                      // the number of which is contained in the variable
+                                      // state, and the keys are of type Generalized_char
         auto it = state_jumps.find(gc);
         if(it != state_jumps.end()){
-            /* если переход по символу gc есть, то записываем пару
-             *  (состояние; номер группы состояний, в которую переходит состояние по gc)
-             */
+          /* If there is a transition on the symbol gc, then we write down the pair
+           * (state; the number of the group of states into which the state passes through gc)
+           */
             sc.push_back(std::make_pair(state, pv[(it->second).st]));
         }else{
-            /* иначе считаем, что переход по gc выполняется в
-             * фиктивную группу с номером 0*/
+            /* Otherwise we assume that the transition to gc is performed in the fictitious
+             * group with the number 0. */
             sc.push_back(std::make_pair(state, 0));
         }
     }
-    /* теперь отсортируем данный вектор по второму компоненту каждой пары,
-       т.е. по номеру группы, в которую переходит состояние по gc */
+    /* Now we sort the given vector by the second component of each pair, i.e. by the number
+     * of the group into which the state passes through gc */
     sort(sc.begin(), sc.end(),
         [](const State_and_group_numb& sg1, const State_and_group_numb& sg2){
             return sg1.second < sg2.second;
@@ -311,12 +316,13 @@ States_classification group_states_classificate(const Partition_as_vector& pv,
 }
 
 Partition_as_sets split_group_by_gc(const Partition_as_vector& pv, const Min_DFA_jumps& j,
-                                    const Group& group,            Generalized_char gc){
+                                    const Group& group,            Generalized_char gc)
+{
     Partition_as_sets partition;
     auto states_classification = group_states_classificate(pv, j, group, gc);
 
-    /* а теперь собственно и строим разбиение группы group, пользуясь для этого
-       отсортированным вектором пар */
+    /* And now we actually build a partition of the group 'group',
+     * using the sorted vector of pairs */
     std::pair<size_t, size_t> current_elem  = states_classification[0];
     Group                     current_group = {current_elem.first};
     for(const auto p : states_classification){
@@ -335,7 +341,8 @@ Partition_as_sets split_group_by_gc(const Partition_as_vector& pv, const Min_DFA
 Partition_as_sets split_group_partition_by_gc(const Partition_as_vector& pv,
                                               const Min_DFA_jumps& j,
                                               const Partition_as_sets& group_partition,
-                                              Generalized_char gc){
+                                              Generalized_char gc)
+{
     Partition_as_sets partition;
     for(const auto& g : group_partition){
         auto splitted_g = split_group_by_gc(pv, j, g, gc);
@@ -345,13 +352,14 @@ Partition_as_sets split_group_partition_by_gc(const Partition_as_vector& pv,
 }
 
 Partition_as_sets split_group(const Partition_as_vector& pv, const Min_DFA_jumps& j,
-                              const Group& group){
-    /* для группы состояний group получим символы и классы символов, по которым
-       возможны переходы из состояний этой группы */
+                              const Group& group)
+{
+    /* For group of states 'group' we get symbols and character classes, on which
+     * transitions from the states of this group are possible */
     auto jump_chars = jump_chars_for_group(j, group);
     Partition_as_sets partition_of_group = {group};
-    /* Далее для каждого возможного символа перехода выясним,
-       различимы ли какие--либо состояния по этому символу. */
+    /* Next, for each possible transition symbol, let us find out whether
+     * any states are distinguishable by this symbol. */
     for(auto gc : jump_chars){
         partition_of_group = split_group_partition_by_gc(pv, j, partition_of_group, gc);
     }
@@ -359,7 +367,8 @@ Partition_as_sets split_group(const Partition_as_vector& pv, const Min_DFA_jumps
 }
 
 Partition_as_sets split_partition(const Partition_as_sets& old, const Min_DFA_jumps& j,
-                                  const DFA& a){
+                                  const DFA& a)
+{
     Partition_as_sets result;
     Partition_as_vector pv = convert_partition_form(old, a);
     for(const auto& g :old){
@@ -370,7 +379,8 @@ Partition_as_sets split_partition(const Partition_as_sets& old, const Min_DFA_ju
 }
 
 Partition_as_sets split_states_into_equivalence_classes(const Min_DFA_jumps& j,
-                                                        const DFA& a){
+                                                        const DFA& a)
+{
     Partition_as_sets old_partition, new_partition;
     new_partition = build_initial_partition(a);
     while(old_partition != new_partition){
@@ -381,7 +391,8 @@ Partition_as_sets split_states_into_equivalence_classes(const Min_DFA_jumps& j,
 }
 
 size_t action_for_group(const Min_DFA_jumps& j, const Group& g,
-                        const Generalized_char& gc){
+                        const Generalized_char& gc)
+{
     for(const size_t state : g){
         auto& state_j = j[state];
         auto  it      = state_j.find(gc);
@@ -398,15 +409,17 @@ size_t action_for_group(const Min_DFA_jumps& j, const Group& g,
 
 Min_DFA_jumps minimal_DFA_jumps(const Partition_as_sets& equivalence_classes,
                                 const Min_DFA_jumps j,
-                                const DFA& a){
+                                const DFA& a)
+{
     Min_DFA_jumps result;
     auto eq_classes_as_vector = convert_partition_form(equivalence_classes, a);
     for(const auto& eq_class : equivalence_classes){
-        size_t representative = *(eq_class.begin()); // выбрали представителя текущего
-                                                     // класса эквивалентности состояний
-        /* после склейки состояний, находящихся в одном классе эквивалентности, в одно
-         * состояние нового автомата, в качестве символов перехода достаточно рассмотреть
-         * лишь символы, по которым совершается переход из состояния--представителя */
+        size_t representative = *(eq_class.begin()); // Chose the representative of
+                                                     // the current equivalence
+                                                     // class of states
+        /* After gluing the states in the same equivalence class into one state of the
+         * new automaton, it is sufficient to consider only characters for the transition
+         * characters from the state of representation. */
         auto&               representative_jumps = j[representative];
         Min_DFA_state_jumps current_jumps;
         for(const auto& x : representative_jumps){
@@ -423,7 +436,8 @@ Min_DFA_jumps minimal_DFA_jumps(const Partition_as_sets& equivalence_classes,
 }
 
 using Permutation = std::vector<size_t>;
-Permutation build_state_permutation(const Min_DFA_jumps& j, size_t begin_state){
+Permutation build_state_permutation(const Min_DFA_jumps& j, size_t begin_state)
+{
     size_t        state_idx        = 1;
     size_t        number_of_states = j.size();
     auto          permutation      = Permutation(number_of_states);
@@ -436,8 +450,8 @@ Permutation build_state_permutation(const Min_DFA_jumps& j, size_t begin_state){
     return permutation;
 }
 
-/* По таблице переходов ДКА с минимальным количеством состояний строится
- * таблица переходов, в которой начальное состояние имеет номер 0. */
+/* According to the transition table of a DFA with a minimum number of states,
+ * a transition table is constructed in which the initial state has the number 0. */
 Min_DFA_jumps reorder_states_in_jt(const Min_DFA_jumps& j, const Permutation& p){
     Min_DFA_jumps result;
     size_t        number_of_states = j.size();

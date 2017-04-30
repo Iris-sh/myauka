@@ -757,7 +757,7 @@ int Error_count::get_number_of_errors(){
 }
 
 void Error_count::print(){
-    printf("\nВсего ошибок: %d\n", number_of_errors);
+    printf("\nTotal errors %d\n", number_of_errors);
 })~";
 
 static const char* file_contents_cpp =

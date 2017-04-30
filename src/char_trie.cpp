@@ -16,21 +16,6 @@
 #include <string>
 #include <set>
 
-Char_trie_as_map::~Char_trie_as_map(){
-    for(auto x : *m){
-        delete [] x.second;
-    }
-}
-
-Char_trie_as_map Char_trie::as_map(){
-    Char_trie_as_map t;
-    t.m = new std::map<size_t,char32_t*>();
-    for(auto x : nodes_indeces){
-        t.m -> insert({x,get_cstring(x)});
-    }
-    return t;
-}
-
 char32_t* Char_trie::get_cstring(size_t idx){
     size_t id_len = node_buffer[idx].path_len;
     char32_t* p = new char32_t[id_len + 1];

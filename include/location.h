@@ -26,8 +26,8 @@
  */
 
 struct Location {
-    char32_t* pcurrent_char; //< pointer to the current character
-    size_t    current_line;  //< number of current line
+    char32_t* pcurrent_char; ///< pointer to the current character
+    size_t    current_line;  ///< number of current line
 
     Location() : pcurrent_char(nullptr), current_line(1) {};
     Location(char32_t* txt) : pcurrent_char(txt), current_line(1) {};

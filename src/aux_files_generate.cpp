@@ -17,57 +17,54 @@ static const char* abstract_scaner_h =
 #include <string>
 #include <memory>
 #include "../include/error_count.h"
-#include "../include/char_trie.h"
+#include "../include/trie.h"
 #include "../include/location.h"
 #include "../include/errors_and_tries.h"
 
 template<typename Lexem_type>
-class Abstract_scaner{
+class Scaner{
 public:
-    Abstract_scaner<Lexem_type>() = default;
-    Abstract_scaner(Location_ptr location, const Errors_and_tries& et);
-    Abstract_scaner(const Abstract_scaner<Lexem_type>& orig) = default;
-    virtual ~Abstract_scaner() = default;
-    /* Функция back() возвращает текущую лексему во входной поток.*/
+    Scaner<Lexem_type>() = default;
+    Scaner(Location_ptr location, const Errors_and_tries& et);
+    Scaner(const Scaner<Lexem_type>& orig) = default;
+    virtual ~Scaner() = default;
+    /*  Function back() return the current lexem into the input stream. */
     void back();
-    /* Функция current_lexem() возвращает сведения о текущей
-     * лексеме (код лексемы и значение лексемы). */
+    /* Function current_lexem() returns information about current lexem,
+     * i.e. returns a lexem code and a lexem value. */
     virtual Lexem_type current_lexem() = 0;
-    /* Функция lexem_begin_line_number() возвращает номер строки
-     * обрабатываемого текста, с которой начинается лексема,
-     * сведения о которой возвращены функцией current_lexem(). */
+    /* Function lexem_begin_line_number() returns the line number
+     * at which the lexem starts. */
     size_t lexem_begin_line_number();
 protected:
-    int                          state; /* текущее состояние текущего автомата */
+    int                          state; /* the current state of the current automaton */
 
     Location_ptr                 loc;
-    char32_t*                    lexem_begin; /* указатель на начало лексемы */
-    char32_t                     ch;          /* текущий символ */
+    char32_t*                    lexem_begin; /* pointer to the lexem begin */
+    char32_t                     ch;          /* current character */
 
-    /* множество категорий символов, которым принадлежит
-     * текущий символ */
+    /* set of categories for the current character */
     uint64_t                     char_categories;
 
-    /* промежуточное значение сведений о лексеме */
+    /* intermediate value of the lexem information */
     Lexem_type                   token;
 
-    /* номер строки, с которой начинается текущая лексема */
+    /* the line number at which the current lexem starts */
     size_t                       lexem_begin_line;
 
-    /* указатель на класс, подсчитывающий количество ошибок: */
+    /* a pointer to a class that counts the number of errors: */
     std::shared_ptr<Error_count> en;
-    /* указатель на префиксное дерево для идентификаторов: */
+    /* a pointer to the prefix tree for identifiers: */
     std::shared_ptr<Char_trie>   ids;
-    /* указатель на префиксное дерево для строк: */
+    /* a pointer to the prefix tree for string literals: */
     std::shared_ptr<Char_trie>   strs;
 
-    /*буфер для записи обрабатываемого идентификатора или строки: */
+    /* buffer for writing the processed identifier or string: */
     std::u32string               buffer;
 };
 
 template<typename Lexem_type>
-Abstract_scaner<Lexem_type>::Abstract_scaner(Location_ptr location,
-                                             const Errors_and_tries& et){
+Scaner<Lexem_type>::Scaner(Location_ptr location, const Errors_and_tries& et){
     ids = et.ids_trie; strs = et.strs_trie; en = et.ec;
     loc = location;
     lexem_begin = location->pcurrent_char;
@@ -75,13 +72,13 @@ Abstract_scaner<Lexem_type>::Abstract_scaner(Location_ptr location,
 }
 
 template<typename Lexem_type>
-void Abstract_scaner<Lexem_type>::back(){
+void Scaner<Lexem_type>::back(){
     loc->pcurrent_char = lexem_begin;
     loc->current_line =  lexem_begin_line;
 }
 
 template<typename Lexem_type>
-size_t Abstract_scaner<Lexem_type>::lexem_begin_line_number(){
+size_t Scaner<Lexem_type>::lexem_begin_line_number(){
     return lexem_begin_line;
 }
 #endif)~";
@@ -89,64 +86,46 @@ size_t Abstract_scaner<Lexem_type>::lexem_begin_line_number(){
 static const char* belongs_h =
     R"~(#ifndef BELONGS_H
 #define BELONGS_H
-/* Данная функция проверяет, принадлежит ли элемент element множеству s. При этом
- * считаем, что множество s состоит из не более чем 64 элементов, так что в качестве
- * внутреннего представления множества используется тип uint64_t. Если бит с номером
- * i внутреннего представления равен 1, то элемент i принадлежит множеству,
- * иначе --- не принадлежит. */
-inline uint64_t belongs(uint64_t element, uint64_t s){
-    return s & (1ULL << element);
+#include <cstdint>
+/* If the element e belongs to the set s, then this function returns non-zero value;
+ * else this function returns zero. The internal representation of the set is the value of
+ * the type uint64_t: if bit with #i is equal to 1, then the number i belongs to the set;
+ * else the number i doesn't belong to set. */
+inline uint64_t belongs(uint64_t e, uint64_t s){
+    return s & (1ULL << e);
 }
 #endif)~";
 
 static const char* char_conv_h =
-    R"~(/**
-\file
-
-\brief Заголовочный файл с прототипами функций, преобразующих строки из кодировки
-UTF-8 в кодировку UTF-32 и наоборот.
-*/
-
-#ifndef CHAR_CONV_H
+    R"~(#ifndef CHAR_CONV_H
 #define CHAR_CONV_H
 
 #include <string>
 
 /**
-\function utf8_to_u32string
- Данная функция по строке в кодировке UTF-8 строит строку в кодировке UTF-32.
+\param [in] utf8str --- UTF-8 string with terminating null character
 
-\param  utf8str – строка в кодировке UTF-8 с завершающим нулевым символом
-
-\return значение типа std::u32string, представляющее собой ту же строку,
- но в кодировке UTF-32
+\return value of the type std::u32string, representing the same string,
+but in the encoding UTF-32
 */
 std::u32string utf8_to_u32string(const char* utf8str);
 
 /**
-\function u32string_to_utf8
- Данная функция по строке в кодировке UTF-32 строит строку в кодировке UTF-8.
+\param [in] u32str --- string in the encoding UTF-32
 
-\param [in] u32str – строка в кодировке UTF-32
-
-\return значение типа std::string, представляющее собой ту же строку,
- но в кодировке UTF-8
+\return value of the type std::string, representing the same string,
+but in the encoding UTF-8
 */
 std::string u32string_to_utf8(const std::u32string& u32str);
 
 /**
-\function char32_to_utf8
-По символу в кодировке UTF-32 строит строку, состоящую из байтов, представляющих
-тот же символ, но в кодировке UTF-8.
+\param [in] с --- character in the encoding UTF-32
 
-\param [in] с - символ в кодировке UTF-32
-
-\return Значение типа std::string, состоящее из байтов, представляющих
-тот же символ, но в кодировке UTF-8.
+\return value of the type std::string, consisting of bytes, representing
+the same character, but in the encoding UTF-8.
 */
 std::string char32_to_utf8(const char32_t c);
-#endif
-)~";
+#endif)~";
 
 static const char* char_trie_h =
     R"~(#ifndef CHAR_TRIE_H
@@ -154,40 +133,35 @@ static const char* char_trie_h =
 
 #include "../include/trie.h"
 
-struct Char_trie_as_map {
-    std::map<size_t,char32_t*> *m;
-    ~Char_trie_as_map();
-};
-
 class Char_trie : public Trie<char32_t>{
 public:
     virtual ~Char_trie() { };
-    /* Конструктор по умолчанию. */
+
     Char_trie(){};
-    /* Копирующий конструктор. */
+
     Char_trie(const Char_trie& orig) = default;
-    /* Функция, по индексу idx строящая строку в стиле C,
-     * соответствующую индексу idx. */
+
+    /* Using the index idx, this function builds C-style string
+     * corresponding to the index idx. */
     char32_t* get_cstring(size_t idx);
-    /* Функция, по индексу idx строящая строку типа u32string,
-       соответствующую индексу idx. */
+
+    /* Using index idx, this function builds a string of the type u32string
+     * corresponding to the index idx. */
     std::u32string get_string(size_t idx);
-    /* Функция, возвращающая префиксное дерево в виде
-     * отображения индексов строк в строки в стиле C. */
-    Char_trie_as_map as_map();
-    /* Функция вывода строки, которой соответствует индекс idx, на экран. */
+
+    /* This function outputs the string corresponding to the index idx. */
     void print(size_t idx);
-    /* Следующая функция по индексу строки возвращает длину этой строки. */
+
+    /* The following function returns the length of the string
+     * corresponding to the index idx. */
     size_t get_length(size_t idx);
 };
-
-#endif
-)~";
+#endif)~";
 
 static const char* error_count_h =
     R"~(#ifndef ERROR_COUNT_H
 #define ERROR_COUNT_H
-/* Класс для подсчёта количества ошибок. */
+/* A class for calculating the number of errors. */
 class Error_count {
 public:
     Error_count() : number_of_errors(0) {};
@@ -197,8 +171,7 @@ public:
 private:
     int number_of_errors;
 };
-#endif
-)~";
+#endif)~";
 
 static const char* errors_and_tries_h =
     R"~(#ifndef ERRORS_AND_TRIES_H
@@ -223,21 +196,20 @@ static const char* file_contents_h =
 #include <string>
 #include <utility>
 
-/** Коды возврата из функции get_contents. */
+/** Return codes from the function get_contents. */
 enum class Get_contents_return_code{
-    Normal,           ///< Этот код означает, что всё прошло успешно.
-    Impossible_open,  ///< Этот код означает, что не удалось открыть файл.
-    Read_error        ///< Этот код означает, что во время чтения файла произошла ошибка.
+    Normal,           ///< This code means success.
+    Impossible_open,  ///< This code means that file could not open.
+    Read_error        ///< This code means that an error occurred while reading the file.
 };
 
 using Contents  = std::pair<Get_contents_return_code, std::string>;
 
 /**
-   Возвращает всё содержимое файла с заданным именем.
-   \param [in] name --- имя читаемого файла
-   \returns Пару из кода возврата (первая компонента) и значения, имеющего
-тип std::string (вторая компонента). При возникновении ошибки вторая компонента
-возвращаемого значения представляет собой пустую строку.
+   Returns: the contents of the file with the specified name
+   \param [in] name file name
+   \returns The pair (return code, value), here value is of type std::string.
+   If an error occured, then the second component of this pair is an empty string.
 */
 Contents get_contents(const char* name);
 #endif)~";
@@ -246,8 +218,11 @@ static const char* fsize_h =
     R"~(#ifndef FSIZE_H
 #define FSIZE_H
 #include <cstdio>
-/* Данная функция выдаёт размер файла в байтах, если
- * fptr != NULL, и (-1) в противном случае. */
+/**
+ * \param [in] fptr  the file pointer
+ * \return           a) (-1), if fptr == NULL
+ *                   b) the size of the file in bytes, otherwise
+ */
 long fsize(FILE* fptr);
 #endif)~";
 
@@ -260,30 +235,58 @@ struct State_for_char{
     char32_t c;
 };
 
-/* Функция get_init_state инициализирует конечный автомат. Делает она это так: ищет
- * символ sym в таблице sts, состоящей из пар (состояние, символ) и имеющей размер
- * n, двоичным поиском по второму компоненту пары. После нахождения выдаётся
- * первая компонента пары. В качестве алгоритма двоичного поиска используется
- * алгоритм B из раздела 6.2.1 монографии "Кнут Д.Э. Искусство программирования.
- * Т.3. Сортировка и поиск. 2-е изд.: Пер. с англ. --- М.: Вильямс, 2008.". При
- * этом в нашем случае не может быть, чтобы нужный элемент в таблице sts
- * отсутствовал. */
+/* The function get_init_state initializes a finite automaton. Namely, this function
+ * looking for the character sym in the table sts. Here sts is an array of
+ * pairs (state, character), and number of elements in sts is n. The search is
+ * performed in accordance with the binary search algorithm B from the section 6.2.1
+ * of "Knuth D.E. The Art of Computer programming. V.3. Sorting and search. 2nd ed.
+ * --- Addison Wesley, 1998.". */
 int get_init_state(char32_t sym, const State_for_char sts[], int n);
 #endif)~";
 
 static const char* location_h =
+
+#ifndef LOCATION_H
+#define LOCATION_H
+
+#include <memory>
+/* The following structure describes the current position in the processed text.
+ * This is due to the fact that, due to the conflict of the lexem 'identifier'
+ * and the lexem 'character', instead of one scanner, two must be done: the main
+ * scanner and the scanner for regular expressions. In this case, the main parser
+ * will call parsers for regular expressions, which, in turn, will call the scanner
+ * for regular expressions. Therefore, both of these scanners need to know the
+ * current position in the current text and be able to manipulate this position,
+ * and each of these scanners must continue to work from the place in the processed
+ * text, on which the previous scanner finished work. As a consequence, the information
+ * about the current position in the processed text should be shared by both scanners,
+ * so that a smart pointer to the shared information about the current location should
+ * be sent to the constructor of each of the scanners.
+ */
+
+struct Location {
+    char32_t* pcurrent_char; //< pointer to the current character
+    size_t    current_line;  //< number of current line
+
+    Location() : pcurrent_char(nullptr), current_line(1) {};
+    Location(char32_t* txt) : pcurrent_char(txt), current_line(1) {};
+};
+
+using Location_ptr = std::shared_ptr<Location>;
+#endif
     R"~(#ifndef LOCATION_H
 #define LOCATION_H
 
 #include <memory>
-/* Следующая структура описывает текущее положение в обрабатываемом тексте.
- * В конструктор сканера нужно передавать умный указатель на
- * разделяемые сведения о текущем местоположении. */
-
 //#include <cstddef>
+/**
+ * \brief The following structure describes the current position in the processed text.
+ *        In the scanner's constructor, you must pass a smart pointer to the shared
+ *        information about the current location.
+ */
 struct Location {
-    char32_t* pcurrent_char; /* указатель на текущий символ */
-    size_t    current_line; /* номер текущей строки обрабатываемого текста */
+    char32_t* pcurrent_char; ///< pointer to the current character
+    size_t    current_line;  ///< number of current line
 
     Location() : pcurrent_char(nullptr), current_line(1) {};
     Location(char32_t* txt) : pcurrent_char(txt), current_line(1) {};
@@ -299,11 +302,15 @@ static const char* operation_with_sets_h =
 #include <set>
 #include <cstdio>
 /**
-    В данном файле определяются теоретико--множественные операции
-    со стандартными контейнерами std::set.
+ * \brief In this file, set-theoretic operations with
+ *        standard containers std :: set are defined.
 */
 namespace operations_with_sets{
-    //! Функция single_elem возвращает множество, состоящее из одного элемента.
+    /**
+     *  \brief The function single_elem returns a set consisting of one element.
+     *  \param [in] x element
+     *  \return       a set consisting of one element, x.
+     */
     template<typename T>
     std::set<T> single_elem(const T& x){
         std::set<T> s;
@@ -311,8 +318,11 @@ namespace operations_with_sets{
         return s;
     }
 
-    /** Функция печати элементов множества. Принимает в качестве
-        аргумента функцию печати элемента множества. */
+    /**
+     *  \brief Prints a set.
+     *  \param [in] a          Printed set.
+     *  \param [in] print_elem Print function of the set element.
+     */
     template<typename T>
     void print_set(const std::set<T>& a, void (*print_elem)(const T&)){
         if(a.empty()){
@@ -330,16 +340,45 @@ namespace operations_with_sets{
         putchar('}');
     }
 
-    /** Проверка принадлежности элемента x множеству a. Если элемент x
-        множеству a принадлежит, то возвращается true, иначе ---
-        возвращается false. */
+
+    /**
+     *  \brief Prints a set.
+     *  \param [in] a          Printed set.
+     *  \param [in] print_elem Print function of the set element.
+     */
+    template<typename T>
+    void print_set(const std::set<T>& a, void (*print_elem)(const T)){
+        if(a.empty()){
+            printf("{}");
+            return;
+        }
+        auto first       = a.begin();
+        auto before_last = --a.end();
+        putchar('{');
+        for(auto i = first; i != before_last; ++i){
+            print_elem(*i);
+            putchar(',');
+        }
+        print_elem(*before_last);
+        putchar('}');
+    }
+
+    /**
+     *  \brief Checking the membership of x for a set a.
+     *  \param [in] a The set a.
+     *  \param [in] x The element x.
+     *  \return       true if the element x belongs to the set a, and false otherwise
+     */
     template<typename T>
     bool is_elem(const T& x, const std::set<T>& a){
         return a.find(x) != a.end();
     }
 
-    /** Объединение множеств a и b, то есть множество, содержащее и
-        элементы множества a, и элементы множества b. */
+    /**
+     *  \brief The union of the sets a and b.
+     *  \param [in] a The set a.
+     *  \param [in] b The set b.
+     *  \return       The union of the sets a and b. */
     template<typename T>
     std::set<T> operator + (const std::set<T>& a, const std::set<T>& b){
         std::set<T> s = a;
@@ -347,9 +386,15 @@ namespace operations_with_sets{
         return s;
     }
 
-    /** Теоретико--множественная разность множеств a и b (обозначается в
-        теории множеств как a \ b), то есть множество, состоящее лишь из тех
-        элементов множества a, которые не принадлежат множеству b. */
+    /**
+     *  \brief   The set-theoretic difference of the sets a and b.
+     *  \details The set-theoretic difference of the sets a and b (denoted in a set
+     *           theory as a \ b), that is, a set consisting only of those elements
+     *           of the set a that do not belong to the set b.
+     *  \param [in] a The set a.
+     *  \param [in] b The set b.
+     *  \return       The set-theoretic difference of the sets a and b.
+     */
     template<typename T>
     std::set<T> operator - (const std::set<T>& a, const std::set<T>& b){
         std::set<T> s = a;
@@ -359,8 +404,14 @@ namespace operations_with_sets{
         return s;
     }
 
-    /** Пересечение множеств a и b, то есть множество, состоящее в точности из
-        тех элементов, которые принадлежат и a, и b. */
+    /**
+     *  \brief   The intersection of the sets a and b.
+     *  \details The intersection of the sets a and b, that is, the set consisting
+     *           precisely of those elements that belong to both a and b.
+     *  \param [in] a The set a.
+     *  \param [in] b The set b.
+     *  \return       The intersection of the sets a and b.
+     */
     template<typename T>
     std::set<T> operator * (const std::set<T>& a, const std::set<T>& b){
         std::set<T> s;
@@ -372,15 +423,26 @@ namespace operations_with_sets{
         return s;
     }
 
-    /** Симметрическая разность множеств a и b, то есть объединение этих
-        множеств с выкинутыми общими элементами. */
+    /**
+     *  \brief   The symmetric difference of the sets a and b.
+     *  \details The symmetric difference of the sets a and b, that is, the union
+     *           of these sets, but with the common elements thrown out.
+     *  \param [in] a The set a.
+     *  \param [in] b The set b.
+     *  \return       The symmetric difference of the sets a and b.
+     */
     template<typename T>
     std::set<T> operator ^ (const std::set<T>& a, const std::set<T>& b){
         return (a - b) + (b - a);
     }
 
-    /** Проверяет, является ли множество a подмножеством множества b,
-        возможно, совпадающим с b. */
+    /**
+     *  \brief Checks whether the set a is a subset of the set b,
+     *         possibly coinciding with b.
+     *  \param [in] a The set a.
+     *  \param [in] b The set b.
+     *  \return       true if the set a is a subset of the set b, and false otherwise
+     */
     template<typename T>
     bool is_subseteq(const std::set<T>& a, const std::set<T>& b){
         std::set<T> s = (a * b) ^ a;
@@ -390,17 +452,19 @@ namespace operations_with_sets{
 #endif)~";
 
 static const char* search_char_h =
-    R"~(#define THERE_IS_NO_CHAR (-1)
+    R"~(#ifndef SEARCH_CHAR_H
+#define SEARCH_CHAR_H
+
+#define THERE_IS_NO_CHAR (-1)
 /**
- * \function search_char
- * Данная функция ищет заданный символ типа char32_t в строке,
- * состоящей из символов такого типа и завершающейся нулевым
- * символом.
+ * \brief This function searches for a given character of type char32_t
+ *        in a string consisting of characters of this type and ending
+ *        with a null character.
  *
- * \param [in] c --- искомый символ
- * \param [in] array --- строка в которой ищется символ
- * \return смещение (в символах) от начала строки, если
- * искомый символ в строке есть, и (-1) в противном случае
+ * \param [in] c     The wanted character.
+ * \param [in] array The string in which the symbol is searched for.
+ * \return           Offset (in characters) from the beginning of the line, if the
+ *                   desired character is in the string, and (-1) otherwise
  */
 int search_char(char32_t c, const char32_t* array);
 #endif)~";
@@ -419,47 +483,74 @@ static const char* trie_h =
 template<typename T>
 class Trie {
 public:
-    /* Конструктор по умолчанию. */
     Trie<T>();
-    /* Деструктор. */
+
     ~Trie() = default;
-    /* Копирующий конструктор. */
+
     Trie(const Trie<T>& orig) = default;
-    /* Функция вставки в префиксное дерево. */
+
+    /**
+     * \brief The function of inserting into the prefix tree.
+     * \param [in] s Inserted string s.
+     * \return       Index of the string s in the prefix tree.
+     */
     size_t insert(const std::basic_string<T>& s);
-    /* Функция, вычисляющая максимальную степень вершин префиксного
-     * дерева (корень дерева не учитывается). */
+
+    /**
+     * \brief Calculation of the maximum degree of the vertices of the prefix tree
+     *        (the root of the tree is not taken into account).
+     * \return The maximum degree of the vertices of the prefix tree
+     *         (the root of the tree is not taken into account)
+     */
     size_t maximal_degree();
 protected:
-    /* тип узла префиксного дерева: */
+    /**
+     * \struct node
+     * \brief Node type of the prefix tree.
+     * \details All child nodes of the current node are organized in the form of a
+     *          simply-connected list, the first element of which is an element with
+     *          the index first_child. The  field parent contains the index of the
+     *          parent node, and in the next field the next descendant of the parent
+     *          node. If the current node has no children, then the field  first_child
+     *          contains zero. Similarly, the last element in the list of children in
+     *          the  field next contains zero. Here, the subscript is the index in the
+     *          field node_buffer, which is a vector (in the sense of the STL library)
+     *          of the nodes of the prefix tree.
+     */
     struct node{
       size_t parent, first_child, next;
-      /* Все узлы-потомки текущего узла организованы в виде односвязного списка, первым
-       * элементом которого является элемент с индексом first_child. В поле parent
-       * содержится индекс родительского узла, а в поле next -- следующего потомка
-       * родительского узла. Если у текущего узла потомков нет, то в поле first_child
-       * содержится нуль. Аналогично, последний элемент в списке потомков в поле next
-       * содержит нуль. Здесь под индексом понимается индекс в поле node_buffer,
-       * представляющем собой вектор (в смысле библиотеки STL) из узлов префиксного
-       * дерева. */
-      size_t path_len; /* в этом поле содержится длина пути
-                        * от текущего узла до корня дерева */
-      size_t degree; /* В этом поле содержится степень узла,
-                      * то есть количество выходящих из узла рёбер. */
-      T c; /* в этом поле содержится символ вставленной строки,
-            * являющийся меткой текущего узла. */
+
+      /// \brief The length of the path from the current node to the root of the tree.
+      size_t path_len;
+
+      /// \brief The degree of the node, that is, the number of edges emerging
+      /// from the node
+      size_t degree;
+
+      /// \brief The character of the inserted string that is the
+      /// label of the current node
+      T c;
+
       node(){
         next = parent = path_len = first_child = 0;
         degree = 0; c = T();
       }
     };
+
     std::vector<node>   node_buffer;
     std::vector<size_t> nodes_indeces;
-    /* Функция, добавляющая к списку потомков узла parent_idx узел, помеченный
-     * значением x типа T. Функция возвращает индекс вставленного узла. */
+
+    /**
+     * \brief This function adds a node marked with a value of x of type T to the list of
+     *        children of the node parent_idx.
+     * \param [in] parent_idx An index of a parent.
+     * \param [in] x          An inserted value.
+     * \return                The index of inserted node.
+     */
     size_t add_child(size_t parent_idx, T x);
-    /* Эта функция выполняет (возможно, необходимые) действия
-     * по окончании вставки последнего символа. */
+
+    /// \brief This function performs (possibly necessary) actions after the last
+    /// character is inserted.
     virtual void post_action(const std::basic_string<T>& s, size_t n){ };
 };
 
@@ -484,14 +575,16 @@ size_t Trie<T>::add_child(size_t parent_idx, T x){
     size_t current, previous;
     node   temp;
     current = previous = node_buffer[parent_idx].first_child;
-    /* В переменной temp содержится узел, который, возможно, придётся вставить. */
+    /* The variable temp contains a node that you might need to insert. */
     temp.c = x; temp.degree = 0;
     temp.next = 0; temp.parent = parent_idx;
     temp.path_len = node_buffer[parent_idx].path_len + 1;
     if(!current){
-        /* Здесь можем оказаться, лишь если у узла с индексом parent_idx потомков
-         * вообще нет. Значит добавляемый узел будет первым в списке потомков. При
-         * этом степень узла parent_idx увеличится на единицу, и станет равна 1. */
+        /* We can be here only if the node with the parent_idx index has no children at
+         * all. This means that the added node will be the first in the list of children.
+         * In this case the degree of node parent_idx will increase by one, and will
+         * become equal to 1.
+         */
         node_buffer.push_back(temp);
         size_t child_idx = node_buffer.size() - 1;
         node_buffer[parent_idx].first_child = child_idx;
@@ -499,18 +592,18 @@ size_t Trie<T>::add_child(size_t parent_idx, T x){
         return child_idx;
     }
     while(current){
-        // Если же потомки есть, то нужно пройти по списку потомков.
+        // If there are children, then you need to go through the list of children.
         node current_node = node_buffer[current];
         if(current_node.c == x){
-          /* Если потомок, помеченный нужным символом (символом x),
-           * есть, то нужно вернуть индекс этого потомка. */
+          /* If there is a child marked with the desired symbol (the symbol x),
+           * then we need to return the index of this child. */
           return current;
         }else{
           previous = current; current = current_node.next;
         }
     }
-    /* Если же такого потомка нет, то нужно этого потомка добавить
-     * в конец списка потомков.*/
+    /* If there is no such child, then we need to add this child to the end
+     * of the list of children. */
     node_buffer.push_back(temp);
     size_t next_child = node_buffer.size() - 1;
     node_buffer[previous].next = next_child;

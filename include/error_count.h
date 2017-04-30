@@ -9,7 +9,7 @@
 
 #ifndef ERROR_COUNT_H
 #define ERROR_COUNT_H
-/* Класс для подсчёта количества ошибок. */
+/* A class for calculating the number of errors. */
 class Error_count {
 public:
     Error_count() : number_of_errors(0) {};

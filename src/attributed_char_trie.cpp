@@ -34,12 +34,14 @@ Attributed_cstring Attributed_char_trie::get_attributed_cstring(size_t idx){
     p[id_len] = 0;
     size_t current = idx;
     size_t i       = id_len-1;
-    /* Поскольку idx -- индекс элемента в node_buffer, содержащего последний символ
-     * вставленной строки, а каждый элемент вектора node_buffer содержит поле parent,
-     * указывающее на элемент с предыдущим символом строки, то для получения вставленной
-     * строки, которой соответствует индекс idx, в виде массива символов, нужно пройтись
-     * от элемента с индексом idx к корню. При этом символы вставленной строки будут
-     * читаться от её конца к началу. */
+    /* Since idx is the index of the element in node_buffer containing the last
+     * character of the inserted string, and each element of the vector node_buffer
+     * contains the field parent that points to the element with the previous
+     * character of the string, then to get the inserted string, which corresponds
+     * to the index idx, as an array of characters, it is necessary to walk from
+     * the element with index idx to the root. The characters of the inserted
+     * string will be read from the end to the beginning.
+     */
     for( ; current; current = node_buffer[current].parent){
         p[i--] = node_buffer[current].c.ch;
     }
@@ -71,9 +73,10 @@ void Attributed_char_trie::get_next_level(const std::vector<size_t>& current_lev
 
 size_t Attributed_char_trie::jumps_for_subtrie(size_t subtrie_root,
                                                size_t current_state,
-                                               Jumps& current_jumps){
-    /* Создадим вектор из уровней поддерева, корнем которого является
-     * subtrie_root. Нулевым уровнем считаем сам узел subtrie_root. */
+                                               Jumps& current_jumps)
+{
+    /* Create a vector from the subtree levels, whose root is subtrie_root.
+     * The zero level is the subtrie_root node itself. */
     using Level = std::vector<size_t>;
     std::vector<Level> levels = std::vector<Level>(1);
     levels[0].push_back(subtrie_root);
@@ -85,7 +88,7 @@ size_t Attributed_char_trie::jumps_for_subtrie(size_t subtrie_root,
         levels.push_back(next_level);
         current_level_number++;
     }
-    /* Теперь можем дописать заготовку для таблицы переходов. */
+    /* Now we can finish the workpiece for the transition table. */
     size_t state = current_state;
     for(const auto& layer : levels){
     /* Цикл по слоям. */

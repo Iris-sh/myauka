@@ -9,13 +9,15 @@
 
 #include "../include/get_act_repres.h"
 #include "../include/idx_to_string.h"
-
-/* Данная функция на вход получает индекс имени действия, i, в префиксном дереве
- * идентификаторов, а в качестве результата выдаёт строковое представление
- * определения действия. */
+/**
+ *  \param [in] info information about constructing scaner
+ *  \param [in] i    index of action name in the prefix tree of identifiers
+ *
+ *  \return          string representation of action
+ */
 std::string get_act_repres(Info_for_constructing& info, size_t i){
-    /* Непустая строка возвращается только в том случае, когда действие
-     * с таким индексом имени есть. */
+    /* A non-empty string is returned only if there is an action with
+     * such an index name. */
     std::string result;
     if(!i){
         return result;

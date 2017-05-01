@@ -22,14 +22,14 @@ static void fuse_DFA_jumps(G_DFA& gdfa, const Min_DFA& min_dfa){
     G_DFA_jumps groupped_jumps;
 
     for(const auto& mj : mjs){
-        /* в mj --- переходы для текущего состояния автомата min_dfa (напомним, что mjs
-           --- вектор из переходов для состояний, т.е. элемент в этом векторе, имеющий
-           индекс 0 --- переходы для состояния 0; элемент с индексом 1 --- переходы для
-          состояния 1, и т.д.) */
+        /* mj contains transitions for the current state of the automaton min_dfa
+         * (recall that mjs is a vector of transitions for states, i.e. the element
+         * in this vector having the index 0 is the transitions for the state 0;
+         * element with index 1 --- transitions for state 1, etc.) */
         if(mj.empty()){
-            /* если в исходном автомате для текущего состояния переходов нет, то
-             * их нет и в автомате со сгруппированными переходами, так что никаких
-             * действий по группировке делать не нужно */
+            /* If there are no transitions in the source automaton for the current
+             * state, then there are none in the automaton with grouped transitions,
+             * so no grouping actions are necessary. */
             groupped_jumps.push_back(G_DFA_state_jumps());
             continue;
         }
@@ -43,9 +43,9 @@ static void fuse_DFA_jumps(G_DFA& gdfa, const Min_DFA& min_dfa){
                       return (a.second.st != b.second.st) ? (a.second.st < b.second.st) :
                              (a.second.action_idx < b.second.action_idx);
                   });
-        /* теперь вектор j отсортирован так, что пары с
-           одинаковой второй компонентой идут подряд */
-        /* сгруппируем теперь такие пары */
+        /* Now the vector j is sorted so that the pairs with the same second
+         * component go one after the other. */
+        /* We now group these pairs. */
         G_DFA_state_jumps     groupped_sj;
         Category              current_category = gc2category(j[0].first);
         DFA_state_with_action sa               = j[0].second;

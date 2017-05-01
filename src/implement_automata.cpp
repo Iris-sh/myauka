@@ -17,8 +17,8 @@
 #include "../include/automaton_with_procs.h"
 
 static const std::string none_proc = R"~(::none_proc(){
-    /* Данная подпрограмма будет вызвана, если по прочтении входного текста оказались
-     * в автомате A_start. Тогда ничего делать не нужно. */
+    /* This subroutine will be called if, after reading the input text, it turned
+     * out to be in the A_start automaton. Then you do not need to do anything. */
 })~";
 
 static void generate_unknown_automata_impl(Info_for_constructing& info){
@@ -27,8 +27,8 @@ static void generate_unknown_automata_impl(Info_for_constructing& info){
 })~";
 
     info.aut_impl_fin_proc[Unknown_aut] = "void " + info.name_of_scaner_class + R"~(::unknown_final_proc(){
-    /* Данная подпрограмма будет вызвана, если по прочтении входного текста
-     * оказались в автомате A_unknown. Тогда ничего делать не нужно. */
+    /* This subroutine will be called if, after reading the input text, it turned
+     * out to be in the A_unknown automaton. Then you do not need to do anything. */
 })~";
 }
 

@@ -52,23 +52,22 @@ uint64_t Main_scaner::get_categories_set(char32_t c){
  * Элемент таблицы переходов автомата обработки ключевых слов.
  */
 struct Elem {
-    /** Указатель на строку , состоящую из символов , по которым
-        возможен переход. */
+    /** A pointer to a string of characters that can be crossed. */
     char32_t*       symbols;
     /** код лексемы */
     Main_lexem_code code;
-    /** Если текущий символ совпадает с symbols[0], то
-        выполняется переход в состояние first_state;
-        если текущий символ совпадает с symbols[1], то
-        выполняется переход в состояние first_state+1;
-        если текущий символ совпадает с symbols[2], то
-        выполняется переход в состояние first_state+2,
-        и так далее. */
+    /** If the current character matches symbols[0], then
+     *  the transition to the state first_state;
+     *  if the current character matches symbols[1], then
+     *  the transition to the state first_state + 1;
+     *  if the current character matches symbols[2], then
+     *  the transition to the state first_state + 2,
+     *  and so on. */
     uint16_t        first_state;
 };
-/* Для автомата обработки ключевых слов член state класса Main_scaner
- * является индексом элемента в таблице переходов, обозначенной
- * ниже как a_keyword_jump_table. */
+/* For the keyword processing automaton, the member state of the class Main_scaner
+ * is the index of the element in the transition table, denoted below as
+ * a_keyword_jump_table. */
 static const Elem a_keyword_jump_table[] = {
     {const_cast<char32_t*>(U"c"),  M_Kw_action,          1},   // 0:   %a...
     {const_cast<char32_t*>(U"t"),  M_Kw_action,          2},   // 1:   %ac...
@@ -283,8 +282,8 @@ Main_scaner::Final_proc Main_scaner::finals[] = {
 bool Main_scaner::start_proc(){
     bool t = true;
     state = -1;
-    /* Для автомата, обрабатывающего какую-либо лексему, состояние с номером (-1)
-     * является состоянием, в котором происходит инициализация этого автомата. */
+    /* For an automaton that processes a lexeme, the state with the number (-1) is
+     * the state in which this automaton is initialized. */
     if(belongs(Spaces, char_categories)){
         loc->current_line += U'\n' == ch;
         return t;
@@ -318,8 +317,8 @@ static const char* keyword_strings[] = {
 };
 
 void Main_scaner::correct_keyword(){
-    /* Данная функция корректирует код лексемы, скорее всего являющейся
-     * ключевым словом, и выводит необходимую диагностику. */
+    /* This function corrects the lexeme code, which is most likely a keyword, and
+     * displays the necessary diagnostics. */
     if(token.code >= M_Kw_action){
         int y = token.code - M_Kw_action;
         printf("В строке %zu ожидается %s.\n",
@@ -328,7 +327,7 @@ void Main_scaner::correct_keyword(){
         en -> increment_number_of_errors();
     }
 }
-//
+
 Main_lexem_info Main_scaner::current_lexem(){
     automaton = A_start; token.code = None;
     lexem_begin = loc->pcurrent_char;
@@ -337,38 +336,37 @@ Main_lexem_info Main_scaner::current_lexem(){
         char_categories = get_categories_set(ch); //categories_table[ch];
         t = (this->*procs[automaton])();
         if(!t){
-            /* Сюда попадаем, лишь если лексема уже прочитана. При этом текущим
-             * автоматом уже прочитан символ, идущий сразу за концом прочитанной
-             * лексемы, на основании этого символа принято решение о том, что
-             * лексема прочитана, и совершён переход к следующему за ним символу.
-             * Поэтому для того, чтобы не пропустить первый символ следующей
-             * лексемы, нужно уменьшить на единицу указатель pcurrent_char. */
+            /* We get here only if the lexeme has already been read. At the same time,
+             * the current automaton reads the character immediately after the end of
+             * the lexeme read, based on this symbol, it is decided that the lexeme has
+             * been read and the transition to the next character has been made.
+             * Therefore, in order to not miss the first character of the next lexeme,
+             * we need to decrease the pcurrent_char pointer by one. */
             (loc->pcurrent_char)--;
             if(Id == token.code){
-                /* Если текущая лексема является идентификатором, то этот
-                 * идентификатор нужно записать в таблицу идентификаторов. */
+                /* If the current lexeme is an identifier, then this identifier must
+                 * be written to the identifier table. */
                 token.ident_index = ids -> insert(buffer);
             }else if(String == token.code){
-                /* Если текущая лексема является строковым литералом, то её
-                 * нужно записать в таблицу строковых литералов. */
+                /* If the current token is a string literal, then it must be written
+                 * to the string literal table. */
                 token.string_index = strs -> insert(buffer);
             }else if(A_keyword == automaton){
-                /* Если закончили обрабатывать ключевое слово, то нужно
-                 * скорректировать его код, и, возможно, вывести диагностику. */
+                /* If we finish processing the keyword, then we need to adjust its code,
+                 * and, perhaps, output the diagnostics.*/
                 correct_keyword();
             }
             return token;
         }
     }
-    /* Здесь можем оказаться, только если уже прочли весь обрабатываемый текст.
-     * При этом указатель на текущий символ указывает на байт, который находится
-     * сразу же после нулевого символа, являющегося признаком конца текста.
-     * Чтобы не выйти при последующих вызовах за пределы текста, нужно перейти
-     * обратно к нулевому символу. */
+    /* Here we can be, only if we have already read all the processed text. In this case,
+     * the pointer to the current symbol indicates a byte, which is immediately after the
+     * zero character, which is a sign of the end of the text. To avoid entering subsequent
+     * calls outside the text, we need to go back to the null character. */
     (loc->pcurrent_char)--;
-    /* Далее, поскольку мы находимся здесь, то конец текущей лексемы (возможно,
-     * неожиданный) ещё не обработан. Надо эту обработку выполнить, и, возможно,
-     * вывести какую-то диагностику. */
+    /* Further, since we are here, the end of the current token (perhaps unexpected) has
+     *not yet been processed. It is necessary to perform this processing, and, probably,
+     * to display any diagnostics. */
     (this->*finals[automaton])();
     return token;
 }
@@ -379,21 +377,22 @@ bool Main_scaner::unknown_proc(){
 
 bool Main_scaner::id_proc(){
     bool t = belongs(Id_body, char_categories);
-    /* Переменная t равна true, если идентификатор полностью
-     * ещё не прочитан, и false в противном случае. */
+    /* The variable t is true if the identifier is not yet
+     * fully read, and false otherwise. */
     if(t){
         buffer += ch;
     }
     return t;
 }
 
-/* Данный массив состоит из пар вида (состояние, символ) и используется для инициализации
- * автомата обработки ключевых слов. Смысл элемента массива таков: если в состоянии (-1)
- * текущий символ совпадает со второй компонентой элемента, то работа начинается с
- * состояния, которое является первой компонентой элемента. Рассмотрим, например, элемент
- * {6, U'c'}. Если текущий символ совпадает со второй компонентой этого элемента, то
- * работа начинается с состояния, являющегося первой компонентой, т.е. с состояния 6.
- * Массив должен быть отсортирован по возрастанию второй компоненты. */
+/* This array consists of pairs of the form (state, character) and is used to
+ * initialize the keyword processing automaton. The sense of the element of the
+ * array is this: if the current character in the state (-1) coincides with the
+ * second component of the element, then work begins with the state that is the
+ * first component of the element. Consider, for example, the element {6, U'c '}.
+ * If the current character coincides with the second component of this element,
+ * then work begins with the state being the first component, i.e. from state 6.
+ * The array must be sorted in ascending order of the second component. */
 static const State_for_char init_table_for_keywords[] = {
     {0,   U'a'}, {6,   U'c'}, {34,  U'd'}, {44,  U'h'},
     {60,  U'i'}, {84,  U'k'}, {92,  U'l'}, {107, U'm'},
@@ -418,8 +417,8 @@ bool Main_scaner::keyword_proc(){
         token.code = a_keyword_jump_table[state].code;
         t = true;
     }else{
-        printf("В строке %zu ожидается один из следующих "
-               "символов: a, c, d, i, k, m, n, s, t.\n",
+        printf("In line %zu, one of the following symbols is expected: "
+               "a, c, d, i, k, m, n, s, t.\n",
                loc->current_line);
         en -> increment_number_of_errors();
     }
@@ -447,26 +446,26 @@ bool Main_scaner::delimiter_proc(){
 }
 
 enum {Begin_string = -1, String_body, End_string};
-/* Это имена состояний автомата обработки строковых литералов. */
+/* These are the state names of the string literals processing automaton. */
 
 bool Main_scaner::string_proc(){
-/* Эта функция реализует конечный автомат для обработки строковых литералов.
- * Допускаемые Мяукой строковые литералы можно описать регулярным выражением
+/* This function implements a finite state machine for processing string literals.
+ * String literals allowed by Myauka can be described by a regular expression
  *         b(a|bb)*b (1),
- * где под b понимается двойная кавычка ("), а под a --- любой символ, отличный
- * от двойной кавычки. Иными словами, строковые литералы заключаются в двойные
- * кавычки. Если же в строковом литерале нужно указать такую кавычку, то её
- * нужно удвоить. Кроме того, из приведённого регулярного выражения следует,
- * что строковый литерал может занимать несколько строк исходного текста.
+ * where b is a double quotation mark ("), and a is any character other than a
+ * double quotation mark. In other words, string literals are enclosed in double
+ * quotes, and if in a string literal it is necessary to specify such a
+ * quotation mark, then it must be doubled. Moreover, from the above regular
+ * expression it follows that a string literal can occupy several lines of
+ * the source text.
  *
- * Далее, если по регулярному выражению построить сначала НКА
- * (недетерминированный конечный автомат), потом по построенному НКА
- * построить соответствующий ДКА (детерминированный конечный автомат), и
- * полученный ДКА минимизировать, то получим ДКА со следующей таблицей
- * переходов:
+ * Further, if we construct a NFA (a nondeterministic finite state machine) by a
+ * this regular expression, then we construct a corresponding DFA (deterministic
+ * finite state machine) from the constructed NFA and minimize the resulting DFA,
+ * then we obtain a DFA with the following transition table:
  *
  * --------------------------------------------
- * | Состояние    | a           | b           |
+ * |     state    | a           | b           |
  * --------------------------------------------
  * | Begin_string |             | String_body |
  * --------------------------------------------
@@ -475,8 +474,8 @@ bool Main_scaner::string_proc(){
  * | End_string   |             | String_body |
  * --------------------------------------------
  *
- * В этой таблице состояние Begin_string является начальным,
- * а состояние End_string --- конечным. */
+ * In this table, the Begin_string state is initial, and the End_string state
+ * is the end state. */
     bool t = true;
     switch(state){
         case Begin_string:
@@ -501,19 +500,21 @@ bool Main_scaner::string_proc(){
 }
 
 void Main_scaner::none_final_proc(){
-    /* Данная подпрограмма будет вызвана, если по прочтении входного текста
-     * оказались в автомате A_start. Тогда ничего делать не нужно. */
+    /* This subroutine will be called if, after reading the input text, it
+     * turned out to be in the A_start automaton. Then we do not need to
+     * do anything. */
 }
 
 void Main_scaner::unknown_final_proc(){
-    /* Данная подпрограмма будет вызвана, если по прочтении входного текста
-     * оказались в автомате A_unknown. Тогда ничего делать не нужно. */
+    /* This subroutine will be called if, after reading the input text, it
+     * turned out to be in the A_unknown automaton. Then we do not need to
+     * do anything. */
 }
 
 void Main_scaner::id_final_proc(){
-    /* Данная функция будет вызвана, если по прочтении входного потока
-     * оказались в автомате обработки идентификаторов, автомате A_id.
-     * Тогда идентификатор нужно записать в таблицу идентификаторов. */
+    /* This function will be called if, after reading the input stream, it
+     *appeared in the identifier processing automaton, the A_id. Then the
+     * identifier must be written to the identifier table. */
     token.ident_index = ids -> insert(buffer);
 }
 
@@ -526,13 +527,12 @@ void Main_scaner::delimiter_final_proc(){
 }
 
 void Main_scaner::string_final_proc(){
-    /* Данная функция будет вызвана, если по прочтении входного потока
-     * оказались в автомате обработки строковых литералов. Если при этом
-     * находимся не в конечном состоянии этого автомата, то нужно вывести
-     * диагностику. */
+    /* This function will be called if, after reading the input stream, it appeared in
+     * the string literals processing automaton. If in this case we are not in the
+     * final state of this automaton, then we must display the diagnosis. */
     token.string_index = strs -> insert(buffer);
     if(state != End_string){
-        printf("Неожиданное окончание строкового литерала в строке %zu.\n",
+        printf("Unexpected end of string literal in line %zu.\n",
                loc->current_line);
         en -> increment_number_of_errors();
     }

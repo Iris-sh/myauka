@@ -9,8 +9,8 @@
 #include <map>
 #include "../include/move_by_ext_from_curr_dir.h"
 
-/* Функция, открывающая файл с тестовым текстом. Возвращает строку с текстом, если открыть
-   файл удалось и размер файла не равен нулю, и пустую строку в противном случае. */
+/* Function that opens a file with text. Returns a string with text if the file was
+ * opened and the file size is not zero, and an empty string otherwise. */
 std::u32string init_testing(const char* name){
     auto contents = get_contents(name);
     auto str      = contents.second;

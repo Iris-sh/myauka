@@ -61,8 +61,8 @@ const char* start_proc_newline_is_not_lexem =
     R"~(::start_proc(){
     bool t = true;
     state = -1;
-    /* Для автомата, обрабатывающего какую-либо лексему, состояние с номером (-1)
-     * является состоянием, в котором происходит инициализация этого автомата. */
+    /* For an automaton that processes a token, the state with the number (-1) is
+     * the state in which this automaton is initialized. */
     if(belongs(SPACES, char_categories)){
         loc->current_line += U'\n' == ch;
         return t;
@@ -72,8 +72,8 @@ const char* start_proc_newline_is_not_lexem =
 const char* start_proc_newline_is_lexem = R"~(::start_proc(){
     bool t = true;
     state = -1;
-    /* Для автомата, обрабатывающего какую-либо лексему, состояние с номером (-1)
-     * является состоянием, в котором происходит инициализация этого автомата. */
+    /* For an automaton that processes a token, the state with the number (-1) is
+     * the state in which this automaton is initialized. */
     if(belongs(SPACES, char_categories)){
         if(U'\n' == ch){
             token.code = Newline;
@@ -190,48 +190,48 @@ using Intersection_msg_index = std::pair<Begin_chars_for_aut, Begin_chars_for_au
 
 const std::map<Intersection_msg_index, std::string> intersection_msgs = {
     {{Keyword_beg_char, Delimiter_beg_char},
-     "Ошибка: множество символов, с которых начинаются ключевые слова, пересекается "
-     "с множеством символов, с которых начинаются разделители."},
+     "Error: the set of characters from which the keywords begin, intersects with "
+     "the set of characters from which the delimiters begin."},
     {{Keyword_beg_char, String_beg_char},
-     "Ошибка: множество символов, с которых начинаются ключевые слова, пересекается "
-     "с множеством символов, с которых начинаются строковые литералы."},
+     "Error: the set of characters from which the keywords begin, intersects with "
+     "the set of characters from which string literals begin."},
     {{Keyword_beg_char, Number_beg_char},
-     "Ошибка: множество символов, с которых начинаются ключевые слова, пересекается "
-     "с множеством символов, с которых начинаются числовые литералы."},
+     "Error: the set of characters from which the keywords begin, intersects with "
+     "the set of characters from which the numeric literals begin."},
     {{Keyword_beg_char, Comment_beg_char},
-     "Ошибка: множество символов, с которых начинаются ключевые слова, пересекается "
-     "с множеством символов, с которых начинаются комментарии."},
+     "Error: the set of characters from which the keywords begin, intersects with "
+     "the set of characters from which comments begin."},
 
     {{Id_beg_char, Delimiter_beg_char},
-     "Ошибка: множество символов, с которых начинаются идентификаторы, пересекается "
-     "с множеством символов, с которых начинаются разделители."},
+     "Error: the set of characters from which the identifiers begin, intersects with "
+     "the set of characters from which the delimiters begin."},
     {{Id_beg_char, String_beg_char},
-     "Ошибка: множество символов, с которых начинаются идентификаторы, пересекается "
-     "с множеством символов, с которых начинаются строковые литералы."},
+     "Error: the set of characters from which identifiers begin, intersects with the "
+     "set of characters from which string literals begin."},
     {{Id_beg_char, Number_beg_char},
-     "Ошибка: множество символов, с которых начинаются идентификаторы, пересекается "
-     "с множеством символов, с которых начинаются числовые литералы."},
+     "Error: the set of characters from which identifiers begin, intersects with the "
+     "set of characters from which numeric literals begin."},
     {{Id_beg_char, Comment_beg_char},
-     "Ошибка: множество символов, с которых начинаются идентификаторы, пересекается "
-     "с множеством символов, с которых начинаются комментарии."},
+     "Error: the set of characters from which the identifiers begin, intersects with "
+     "the set of characters from which comments begin."},
 
     {{Delimiter_beg_char, String_beg_char},
-     "Ошибка: множество символов, с которых начинаются разделители, пересекается "
-     "с множеством символов, с которых начинаются строковые литералы."},
+     "Error: the set of characters from which delimiters begin, intersects with the "
+     "set of characters from which string literals begin."},
     {{Delimiter_beg_char, Number_beg_char},
-     "Ошибка: множество символов, с которых начинаются разделители, пересекается "
-     "с множеством символов, с которых начинаются числовые литералы."},
+     "Error: the set of characters from which delimiters begin, intersects with the "
+     "set of characters from which numeric literals begin."},
 
     {{String_beg_char, Number_beg_char},
-     "Ошибка: множество символов, с которых начинаются строковые литералы, "
-     "пересекается с множеством символов, с которых начинаются числовые литералы."},
+     "Error: the set of characters from which string literals begin, intersects with "
+     "the set of characters from which numeric literals begin."},
     {{String_beg_char, Comment_beg_char},
-     "Ошибка: множество символов, с которых начинаются строковые литералы, "
-     "пересекается с множеством символов, с которых начинаются комментарии."},
+     "Error: the set of characters from which string literals begin, intersects with "
+     "the set of characters from which comments begin."},
 
     {{Number_beg_char, Comment_beg_char},
-     "Ошибка: множество символов, с которых начинаются числовые литералы, "
-     "пересекается с множеством символов, с которых начинаются комментарии."}
+     "Error: the set of characters from which numeric literals begin, intersects with "
+     "the set of characters from which comments begin."}
 };
 
 bool Main_parser::verify(){
@@ -241,8 +241,7 @@ bool Main_parser::verify(){
     }
 
     if(!set_of_used_automata){
-        printf("Ни один из определённых кодов лексем не используется"
-               " ни для одной лексемы.\n");
+        printf("None of the specified lexeme codes is used for any lexeme.\n");
         et_.ec -> increment_number_of_errors();
         return false;
     }
@@ -279,8 +278,8 @@ bool Main_parser::verify(){
 
     if(belongs(Id_aut, set_of_used_automata)){
         if(id_begin.empty() || id_body.empty()){
-            puts("Ошибка: имя лексемы 'идентификатор' определено, а "
-                 "структура идентификаторов не описана.");
+            puts("Error: the name of the lexeme 'identifier' is defined, but the "
+                 "structure of the identifiers is not described.");
             et_.ec -> increment_number_of_errors();
             return false;
         }
@@ -385,7 +384,7 @@ bool Main_parser::id_is_defined(size_t idx){
     bool is_def = false;
     auto s = scope_->idsc.find(idx);
     if(s != scope_->idsc.end()){
-        printf("В строке %zu повторно определён идентификатор ",
+        printf("Line %zu repeatedly defines the identifier ",
                msc->lexem_begin_line_number());
         et_.ids_trie->print(idx); printf("\n");
         et_.ec->increment_number_of_errors();
@@ -412,7 +411,7 @@ void Main_parser::name_section_handling(size_t& ind, Name_sec section){
 
     lc = (li = msc-> current_lexem()).code;
     if(Id == li.code){
-        printf("В строке %zu ожидается %s", msc->lexem_begin_line_number(),
+        printf("Line %zu expects %s", msc->lexem_begin_line_number(),
                expected_keywords_strings[section]);
         et_.ec->increment_number_of_errors();
         iattr.kind = attribute;
@@ -452,7 +451,7 @@ void Main_parser::token_fields_sec(){
     lc = (li = msc-> current_lexem()).code;
     if(Kw_token_fields != lc){
         if(String == lc){
-            printf("В строке %zu ожидается %%token_fields.\n",
+            printf("Line %zu expects %%token_fields.\n",
                    msc->lexem_begin_line_number());
             et_.ec->increment_number_of_errors();
             token_fields_idx = li.string_index;
@@ -466,7 +465,7 @@ void Main_parser::token_fields_sec(){
     if(String == lc){
         token_fields_idx = li.string_index;
     }else{
-        printf("В строке %zu ожидается строковый литерал с добавляемыми полями лексемы.\n",
+        printf("Line %zu expects a string literal with the added lexeme fields.\n",
                msc->lexem_begin_line_number());
         et_.ec->increment_number_of_errors();
         msc->back();
@@ -477,7 +476,7 @@ void Main_parser::class_members_sec(){
     lc = (li = msc-> current_lexem()).code;
     if(Kw_class_members != lc){
         if(String == li.code){
-            printf("В строке %zu ожидается %%class_members.\n",
+            printf("Line %zu expects %%class_members.\n",
                    msc->lexem_begin_line_number());
             et_.ec->increment_number_of_errors();
             class_members_idx = li.string_index;
@@ -491,7 +490,7 @@ void Main_parser::class_members_sec(){
     if(String == lc){
         class_members_idx = li.string_index;
     }else{
-        printf("В строке %zu ожидается строковый литерал с добавляемыми полями класса.\n",
+        printf("Line %zu expects a string literal with the added class fields.\n",
                msc->lexem_begin_line_number());
         et_.ec->increment_number_of_errors();
         msc->back();
@@ -505,7 +504,7 @@ void Main_parser::idents_sec(){
         return;
     }
     if(!ident_name_idx){
-        puts("Не задано имя лексемы 'идентификатор'.");
+        puts("The name of the lexeme 'identifier' is not specified.");
         et_.ec -> increment_number_of_errors();
     }
     id_definition_parser->compile(id_begin);
@@ -525,7 +524,7 @@ void Main_parser::add_new_lexem_code(size_t idx){
     auto s = scope_->idsc.find(idx);
     Id_attributes iattr;
     if(s != scope_->idsc.end()){
-        printf("В строке %zu повторно определён идентификатор ",
+        printf("Line %zu repeatedly defines the identifier ",
                msc->lexem_begin_line_number());
         et_.ids_trie->print(idx); printf("\n");
         et_.ec -> increment_number_of_errors();
@@ -538,15 +537,15 @@ void Main_parser::add_new_lexem_code(size_t idx){
 }
 
 void Main_parser::add_new_string(const size_t idx, const size_t code_){
-/* Первый аргумент данной функции --- индекс строкового литерала, представляющего
- * ключевое слово или разделитель, в префиксном дереве строковых литералов, а
- * второй аргумент --- индекс идентификатора, являющегося соответствующим кодом лексемы,
- * в префиксном дереве идентификаторов. */
+/* The first argument of this function is the index of the string literal representing
+ * the keyword or delimiter in the prefix tree of string literals, and the second
+ * argument is the index of the identifier that is the corresponding token code in the
+ * prefix tree of identifiers. */
     auto s = scope_->strsc.find(idx);
     Str_attributes sattr;
     Id_attributes  iattr;
     if(s != scope_->strsc.end()){
-        printf("В строке %zu повторно определён разделитель ",
+        printf("Line %zu repeatedly defines the delimiter ",
                msc->lexem_begin_line_number());
         et_.strs_trie->print(idx); printf("\n");
         et_.ec -> increment_number_of_errors();

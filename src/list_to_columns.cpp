@@ -11,7 +11,8 @@
 #include <algorithm>
 
 std::vector<size_t> calculate_columns_width(size_t num_of_columns,
-                                            const std::vector<std::string>& l){
+                                            const std::vector<std::string>& l)
+{
     std::vector<size_t> result = std::vector<size_t>(num_of_columns);
     for(size_t& z : result){
         z = 0;
@@ -26,7 +27,8 @@ std::vector<size_t> calculate_columns_width(size_t num_of_columns,
 }
 
 std::string string_list_to_columns(const std::vector<std::string>& l, const Format& f,
-                                   char  d){
+                                   char  d)
+{
     std::string result;
     size_t      num_of_strs    = l.size();
     size_t      num_of_columns = f.number_of_columns;

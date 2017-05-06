@@ -108,12 +108,10 @@ void Main_parser_data::init_end(Location_ptr loc){
     comments_parser       = std::make_shared<Comments_parser>(et_, msc);
 }
 
-/* Данная функция на вход получает индекс имени действия, i, в префиксном дереве
- * идентификаторов, а в качестве результата выдаёт строковое представление
- * определения действия. */
+/* This function receives an index of the name of the action, i, in the prefix tree of identifiers,
+ * and returns a string representation of the action definition. */
 std::string Main_parser_data::get_act_repres(size_t i){
-    /* Непустая строка возвращается только в том случае, когда действие
-     * с таким индексом имени есть. */
+    /* A non-empty string is returned only if there is an action with such an index name. */
     std::string result;
 //     printf("action index is = %zu\n", i);
     if(!i){
@@ -129,10 +127,9 @@ std::string Main_parser_data::get_act_repres(size_t i){
 }
 
 /*
- * Добавляет в ассоциативный массив std::map<size_t, std::string> category_name
- * категорию (множество) символов с именем default_name. Если такого множества ещё
- * нет, то добавляем с таким названием, и возвращаем его и true. Если же есть, то
- * возвращаем имеющееся название и false.
+ * Adds to the associative array std :: map <size_t, std :: string> category_name a category (set)
+ * of characters named default_name. If there is no such set, then add it with this name, and
+ * return it and true. If there is, then return the existing name and false.
 */
 std::pair<bool, std::string> Main_parser_data::add_category(const std::set<char32_t>& s,
                                                             const std::string& default_name){

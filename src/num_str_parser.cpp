@@ -26,17 +26,17 @@ void NS_parser::add_action_definition(size_t action_id, size_t action_def_idx){
     auto  s_it  = ssc.find(action_def_idx);
 
     if( (id_it != isc.end()) && ((id_it->second).kind != Action_name) ){
-        printf("Ошибка в строке %zu: идентификатор ", msc->lexem_begin_line_number());
+        printf("Error in line %zu: the identifier ", msc->lexem_begin_line_number());
         et_.ids_trie->print(action_id);
-        printf(" уже определён, но не как имя действия.\n");
+        printf(" is already defined, but not as an action name.\n");
         et_.ec->increment_number_of_errors();
         return;
     }
 
     if( (s_it != ssc.end()) && ((s_it->second).kind != Action_definition) ){
-        printf("Ошибка в строке %zu: строковый литерал ", msc->lexem_begin_line_number());
+        printf("Error in line %zu: the string literal ", msc->lexem_begin_line_number());
         et_.strs_trie->print(action_def_idx);
-        printf(" уже есть, но не как определение действия.\n");
+        printf(" is already defined, but not as an action definition.\n");
         et_.ec->increment_number_of_errors();
         return;
     }
@@ -90,7 +90,7 @@ bool NS_parser::begin_of_num_or_str_sec(){
     }
 
     if(state != Act_expr_beg){
-        printf("Неожиданный конец шапки раздела в строке %zu.\n",
+        printf("Unexpected end of section header in line %zu.\n",
                msc->lexem_begin_line_number());
         et_.ec -> increment_number_of_errors();
     }
@@ -117,7 +117,7 @@ bool NS_parser::num_str_kw_proc(){
         return t;
     }
     msc->back();
-    printf("В строке %zu пропущено %s.\n", msc->lexem_begin_line_number(),
+    printf("Line %zu omits the keyword %s.\n", msc->lexem_begin_line_number(),
            (Kw_strings == sec_begin) ? "%strings" : "%numbers");
     et_.ec -> increment_number_of_errors();
     switch(lc){
@@ -131,7 +131,7 @@ bool NS_parser::num_str_kw_proc(){
             break;
 
         case Id:
-            printf("В строке %zu пропущено слово %%action.\n",
+            printf("Line %zu omits the keyword %%action.\n",
                 msc->lexem_begin_line_number());
             et_.ec -> increment_number_of_errors();
             current_action_name_idx = li.ident_index;
@@ -156,7 +156,7 @@ bool NS_parser::num_str_kw_proc(){
 bool NS_parser::maybe_init_acts_proc(){
     bool t = true;
     if(sec_begin == lc){
-        printf("В строке %zu неожиданно обнаружено слово %s.\n",
+        printf("Line %zu unexpectedly found the keyword %s.\n",
                msc->lexem_begin_line_number(),
                (Kw_strings == sec_begin) ? "%strings" : "%numbers");
         return t;
@@ -169,14 +169,14 @@ bool NS_parser::maybe_init_acts_proc(){
 
         case Kw_action:
             state = Action_sec;
-            printf("В строке %zu неожиданно встретилось слово %%action.\n",
+            printf("Line %zu unexpectedly found the keyword %%action.\n",
                    msc->lexem_begin_line_number());
             et_.ec -> increment_number_of_errors();
             current_action_name_idx = li.ident_index;
             break;
 
         case Id:
-            printf("В строке %zu пропущено слово %%action.\n",
+            printf("Line %zu omits the keyword %%action.\n",
                    msc->lexem_begin_line_number());
             et_.ec -> increment_number_of_errors();
             current_action_name_idx = li.ident_index;
@@ -190,7 +190,7 @@ bool NS_parser::maybe_init_acts_proc(){
         case Opened_fig_brack:
             state = Act_expr_beg;
             msc->back();
-            printf("В строке %zu неожиданно встретилась {.\n",
+            printf("Line %zu unexpectedly found {.\n",
                    msc->lexem_begin_line_number());
             et_.ec -> increment_number_of_errors();
             break;
@@ -205,7 +205,7 @@ bool NS_parser::maybe_init_acts_proc(){
 bool NS_parser::init_acts_proc(){
     bool t = true;
     if(sec_begin == lc){
-        printf("В строке %zu неожиданно обнаружено слово %s.\n",
+        printf("Line %zu unexpectedly found the keyword %s.\n",
                msc->lexem_begin_line_number(),
                (Kw_strings == sec_begin) ? "%strings" : "%numbers");
         return t;
@@ -221,14 +221,14 @@ bool NS_parser::init_acts_proc(){
 
         case Kw_action:
             state = Action_sec;
-            printf("В строке %zu неожиданно встретилось слово %%action.\n",
+            printf("Line %zu unexpectedly found the keyword %%action.\n",
                    msc->lexem_begin_line_number());
             et_.ec -> increment_number_of_errors();
             current_action_name_idx = li.ident_index;
             break;
 
         case Id:
-            printf("В строке %zu пропущено слово %%action.\n",
+            printf("Line %zu omits the keyword %%action.\n",
                    msc->lexem_begin_line_number());
             et_.ec -> increment_number_of_errors();
             current_action_name_idx = li.ident_index;
@@ -242,7 +242,7 @@ bool NS_parser::init_acts_proc(){
         case Opened_fig_brack:
             state = Act_expr_beg;
             msc->back();
-            printf("В строке %zu неожиданно встретилась {.\n",
+            printf("Line %zu unexpectedly found {.\n",
                    msc->lexem_begin_line_number());
             et_.ec -> increment_number_of_errors();
             break;
@@ -257,7 +257,7 @@ bool NS_parser::init_acts_proc(){
 bool NS_parser::maybe_final_acts_proc(){
     bool t = true;
     if(sec_begin == lc){
-        printf("В строке %zu неожиданно обнаружено слово %s.\n",
+        printf("Line %zu unexpectedly found the keyword %s.\n",
                msc->lexem_begin_line_number(),
                (Kw_strings == sec_begin) ? "%strings" : "%numbers");
         return t;
@@ -273,7 +273,7 @@ bool NS_parser::maybe_final_acts_proc(){
             break;
 
         case Id:
-            printf("В строке %zu пропущено слово %%action.\n",
+            printf("Line %zu omits the keyword %%action.\n",
                    msc->lexem_begin_line_number());
             et_.ec -> increment_number_of_errors();
             current_action_name_idx = li.ident_index;
@@ -281,7 +281,7 @@ bool NS_parser::maybe_final_acts_proc(){
             break;
 
         case Colon:
-            printf("В строке %zu неожиданно встретилось двоеточие.\n",
+            printf("Line %zu unexpectedly found the colon.\n",
                    msc->lexem_begin_line_number());
             et_.ec -> increment_number_of_errors();
             break;
@@ -301,15 +301,15 @@ bool NS_parser::maybe_final_acts_proc(){
 bool NS_parser::final_acts_proc(){
     bool t = true;
     if(sec_begin == lc){
-        printf("В строке %zu неожиданно обнаружено слово %s.\n",
+        printf("Line %zu unexpectedly found the keyword %s.\n",
                msc->lexem_begin_line_number(),
               (Kw_strings == sec_begin) ? "%strings" : "%numbers");
         return t;
     }
     switch(lc){
         case String:
-            printf("В строке %zu неожиданно встретился строковый литерал с "
-                   "определением действия.\n", msc->lexem_begin_line_number());
+            printf("Line %zu unexpectedly found the string literal with "
+                   "an action definition.\n", msc->lexem_begin_line_number());
             et_.ec -> increment_number_of_errors();
             break;
 
@@ -318,7 +318,7 @@ bool NS_parser::final_acts_proc(){
             break;
 
         case Id:
-            printf("В строке %zu пропущено слово %%action.\n",
+            printf("Line %zu omits the keyword %%action.\n",
                    msc->lexem_begin_line_number());
             et_.ec -> increment_number_of_errors();
             current_action_name_idx = li.ident_index;
@@ -326,7 +326,7 @@ bool NS_parser::final_acts_proc(){
             break;
 
         case Colon:
-            printf("В строке %zu неожиданно встретилось двоеточие.\n",
+            printf("Line %zu unexpectedly found the colon.\n",
                    msc->lexem_begin_line_number());
             et_.ec -> increment_number_of_errors();
             break;
@@ -346,21 +346,21 @@ bool NS_parser::final_acts_proc(){
 bool NS_parser::action_sec_proc(){
     bool t = true;
     if(sec_begin == lc){
-        printf("В строке %zu неожиданно обнаружено слово %s.\n",
+        printf("Line %zu unexpectedly found the keyword %s.\n",
                msc->lexem_begin_line_number(),
                (Kw_strings == sec_begin) ? "%strings" : "%numbers");
         return t;
     }
     switch(lc){
         case String:
-            printf("В строке %zu неожиданно встретился строковый литерал с "
-                   "определением действия.\n", msc->lexem_begin_line_number());
+            printf("Line %zu unexpectedly found the string literal with "
+                   "an action definition.\n", msc->lexem_begin_line_number());
             et_.ec -> increment_number_of_errors();
             state = Final_acts;
             break;
 
         case Kw_action:
-            printf("В строке %zu неожиданно встретилось %%action.\n",
+            printf("Line %zu unexpectedly found the keyword %%action.\n",
                    msc->lexem_begin_line_number());
             et_.ec -> increment_number_of_errors();
             break;
@@ -371,7 +371,7 @@ bool NS_parser::action_sec_proc(){
             break;
 
         case Colon:
-            printf("В строке %zu неожиданно встретилось двоеточие.\n",
+            printf("Line %zu unexpectedly found the colon.\n",
                    msc->lexem_begin_line_number());
             et_.ec -> increment_number_of_errors();
             break;
@@ -379,7 +379,7 @@ bool NS_parser::action_sec_proc(){
         case Opened_fig_brack:
             state = Act_expr_beg;
             msc->back();
-            printf("В строке %zu неожиданно встретилась {.\n",
+            printf("Line %zu unexpectedly found {.\n",
                    msc->lexem_begin_line_number());
             et_.ec -> increment_number_of_errors();
             break;
@@ -400,7 +400,7 @@ bool NS_parser::act_expr_beg_proc(){
 bool NS_parser::act_def_proc(){
     bool t = true;
     if(sec_begin == lc){
-        printf("В строке %zu неожиданно обнаружено слово %s.\n",
+        printf("Line %zu unexpectedly found the keyword %s.\n",
                msc->lexem_begin_line_number(),
                (Kw_strings == sec_begin) ? "%strings" : "%numbers");
         return t;
@@ -412,19 +412,19 @@ bool NS_parser::act_def_proc(){
             break;
 
         case Kw_action:
-            printf("В строке %zu неожиданно встретилось %%action.\n",
+            printf("Line %zu unexpectedly found the keyword %%action.\n",
                    msc->lexem_begin_line_number());
             et_.ec -> increment_number_of_errors();
             break;
 
         case Id:
-            printf("В строке %zu неожиданно встретился идентификатор.\n",
+            printf("Line %zu unexpectedly found the identifier.\n",
                    msc->lexem_begin_line_number());
             et_.ec -> increment_number_of_errors();
             break;
 
         case Colon:
-            printf("В строке %zu неожиданно встретилось двоеточие.\n",
+            printf("Line %zu unexpectedly found the colon.\n",
                    msc->lexem_begin_line_number());
             et_.ec -> increment_number_of_errors();
             break;
@@ -432,7 +432,7 @@ bool NS_parser::act_def_proc(){
         case Opened_fig_brack:
             state = Act_expr_beg;
             msc->back();
-            printf("В строке %zu неожиданно встретилась {.\n",
+            printf("Line %zu unexpectedly found {.\n",
                    msc->lexem_begin_line_number());
             et_.ec -> increment_number_of_errors();
             break;

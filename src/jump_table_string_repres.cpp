@@ -17,18 +17,16 @@
 std::string generate_Elem(const std::string& s)
 {
     std::string result = R"~(struct Elem {
-    /** Указатель на строку , состоящую из символов , по которым
-        возможен переход. */
+    /** A pointer to a string of characters that can be crossed. */
     char32_t*       symbols;
-    /** код лексемы */
+    /** A lexeme code. */
     )~" + s + R"~( code;
-    /** Если текущий символ совпадает с symbols[0], то
-        выполняется переход в состояние first_state;
-        если текущий символ совпадает с symbols[1], то
-        выполняется переход в состояние first_state+1;
-        если текущий символ совпадает с symbols[2], то
-        выполняется переход в состояние first_state+2,
-        и так далее. */
+    /** If the current character matches symbols[0], then the transition to the state
+     *  first_state;
+     *  if the current character matches symbols[1], then the transition to the state
+     *  first_state + 1;
+     *  if the current character matches symbols[2], then the transition to the state
+     *  first_state + 2, and so on. */
     uint16_t        first_state;
 };
 

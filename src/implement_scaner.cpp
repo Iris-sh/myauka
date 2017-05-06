@@ -45,25 +45,25 @@ static const std::string current_lexem_without_comments_proc = R"~(::current_lex
         char_categories = get_categories_set(ch); //categories_table[ch];
         t = (this->*procs[automaton])();
         if(!t){
-            /* Сюда попадаем, лишь если лексема уже прочитана. При этом текущим
-             * автоматом уже прочитан символ, идущий сразу за концом прочитанной
-             * лексемы, на основании этого символа принято решение о том, что
-             * лексема прочитана, и совершён переход к следующему за ним символу.
-             * Поэтому для того, чтобы не пропустить первый символ следующей
-             * лексемы, нужно уменьшить на единицу указатель pcurrent_char. */
+            /* We get here only if the lexeme has already been read. At the same time,
+             * the current automaton reads the character immediately after the end of
+             * the token read, based on this symbol, it is decided that the token has
+             * been read and the transition to the next character has been made.
+             * Therefore, in order to not miss the first character of the next lexeme,
+             * we need to decrease the pcurrent_char pointer by one. */
             (loc->pcurrent_char)--;
             return token;
         }
     }
-    /* Здесь можем оказаться, только если уже прочли весь обрабатываемый текст.
-     * При этом указатель на текущий символ указывает на байт, который находится
-     * сразу же после нулевого символа, являющегося признаком конца текста.
-     * Чтобы не выйти при последующих вызовах за пределы текста, нужно перейти
-     * обратно к нулевому символу. */
+    /* Here we can be, only if we have already read all the processed text. In this
+     * case, the pointer to the current symbol indicates a byte, which is immediately
+     * after the zero character, which is a sign of the end of the text. To avoid
+     * entering subsequent calls outside the text, we need to go back to the null
+     * character. */
     (loc->pcurrent_char)--;
-    /* Далее, поскольку мы находимся здесь, то конец текущей лексемы (возможно,
-     * неожиданный) ещё не обработан. Надо эту обработку выполнить, и, возможно,
-     * вывести какую-то диагностику. */
+    /* Further, since we are here, the end of the current token (perhaps unexpected)
+     * has not yet been processed. It is necessary to perform this processing, and,
+     * probably, to display any diagnostics. */
     (this->*finals[automaton])();
     return token;
 }
@@ -92,25 +92,25 @@ static const std::string current_lexem__without_comments_proc = R"~(::current_le
         char_categories = get_categories_set(ch); //categories_table[ch];
         t = (this->*procs[automaton])();
         if(!t){
-            /* Сюда попадаем, лишь если лексема уже прочитана. При этом текущим
-             * автоматом уже прочитан символ, идущий сразу за концом прочитанной
-             * лексемы, на основании этого символа принято решение о том, что
-             * лексема прочитана, и совершён переход к следующему за ним символу.
-             * Поэтому для того, чтобы не пропустить первый символ следующей
-             * лексемы, нужно уменьшить на единицу указатель pcurrent_char. */
+            /* We get here only if the lexeme has already been read. At the same time,
+             * the current automaton reads the character immediately after the end of
+             * the token read, based on this symbol, it is decided that the token has
+             * been read and the transition to the next character has been made.
+             * Therefore, in order to not miss the first character of the next lexeme,
+             * we need to decrease the pcurrent_char pointer by one. */
             (loc->pcurrent_char)--;
             return token;
         }
     }
-    /* Здесь можем оказаться, только если уже прочли весь обрабатываемый текст.
-     * При этом указатель на текущий символ указывает на байт, который находится
-     * сразу же после нулевого символа, являющегося признаком конца текста.
-     * Чтобы не выйти при последующих вызовах за пределы текста, нужно перейти
-     * обратно к нулевому символу. */
+    /* Here we can be, only if we have already read all the processed text. In this
+     * case, the pointer to the current symbol indicates a byte, which is immediately
+     * after the zero character, which is a sign of the end of the text. To avoid
+     * entering subsequent calls outside the text, we need to go back to the null
+     * character. */
     (loc->pcurrent_char)--;
-    /* Далее, поскольку мы находимся здесь, то конец текущей лексемы (возможно,
-     * неожиданный) ещё не обработан. Надо эту обработку выполнить, и, возможно,
-     * вывести какую-то диагностику. */
+    /* Further, since we are here, the end of the current token (perhaps unexpected)
+     * has not yet been processed. It is necessary to perform this processing, and,
+     * probably, to display any diagnostics. */
     (this->*finals[automaton])();
     return token;
 }
@@ -141,7 +141,7 @@ static const std::string current_lexem_with_omitting_multilined =
                 omit_multilined_comment();
                 break;
             case MULTI_LINED_COMMENT_END:
-                printf("Неожиданный конец многострочного комментария в строке %zu.\n",
+                printf("Unexpected end of a multi-line comment in line %zu.\n",
                        lexem_begin_line_number());
                 en->increment_number_of_errors();
                 break;
@@ -156,16 +156,15 @@ static const std::string current_lexem_with_omitting_multilined =
 
 static const std::string nested_comment_jump_struct =
     R"~(struct Comment_jump{
-    /** Указатель на строку , состоящую из символов , по которым возможен переход. */
+    /** A pointer to a string of characters that can be crossed. */
     char32_t*       symbols;
     uint16_t        marker;
-    /** Если текущий символ совпадает с symbols[0], то
-        выполняется переход в состояние first_state;
-        если текущий символ совпадает с symbols[1], то
-        выполняется переход в состояние first_state+1;
-        если текущий символ совпадает с symbols[2], то
-        выполняется переход в состояние first_state+2,
-        и так далее. */
+    /** If the current character matches symbols[0], then the transition to the state
+     *  first_state;
+     *  if the current character matches symbols[1], then the transition to the state
+     *  first_state + 1;
+     *  if the current character matches symbols[2], then the transition to the state
+     *  first_state + 2, and so on. */
     uint16_t        first_state;
 };
 
@@ -187,7 +186,7 @@ static const std::string omit_not_nested_multilined_comment_proc_str =
             st = 0;
         }
     }
-    printf("В строке %zu неожиданно закончился многострочный комментарий.\n",
+    printf("Unexpected end of a multi-line comment in line %zu.\n",
            lexem_begin_line_number());
     en->increment_number_of_errors();
     return;
@@ -240,7 +239,7 @@ static const std::string omit_nested_multilined_proc_str =
         }
     }
     if(-1 == st){
-        printf("В строке %zu неожиданно закончился многострочный комментарий.\n",
+        printf("Unexpected end of a multi-line comment in line %zu.\n",
                lexem_begin_line_number());
         en->increment_number_of_errors();
     }else{
@@ -257,13 +256,13 @@ static const std::string omit_nested_multilined_proc_str =
                 break;
             default:
                 (loc->pcurrent_char)--;
-                printf("В строке %zu неожиданно закончился многострочный комментарий.\n",
+                printf("Unexpected end of a multi-line comment in line %zu.\n",
                        lexem_begin_line_number());
                 en->increment_number_of_errors();
                 return;
         }
         if(comment_level != 0){
-            printf("В строке %zu неожиданно закончился многострочный комментарий.\n",
+            printf("Unexpected end of a multi-line comment in line %zu.\n",
                    lexem_begin_line_number());
             en->increment_number_of_errors();
         }
@@ -284,7 +283,7 @@ static const std::string current_lexem_with_omitting_all =
                 omit_multilined_comment();
                 break;
             case MULTI_LINED_COMMENT_END:
-                printf("Неожиданный конец многострочного комментария в строке %zu.\n",
+                printf("Unexpected end of a multi-line comment in line %zu.\n",
                        lexem_begin_line_number());
                 en->increment_number_of_errors();
                 break;
@@ -561,7 +560,7 @@ void implement_scaner(Info_for_constructing& info){
         fputs("\n",fptr);
         fclose(fptr);
     }else{
-        printf("Не удалось создать файл реализации сканера.\n");
+        printf("Could not create the scanner implementation file.\n");
         info.et.ec -> increment_number_of_errors();
     }
 }

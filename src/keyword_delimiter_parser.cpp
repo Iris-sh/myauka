@@ -19,11 +19,9 @@ KW_parser::State_proc KW_parser::procs[] = {
     &KW_parser::kw_del_comma_sep_proc
 };
 
-static const std::string defined_keyword =
-    "В строке %zu повторно определено ключевое слово ";
+static const std::string defined_keyword   = "Line %zu re-defines the keyword ";
 
-static const std::string defined_delimiter =
-    "В строке %zu повторно определён разделитель ";
+static const std::string defined_delimiter = "Line %zu re-defines the delimiter ";
 
 Settings Keyword_parser::settings(){
     return std::make_tuple(defined_keyword, Keyword_repres, Kw_keywords);
@@ -34,10 +32,6 @@ Settings Delimiter_parser::settings(){
 }
 
 void KW_parser::add_new_string(const size_t idx, const size_t code_){
-/* Первый аргумент данной функции --- индекс строкового литерала, представляющего
- * ключевое слово или разделитель, в префиксном дереве строковых литералов, а
- * второй аргумент --- индекс идентификатора, являющегося соответствующим кодом лексемы,
- * в префиксном дереве идентификаторов. */
     auto s = scope_->strsc.find(idx);
     Str_attributes sattr;
     Id_attributes  iattr;
@@ -63,7 +57,8 @@ void KW_parser::add_new_string(const size_t idx, const size_t code_){
 }
 
 size_t KW_parser::compile(std::vector<size_t>& repres_, std::vector<size_t>& codes_,
-                          size_t& last_code){
+                          size_t& last_code)
+{
     last_code_val = last_code;
     repres        = repres_;
     codes         = codes_;
@@ -105,9 +100,9 @@ bool KW_parser::maybe_repres_str_proc(){
             return t;
     }
     if(belongs(lc, 1ULL << Colon | 1ULL << Id | 1ULL << Comma)){
-        printf("В строке %zu ожидается строковый литерал, являющийся либо действием "
-                "по завершении, либо представлением ключевого слова или разделителя.\n",
-                msc->lexem_begin_line_number());
+        printf("Line %zu expects a string literal, which is either an action after the "
+               "processing is completed, or a keyword or delimiter representation.\n",
+               msc->lexem_begin_line_number());
         et_.ec -> increment_number_of_errors();
         switch(lc){
             case Colon:
@@ -135,7 +130,7 @@ bool KW_parser::colon_sep0_proc(){
     if(Colon == lc){
         state = Maybe_code_kw_or_del;
     }else if(belongs(lc, 1ULL << String | 1ULL << Id | 1ULL << Comma)){
-        printf("В строке %zu пропущено двоеточие.\n", msc->lexem_begin_line_number());
+        printf("Line %zu omits the colon.\n", msc->lexem_begin_line_number());
         et_.ec -> increment_number_of_errors();
         switch(lc){
             case Id:
@@ -176,17 +171,17 @@ bool KW_parser::maybe_code_kw_or_del_proc(){
             state = Repres_str;
             break;
         case Colon:
-            printf("В строке %zu ожидается либо идентификатор, являющийся кодом лексемы, "
-                   "либо строковый литерал, являющийся представлением идентификатора или "
-                   "ключевого слова.\n", msc->lexem_begin_line_number());
+            printf("Line %zu expects either an identifier that is a lexeme code, or a "
+                   "string literal representing an identifier or a keyword.\n",
+                   msc->lexem_begin_line_number());
             et_.ec -> increment_number_of_errors();
             idx = maybe_repres_str_idx;
             state = Colon_sep;
             break;
         case Comma:
-            printf("В строке %zu ожидается либо идентификатор, являющийся кодом лексемы, "
-                   "либо строковый литерал, являющийся представлением идентификатора или "
-                   "ключевого слова.\n", msc->lexem_begin_line_number());
+            printf("Line %zu expects either an identifier that is a lexeme code, or a "
+                   "string literal representing an identifier or a keyword.\n",
+                   msc->lexem_begin_line_number());
             et_.ec -> increment_number_of_errors();
             state = Kw_del_comma_sep;
             break;
@@ -201,7 +196,7 @@ bool KW_parser::repres_str_proc(){
     if(Colon == lc){
         state = Colon_sep;
     }else if(belongs(lc, 1ULL << String | 1ULL << Id | 1ULL << Comma)){
-        printf("В строке %zu пропущено двоеточие.\n", msc->lexem_begin_line_number());
+        printf("Line %zu omits the colon.\n", msc->lexem_begin_line_number());
         et_.ec -> increment_number_of_errors();
         switch(lc){
             case Id:
@@ -229,7 +224,7 @@ bool KW_parser::colon_sep_proc(){
         add_new_string(idx, li.ident_index);
         state = Code_kw_or_del;
     }else if(belongs(lc, 1ULL << String | 1ULL << Colon | 1ULL << Comma)){
-        printf("В строке %zu ожидается идентификатор, являющийся кодом лексемы.\n",
+        printf("Line %zu expects an identifier that is a lexeme code.\n",
                msc->lexem_begin_line_number());
         et_.ec -> increment_number_of_errors();
         switch(lc){
@@ -256,7 +251,7 @@ bool KW_parser::code_kw_or_del_proc(){
     if(Comma == lc){
         state = Kw_del_comma_sep;
     }else if(belongs(li.code, 1ULL << String | 1ULL << Id | 1ULL << Colon)){
-        printf("В строке %zu пропущена запятая.\n", msc->lexem_begin_line_number());
+        printf("Line %zu omits the comma.\n", msc->lexem_begin_line_number());
         et_.ec -> increment_number_of_errors();
         switch(lc){
             case String:
@@ -286,8 +281,8 @@ bool KW_parser::kw_del_comma_sep_proc(){
         return t;
     }
     if(belongs(lc, 1ULL << Colon | 1ULL << Id | 1ULL << Comma)){
-        printf("В строке %zu ожидается строковый литерал, являющийся либо действием "
-                "по завершении, либо представлением ключевого слова или разделителя.\n",
+        printf("Line %zu expects a string literal, which is either an action after the "
+               "processing is completed, or a keyword or delimiter representation.\n",
                 msc->lexem_begin_line_number());
         et_.ec -> increment_number_of_errors();
         switch(lc){

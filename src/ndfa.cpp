@@ -56,12 +56,13 @@ static const NDFA_builder ndfa_builders[] = {
     unknown_builder,        multiconcat_builder
 };
 
-/*!  Данная функция строит  недетерминированный конечный автомат a для
-     команды, индекс которой в списке команд commands указан параметром
-     command_nom. Наименьший из номеров состояний строящегося автомата
-     указан параметром first_state_nom. */
+/* This function builds a nondeterministic state machine a for a command whose
+ * index in the list of commands is specified by the command_nom parameter.
+ * The smallest of the state numbers of the machine being built is indicated by
+ * the parameter first_state_nom. */
 static void generate_NDFA_for_command(NDFA&  a,       const  Unwrapped_commands& commands,
-                                      size_t cmd_nom, size_t first_state_nom){
+                                      size_t cmd_nom, size_t first_state_nom)
+{
     auto& com = commands[cmd_nom];
     (ndfa_builders[static_cast<uint32_t>(com.kind)])(a, commands, cmd_nom, first_state_nom);
 }
@@ -74,7 +75,8 @@ void build_NDFA(NDFA& a, const Unwrapped_commands& commands){
 }
 
 static void add_state_jumps(NDFA_state_jumps& sj,     Generalized_char c,
-                            const States_with_action& added_states){
+                            const States_with_action& added_states)
+{
     auto it = sj.find(c);
     if(it != sj.end()){
         auto sa = it -> second;
@@ -122,11 +124,11 @@ static void concat_builder(NDFA& a,            const Unwrapped_commands& command
     for(auto sj : state_jumps2){
         add_state_jumps(state_jumps1, sj.first, sj.second);
     }
-    /* Затем добавляем состояния автомата a1 (кроме конечного). */
+    /* Then we add the states of the automaton a1 (except the final one). */
     a.jumps.insert(a.jumps.end(), a1.jumps.begin(), a1.jumps.end() - 1);
-    /* Добавляем склеенное состояние. */
+    /* Add the glued state. */
     a.jumps.push_back(state_jumps1);
-    /* Наконец, добавляем прочие состояния автомата a2. */
+    /* Finally, we add other states of the automaton a2. */
     a.jumps.insert(a.jumps.end(), a2.jumps.begin() + 1, a2.jumps.end());
     a.begin_state = first_state_nom;
     a.final_state = a2.final_state;
@@ -168,9 +170,9 @@ static void positive_clos_builder(NDFA& a,            const Unwrapped_commands& 
     a2 = a1;
     size_t number_of_states_in_a1 = a1.jumps.size();
 
-    /* Цикл ниже увеличивает номера состояний для второй копии автомата для выражения,
-     * стоящего под знаком положительного замыкания. */
-    /* Внешний цикл --- по состояниям автомата a2. */
+    /* The cycle below increases the number of states for the second copy of the
+     * automaton for the expression under the positive closure sign. */
+    /* The outer cycle is a cycle over the states of the automaton a2. */
     for(auto& state_jmps : a2.jumps){
         /* Следующий цикл --- по переходам для текущего состояния. */
         for(auto& jump : state_jmps){

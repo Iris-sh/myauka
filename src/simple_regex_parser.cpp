@@ -13,16 +13,13 @@
 #include "../include/belongs.h"
 #include <cstdio>
 
-/* Если лексемы 'символ' и 'класс символов' обозначить через a,
- * лексему '|' --- через b, а лексемы с кодами Begin_expression
- * и End_expression --- через c и d соответственно, то тогда
- * описание начала идентификатора и описание тела идентификатора
- * можно записать в виде регулярного выражения caa*(baa*)*d.
- * Построив затем для этого регулярного выражения сначала
- * недетерминированный конечный автомат (НКА), затем по
- * полученному НКА --- соответствующий детерминированный
- * конечный автомат (ДКА), после чего, минимизировав построенный
- * ДКА, получим следующую таблицу переходов:
+/* If the lexemes 'symbol' and 'symbol class' are denoted by a, the token '|' denote by b,
+ * and the lexemes with codes Begin_expression and End_expression are c and d respectively,
+ * then the description of the identifier's beginning and description of the identifier
+ * body can be written in the form of the regular expression caa*(baa*)*d. After
+ * constructing a nondeterministic finite state machine (NFA) for this regular expression,
+ * then from the obtained NFA the corresponding deterministic finite automaton (DFA),
+ * after which, minimizing the constructed DFA, we obtain the following transition table:
  *
  * -------------------------------------------------------------------------------------
  * |   | State_begin_expr   | State_begin_concat | State_concat       | State_end_expr |
@@ -35,8 +32,8 @@
  * -------------------------------------------------------------------------------------
  * | d |                    |                    | State_end_expr     |                |
  * -------------------------------------------------------------------------------------
- * В этой таблице имена столбцов представляют собой имена состояний, причём состояние
- * State_begin_expr является начальным, а состояние State_end_expr --- конечным. */
+ * In this table, column names are state names, and State_begin_expr is the initial state,
+ * and State_end_expr is the end state. */
 
 static const unsigned long long set_of_first_lexems_of_expr =
     1ULL << Character     | 1ULL << Class_Latin   |
@@ -64,7 +61,7 @@ void Simple_regex_parser::state_begin_expr_proc(Command_buffer& buf){
     if(Begin_expression == elc){
         return;
     }
-    printf("В строке %zu пропущена открывающая фигурная скобка.\n",
+    printf("Line %zu omits the opening curly brace.\n",
            esc_->lexem_begin_line_number());
     et_.ec->increment_number_of_errors();
     if(belongs(elc, character_and_char_classes)){
@@ -82,7 +79,7 @@ void Simple_regex_parser::state_begin_concat_proc(Command_buffer& buf){
         number_of_concatenated = 1;
         return;
     }
-    printf("В строке %zu ожидается символ или класс символов.\n",
+    printf("In line %zu, a character or character class is expected.\n",
            esc_->lexem_begin_line_number());
     et_.ec -> increment_number_of_errors();
     state = (End_expression == elc) ? State_end_expr: State_begin_concat;
@@ -102,8 +99,8 @@ void Simple_regex_parser::state_concat_proc(Command_buffer& buf){
         write_or_command(buf);
         state = State_end_expr;
     }else{
-        printf("В строке %zu ожидается символ, класс символов, "
-               "или закрывающая фигурная скобка.\n",
+        printf("In line %zu, a character, a character class, or a "
+               "closing brace is expected.\n",
                esc_->lexem_begin_line_number());
         et_.ec -> increment_number_of_errors();
     }
@@ -124,8 +121,8 @@ void Simple_regex_parser::write_char_or_char_class(Command_buffer& buf){
         command.cls  = static_cast<Char_class>(elc - Class_Latin);
         command.action_name = 0;
         if(belongs(elc, set_of_non_quotes)){
-            printf("Ошибка в строке %zu: классы символов [:ndq:] и [:nsq:] в определении"
-                   " идентификатора не допускаются.\n",
+            printf("Error in line %zu: the character classes [:ndq:] and [:nsq:] "
+                   "are not allowed in the identifier definition.\n",
                    esc_->lexem_begin_line_number());
             et_.ec -> increment_number_of_errors();
         }
@@ -173,7 +170,7 @@ void Simple_regex_parser::compile(Command_buffer& buf){
         }
     }
     if(state != State_end_expr){
-        printf("Неожиданный конец регулярного выражения в строке %zu\n.",
+        printf("Unexpected end of a regular expression in line %zu.\n",
                esc_->lexem_begin_line_number());
         et_.ec->increment_number_of_errors();
         if((State_concat == state) || (State_begin_concat == state)){

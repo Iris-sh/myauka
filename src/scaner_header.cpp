@@ -76,7 +76,7 @@ static std::string generate_automata_enum(Info_for_constructing& info){
 
     s += string_list_to_columns(automata_names, f);
     s += "\n" + indent + "};\n" + indent +
-         "Automaton_name automaton; /* текущий автомат */\n\n";
+         "Automaton_name automaton; /* current automaton */\n\n";
     return s;
 }
 
@@ -84,21 +84,19 @@ static std::string automaton_procs_typedefs(const std::string& s){
     std::string result;
     result = "   typedef bool (" + s +
         R"~(::*Automaton_proc)();
-    /* Это тип указателя на функцию--член, реализующую
-     * конечный автомат, обрабатывающий лексему. Функция
-     * эта должна возвращать true, если лексема ещё не
-     * разобрана до конца, и false --- в противном случае. */
+    /* This is the type of pointer to the member function that implements the
+     * automaton that processes the lexeme. This function must return true if
+     * the lexeme is not yet parsed, and false otherwise. */
 
     typedef void ()~" + s +
     R"~(::*Final_proc)();
-    /* А это -- тип указателя на функцию-член, выполняющую
-     * необходимые действия в случае неожиданного окончания
-     * лексемы. */
+    /* And this is the type of the pointer to the member function that performs
+     * the necessary actions in the event of an unexpected end of the lexeme. */
 
     static Automaton_proc procs[];
     static Final_proc     finals[];
 
-    /* функции обработки лексем: */
+    /* Lexeme processing functions: */
 )~";
     return result;
 }
@@ -117,8 +115,8 @@ static std::string generate_automata_proc_protos(Info_for_constructing& info){
 
     s += string_list_to_columns(automata_protos, f, 0);
     s += '\n';
-    s += R"~(    /* функции для выполнения действий в случае неожиданного
-     * окончания лексемы */
+    s += R"~(    /* functions for performing actions in case of an
+     * unexpected end of the token */
 )~";
     return s;
 }
@@ -183,7 +181,7 @@ void scaner_header(Info_for_constructing& info){
         fputs("\n",fptr);
         fclose(fptr);
     }else{
-        printf("Не удалось создать заголовочный файл сканера.\n");
+        printf("Could not create scanner header file.\n");
         info.et.ec -> increment_number_of_errors();
     }
 }

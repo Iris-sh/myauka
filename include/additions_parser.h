@@ -11,7 +11,6 @@
 #define ADDITIONS_PARSER_H
 
 #include <memory>
-#include "../include/scope.h"
 #include "../include/errors_and_tries.h"
 #include "../include/main_scaner.h"
 
@@ -22,8 +21,7 @@ enum class Header_or_impl{
 class Additions_parser{
 public:
     Additions_parser()                        = default;
-    Additions_parser(std::shared_ptr<Scope>&       scope,
-                     Errors_and_tries              et,
+    Additions_parser(Errors_and_tries              et,
                      std::shared_ptr<Main_scaner>& msc) :
         scope_(scope), et_(et), msc_(msc) { };
     Additions_parser(const Additions_parser&) = default;

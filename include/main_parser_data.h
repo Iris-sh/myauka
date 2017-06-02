@@ -34,6 +34,7 @@
 #include "../include/used_automaton.h"
 #include "../include/begin_chars_for_aut.h"
 #include "../include/automaton_with_procs.h"
+#include "../include/additions_parser.h"
 
 class Main_parser_data {
 public:
@@ -56,6 +57,7 @@ protected:
     std::shared_ptr<NS_parser>           num_sec_parser;
     std::shared_ptr<NS_parser>           strs_sec_parser;
     std::shared_ptr<Comments_parser>     comments_parser;
+    std::shared_ptr<Additions_parser>    additions_parser;
 
     size_t scaner_name_idx;    /* The index of the identifier, which is
                                 * the name of the scanner, in the prefix
@@ -122,6 +124,9 @@ protected:
     size_t write_action_name_idx;
 
     std::string fields_for_comments_handling;
+
+    size_t impl_additions_idx;
+    size_t header_additions_idx;
 
 private:
     void init_end(Location_ptr loc);

@@ -93,6 +93,9 @@ Main_parser_data::Main_parser_data(){
     scope_->strsc[body_idx] = sattr;
 
     fields_for_comments_handling = "";
+
+    impl_additions_idx      = 0;
+    header_additions_idx    = 0;
 }
 
 void Main_parser_data::init_end(Location_ptr loc){
@@ -106,6 +109,7 @@ void Main_parser_data::init_end(Location_ptr loc){
     num_sec_parser        = std::make_shared<Number_parser>(scope_, et_, msc, num_and_str_parser);
     strs_sec_parser       = std::make_shared<String_parser>(scope_, et_, msc, num_and_str_parser);
     comments_parser       = std::make_shared<Comments_parser>(et_, msc);
+    additions_parser      = std::make_shared<Additions_parser>(et_, msc);
 }
 
 /* This function receives an index of the name of the action, i, in the prefix tree of identifiers,

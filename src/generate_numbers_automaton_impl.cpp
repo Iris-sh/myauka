@@ -53,7 +53,7 @@ void generate_numbers_automaton_impl(Info_for_constructing& info){
     f.automata_name         = info.possible_automata_name_str[Number_aut];
     f.proc_name             = info.possible_proc_ptr[Number_aut];
     f.category_name_prefix  = "NUMBER";
-    f.diagnostic_msg        = "В строке %zu неожиданно закончилось число.";
+    f.diagnostic_msg        = "At line %zu unexpectedly ended the number.";
     f.final_states_set_name = "final_states_for_numbers";
 
     temp = "void " + info.name_of_scaner_class + "::" +

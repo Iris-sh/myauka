@@ -59,9 +59,8 @@ private:
         A_start,     A_unknown, A_action,
         A_delimiter, A_class,   A_char
     };
-    Automaton_name automaton; /* текущий автомат */
-    int            state; /* текущее состояние
-                           * текущего автомата */
+    Automaton_name automaton; /* current automaton */
+    int            state;     /* current state of the current automaton */
 
     typedef bool (Expr_scaner::*Automaton_proc)();
     /* It is the type of the pointer on function-member that implements

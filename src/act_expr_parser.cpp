@@ -316,16 +316,16 @@ void Act_expr_parser::generate_command(Rule r){
             act_index = rule_body[1].attr.eli.action_name_index;
             it        = scope_->idsc.find(act_index);
             if(it == scope_->idsc.end()){
-                printf("Действие ");
+                printf("The action ");
                 et_.ids_trie->print(act_index);
-                printf(" в строке %zu не определено.\n",
+                printf(" is not defined at line %zu.\n",
                        esc_->lexem_begin_line_number());
                 et_.ec -> increment_number_of_errors();
                 return;
             } else if(it->second.kind != Action_name){
-                printf("Идентификатор ");
+                printf("The identifier ");
                 et_.ids_trie->print(act_index);
-                printf(" в строке %zu именем действия не является.\n",
+                printf(" is not action name at line %zu.\n",
                        esc_->lexem_begin_line_number());
                 et_.ec -> increment_number_of_errors();
                 return;

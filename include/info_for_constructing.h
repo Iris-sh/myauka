@@ -24,7 +24,8 @@
 #include "../include/init_and_final_acts.h"
 #include "../include/automaton_with_procs.h"
 
-/* Структура данных для порождения реализации сканера и заголовочного файла сканера. */
+/* The data structure for generating the scanner implementation and the
+ * scanner header file. */
 struct Info_for_constructing{
     Unwrapped_commands                    id_begin;
     Unwrapped_commands                    id_body;

@@ -68,8 +68,8 @@ bool NS_parser::begin_of_num_or_str_sec(){
     lc = (li = msc->current_lexem()).code;
     bool t = false;
     if(!lc){
-        /* Если текст с описанием сканера закончился, то далее
-           секцию обрабатывать не нужно. */
+        /* If the text with the description of the scanner has ended,
+         * then the section will not be processed further. */
         msc->back();
         return t;
     }
@@ -214,7 +214,7 @@ bool NS_parser::init_acts_proc(){
         case String:
             acts_.fin_acts = li.string_index;
             state = Final_acts;
-            printf("В строке %zu пропущено двоеточие.\n",
+            printf("Colon is omitted at line %zu.\n",
                    msc->lexem_begin_line_number());
             et_.ec -> increment_number_of_errors();
             break;

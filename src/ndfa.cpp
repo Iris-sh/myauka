@@ -96,7 +96,7 @@ static void or_builder(NDFA& a,            const Unwrapped_commands& commands,
     generate_NDFA_for_command(a2, commands, com.second_arg, a1.final_state + 1);
     state_jumps[eps_gc] =
         std::make_pair(single_elem(a1.begin_state) + single_elem(a2.begin_state), 0);
-    /* Далее склейка a1 и a2 с дописыванием состояний в a. */
+    /* Next, we glue a1 and a2 with the addition of states to a. */
     size_t final_st = a2.final_state + 1;
     auto last_state = std::make_pair(single_elem(final_st),0);
     add_state_jumps(a1.jumps.back(), eps_gc, last_state);
@@ -117,8 +117,9 @@ static void concat_builder(NDFA& a,            const Unwrapped_commands& command
     NDFA_state_jumps state_jumps1, state_jumps2;
     generate_NDFA_for_command(a1, commands, com.first_arg, first_state_nom);
     generate_NDFA_for_command(a2, commands, com.second_arg, a1.final_state);
-    /* Далее склейка a1 и a2 с дописыванием состояний в a. */
-    /* Cклеим начальное состояние автомата a2 с конечным состоянием автомата a1. */
+    /* Next, we glue a1 and a2 with the addition of states to a. */
+    /* Let us glue the begin state of the automaton a2 with the final
+     * state of the automaton a1. */
     state_jumps1 = a1.jumps.back();
     state_jumps2 = a2.jumps[0];
     for(auto sj : state_jumps2){
@@ -174,7 +175,7 @@ static void positive_clos_builder(NDFA& a,            const Unwrapped_commands& 
      * automaton for the expression under the positive closure sign. */
     /* The outer cycle is a cycle over the states of the automaton a2. */
     for(auto& state_jmps : a2.jumps){
-        /* Следующий цикл --- по переходам для текущего состояния. */
+        /* The following loop is the loop on transitions of the current state. */
         for(auto& jump : state_jmps){
             Generalized_char   c  = jump.first;
             States_with_action sa = jump.second;
@@ -247,8 +248,8 @@ static void char_def_builder(NDFA& a,            const Unwrapped_commands& comma
     a.final_state = first_state_nom + 1;
 }
 
-/* Следующая функция строит множество целых чисел, принадлежащих
- * отрезку [min_state, max_state]. */
+/* The following function builds the set of integers belonging
+ * to the segment [min_state, max_state]. */
 Set_of_states range(size_t min_state, size_t max_state){
     Set_of_states result;
     for(size_t e = min_state; e <= max_state; e++){
@@ -329,9 +330,10 @@ static void multiconcat_builder(NDFA& a,            const Unwrapped_commands& co
     for(size_t i = fst + 1; i <= snd; i++){
         NDFA current;
         generate_NDFA_for_command(current, commands, i, current_fst_state);
-        /* Породили конечный автомат для очередной команды, из тех, что связаны
-         * командой Multiconcat. Теперь нужно приклеить этот автомат к аккумулятору. */
-        /* Начинаем приклеивание. */
+        /* We created the finite state machine for the next command, from those
+         * connected by the Multiconcat command. Now we need to glue this machine
+         * to the accumulator. */
+        /* We begin gluing. */
         NDFA_state_jumps state_jumps1;
         NDFA_state_jumps state_jumps2;
         state_jumps1      = accumulator.jumps.back();

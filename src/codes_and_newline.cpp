@@ -22,7 +22,7 @@ void Codes_and_newline::add_new_lexem_code(size_t idx){
     auto s = scope_->idsc.find(idx);
     Id_attributes iattr;
     if(s != scope_->idsc.end()){
-        printf("В строке %zu повторно определён идентификатор ",
+        printf("Line %zu repeatedly defines identifier ",
                msc->lexem_begin_line_number());
         et_.ids_trie->print(idx); printf("\n");
         et_.ec -> increment_number_of_errors();

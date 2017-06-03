@@ -58,7 +58,7 @@ void generate_strings_automaton_impl(Info_for_constructing& info)
     f.automata_name         = info.possible_automata_name_str[String_aut];
     f.proc_name             = info.possible_proc_ptr[String_aut];
     f.category_name_prefix  = "STRING";
-    f.diagnostic_msg        = "В строке %zu неожиданно закончился строковый литерал.";
+    f.diagnostic_msg        = "At line %zu unexpectedly ended a string literal.";
     f.final_states_set_name = "final_states_for_strings";
 
     temp =  "void " + info.name_of_scaner_class + "::" +

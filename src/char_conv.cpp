@@ -1,6 +1,6 @@
 /*
      File:    char_conv.cpp
-     Создано: 28 January 2016г.
+     Created: 28 January 2016.
      Author:  Гаврилов Владимир Сергеевич
      E-mails: vladimir.s.gavrilov@gmail.com
               gavrilov.vladimir.s@mail.ru

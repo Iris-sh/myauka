@@ -177,8 +177,7 @@ static void generate_idkeyword_automat(Info_for_constructing& info){
     f.automata_name         = info.possible_automata_name_str[IdKeyword_aut];
     f.proc_name             = info.possible_proc_ptr[IdKeyword_aut];
     f.category_name_prefix  = "IDKEYWORD";
-    f.diagnostic_msg        =
-        "В строке %zu неожиданно закончился идентификатор или ключевое слово.";
+    f.diagnostic_msg        = "At line %zu unexpectedly ended identifier or keyword.";
     f.final_states_set_name = "final_states_for_idkeywords";
     f.final_actions         = dindent(kw_postact) + idkeyword_final_actions;
 
@@ -234,7 +233,7 @@ static void generate_separate_identifier_automat(Info_for_constructing& info){
     f.automata_name         = info.possible_automata_name_str[Id_aut];
     f.proc_name             = info.possible_proc_ptr[Id_aut];
     f.category_name_prefix  = "IDENTIFIER";
-    f.diagnostic_msg        = "В строке %zu неожиданно закончился идентификатор.";
+    f.diagnostic_msg        = "At line %zu unexpectedly ended identifier.";
     f.final_states_set_name = "final_states_for_identiers";
     f.final_actions         = "token.ident_index = ids -> insert(buffer);";
 

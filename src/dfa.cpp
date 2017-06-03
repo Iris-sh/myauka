@@ -68,8 +68,8 @@ std::set<Generalized_char> jump_chars_set(const NDFA& a, const std::set<size_t>&
     for(size_t st : s){
         auto& st_jumps = a.jumps[st];
         for(auto m : st_jumps){
-            /* этот цикл --- по всем переходам для состояния st недетерминированного
-               конечного автомата */
+            /* loop on all transitions of the state st of
+             * a non-deterministic finite automaton */
             Generalized_char gc = m.first;
             if(gc.kind != Epsilon){
                 jump_chars.insert(gc);
@@ -495,8 +495,8 @@ void minimize_DFA(Min_DFA& minimal, const DFA& source){
     auto minimal_jumps        = minimal_DFA_jumps(equivalence_classes, sj, source);
     auto eq_classes_as_vector = convert_partition_form(equivalence_classes, source);
 
-    /* выясняем, какие состояния являются конечными, а какое
-       состояние является начальным */
+    /* We determine which states are final states, and which
+     * state is the initial state */
     size_t       mb = source.begin_state;
     auto         mf = source.final_states;
     size_t       bs = 0;

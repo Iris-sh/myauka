@@ -49,12 +49,12 @@ uint64_t Main_scaner::get_categories_set(char32_t c){
 }
 
 /**
- * Элемент таблицы переходов автомата обработки ключевых слов.
+ * Element of transition table of automaton processing the keywords.
  */
 struct Elem {
     /** A pointer to a string of characters that can be crossed. */
     char32_t*       symbols;
-    /** код лексемы */
+    /** lexeme code */
     Main_lexem_code code;
     /** If the current character matches symbols[0], then
      *  the transition to the state first_state;
@@ -321,7 +321,7 @@ void Main_scaner::correct_keyword(){
      * displays the necessary diagnostics. */
     if(token.code >= M_Kw_action){
         int y = token.code - M_Kw_action;
-        printf("В строке %zu ожидается %s.\n",
+        printf("Line %zu expects %s.\n",
                loc->current_line, keyword_strings[y]);
         token.code = static_cast<Main_lexem_code>(y + Kw_action);
         en -> increment_number_of_errors();

@@ -16,8 +16,9 @@ void Comments_parser::compile_(){
 
     lc = (li = msc->current_lexem()).code;
     if(!lc){
-        /* Если текст с описанием сканера закончился, то и секции обработки комментариев
-           нет, и, значит, эту секцию обрабатывать не нужно. */
+        /* If the text with the description of the scanner is over, then there is
+         * no comment processing section, and, therefore, this section should
+         * not be processed. */
         msc->back();
         return;
     }
@@ -34,7 +35,7 @@ void Comments_parser::compile_(){
     }
 
     if(!belongs(state, 1ULL << Single_lined_mark | 1ULL << Multilined_end)){
-        printf("В строке %zu неожиданно закончилась секция описания комментариев.\n",
+        printf("The section describing comments unexpectedly ended in line %zu.\n",
                msc->lexem_begin_line_number());
         et_.ec -> increment_number_of_errors();
     }
@@ -42,15 +43,9 @@ void Comments_parser::compile_(){
 
 Comments_parser_result Comments_parser::compile(){
     Comments_parser_result result;
-
     compile_();
     result = std::make_tuple(mark_of_single_lined, mark_of_multilined_begin,
                              mark_of_multilined_end, multilined_is_nested);
-//     result.mark_of_single_lined     = mark_of_single_lined;
-//     result.mark_of_multilined_begin = mark_of_multilined_begin;
-//     result.mark_of_multilined_end   = mark_of_multilined_end;
-//     result.multilined_is_nested     = multilined_is_nested;
-
     return result;
 }
 
@@ -70,14 +65,14 @@ Comments_parser::State_proc Comments_parser::procs[] = {
              break;
 
          case Kw_single_lined:
-             printf("В строке %zu пропущено слово %%comments.\n",
+             printf("At line %zu missing word %%comments.\n",
                  msc->lexem_begin_line_number());
              et_.ec -> increment_number_of_errors();
              state = Single_lined;
              break;
 
          case String:
-             printf("В строке %zu пропущены слова %%comments и %%single_lined.\n",
+             printf("At line %zu missing words %%comments and %%single_lined.\n",
                  msc->lexem_begin_line_number());
              et_.ec -> increment_number_of_errors();
              state = Single_lined_mark;
@@ -85,14 +80,14 @@ Comments_parser::State_proc Comments_parser::procs[] = {
              break;
 
          case Kw_multilined:
-             printf("В строке %zu пропущено слово %%comments.\n",
+             printf("At line %zu missing word %%comments.\n",
                  msc->lexem_begin_line_number());
              et_.ec -> increment_number_of_errors();
              state = Multilined;
              break;
 
          case Kw_nested:
-             printf("В строке %zu пропущены слова %%comments и %%multilined.\n",
+             printf("At line %zu missing words %%comments and %%multilined.\n",
                  msc->lexem_begin_line_number());
              et_.ec -> increment_number_of_errors();
              state = Nested;
@@ -100,15 +95,15 @@ Comments_parser::State_proc Comments_parser::procs[] = {
              break;
 
          case Colon:
-             printf("В строке %zu пропущены слова %%comments и %%multilined, а также "
-                    "описание начала многострочного комментария.\n",
+             printf("At line %zu skipped words %%comments and %%multilined, and "
+                    "a description of the beginning of the multiline comment.\n",
                     msc->lexem_begin_line_number());
              et_.ec -> increment_number_of_errors();
              state = Beg_end_delim;
              break;
 
          default:
-             printf("В строке %zu встречен неожиданный вид лексемы.\n",
+             printf("At line %zu received an unexpected kind of lexeme.\n",
                     msc->lexem_begin_line_number());
              et_.ec -> increment_number_of_errors();
              t = false;
@@ -120,7 +115,7 @@ bool Comments_parser::single_or_multilined_proc(){
     bool t = true;
     switch(lc){
         case Kw_comments:
-            printf("В строке %zu неожиданно встретилось слово %%comments.\n",
+            printf("At line %zu unexpectedly met the word %%comments.\n",
                    msc->lexem_begin_line_number());
             et_.ec -> increment_number_of_errors();
             break;
@@ -130,7 +125,7 @@ bool Comments_parser::single_or_multilined_proc(){
             break;
 
         case String:
-            printf("В строке %zu пропущены слова %%comments и %%single_lined.\n",
+            printf("At line %zu missing words %%comments and %%single_lined.\n",
                 msc->lexem_begin_line_number());
             et_.ec -> increment_number_of_errors();
             state = Single_lined_mark;
@@ -142,7 +137,7 @@ bool Comments_parser::single_or_multilined_proc(){
             break;
 
         case Kw_nested:
-            printf("В строке %zu пропущено слово %%multilined.\n",
+            printf("At line %zu missing word %%multilined.\n",
                 msc->lexem_begin_line_number());
             et_.ec -> increment_number_of_errors();
             state = Nested;
@@ -150,15 +145,15 @@ bool Comments_parser::single_or_multilined_proc(){
             break;
 
         case Colon:
-            printf("В строке %zu пропущено слово %%multilined, а также "
-                   "описание начала многострочного комментария.\n",
+            printf("At line %zu missing word %%multilined, and a description of "
+                   "the beginning of the multiline comment.\n",
                    msc->lexem_begin_line_number());
             et_.ec -> increment_number_of_errors();
             state = Beg_end_delim;
             break;
 
         default:
-            printf("В строке %zu встречен неожиданный вид лексемы.\n",
+            printf("At line %zu received an unexpected kind of lexeme.\n",
                    msc->lexem_begin_line_number());
             et_.ec -> increment_number_of_errors();
             t = false;
@@ -170,13 +165,13 @@ bool Comments_parser::single_lined_proc(){
     bool t = true;
     switch(lc){
         case Kw_comments:
-            printf("В строке %zu неожиданно встретилось слово %%comments.\n",
+            printf("At line %zu unexpectedly met the word %%comments.\n",
                    msc->lexem_begin_line_number());
             et_.ec -> increment_number_of_errors();
             break;
 
         case Kw_single_lined:
-            printf("В строке %zu неожиданно встретилось слово %%single_lined.\n",
+            printf("At line %zu unexpectedly met the word %%single_lined.\n",
                    msc->lexem_begin_line_number());
             et_.ec -> increment_number_of_errors();
             break;
@@ -187,14 +182,14 @@ bool Comments_parser::single_lined_proc(){
             break;
 
         case Kw_multilined:
-            printf("В строке %zu неожиданно встретилось слово %%multilined.\n",
+            printf("At line %zu unexpectedly met the word %%multilined.\n",
                    msc->lexem_begin_line_number());
             et_.ec -> increment_number_of_errors();
             state = Multilined;
             break;
 
         case Kw_nested:
-            printf("В строке %zu пропущено слово %%multilined.\n",
+            printf("At line %zu missing word %%multilined.\n",
                 msc->lexem_begin_line_number());
             et_.ec -> increment_number_of_errors();
             state = Nested;
@@ -202,15 +197,15 @@ bool Comments_parser::single_lined_proc(){
             break;
 
         case Colon:
-            printf("В строке %zu пропущено слово %%multilined, а также "
-                   "описание начала многострочного комментария.\n",
+            printf("At line %zu missing word %%multilined, and a description of "
+                   "the beginning of the multiline comment.\n",
                    msc->lexem_begin_line_number());
             et_.ec -> increment_number_of_errors();
             state = Beg_end_delim;
             break;
 
         default:
-            printf("В строке %zu встречен неожиданный вид лексемы.\n",
+            printf("At line %zu received an unexpected kind of lexeme.\n",
                    msc->lexem_begin_line_number());
             et_.ec -> increment_number_of_errors();
             t = false;
@@ -222,13 +217,13 @@ bool Comments_parser::multilined_proc(){
     bool t = true;
     switch(lc){
         case Kw_comments:
-            printf("В строке %zu неожиданно встретилось слово %%comments.\n",
+            printf("At line %zu unexpectedly met the word %%comments.\n",
                    msc->lexem_begin_line_number());
             et_.ec -> increment_number_of_errors();
             break;
 
         case Kw_single_lined:
-            printf("В строке %zu неожиданно встретилось слово %%single_lined.\n",
+            printf("At line %zu unexpectedly met the word %%single_lined.\n",
                    msc->lexem_begin_line_number());
             et_.ec -> increment_number_of_errors();
             break;
@@ -239,7 +234,7 @@ bool Comments_parser::multilined_proc(){
             break;
 
         case Kw_multilined:
-            printf("В строке %zu неожиданно встретилось слово %%multilined.\n",
+            printf("At line %zu unexpectedly met the word %%multilined.\n",
                    msc->lexem_begin_line_number());
             et_.ec -> increment_number_of_errors();
             break;
@@ -250,15 +245,15 @@ bool Comments_parser::multilined_proc(){
             break;
 
         case Colon:
-            printf("В строке %zu пропущено слово описание начала "
-                   "многострочного комментария.\n",
+            printf("At line %zu missising a description of "
+                   "the multilined comment begin.\n",
                    msc->lexem_begin_line_number());
             et_.ec -> increment_number_of_errors();
             state = Beg_end_delim;
             break;
 
         default:
-            printf("В строке %zu встречен неожиданный вид лексемы.\n",
+            printf("At line %zu received an unexpected kind of lexeme.\n",
                    msc->lexem_begin_line_number());
             et_.ec -> increment_number_of_errors();
             t = false;
@@ -270,19 +265,19 @@ bool Comments_parser::single_lined_mark_proc(){
     bool t = true;
     switch(lc){
         case Kw_comments:
-            printf("В строке %zu неожиданно встретилось слово %%comments.\n",
+            printf("At line %zu unexpectedly met the word %%comments.\n",
                    msc->lexem_begin_line_number());
             et_.ec -> increment_number_of_errors();
             break;
 
         case Kw_single_lined:
-            printf("В строке %zu неожиданно встретилось слово %%single_lined.\n",
+            printf("At line %zu unexpectedly met the word %%single_lined.\n",
                    msc->lexem_begin_line_number());
             et_.ec -> increment_number_of_errors();
             break;
 
         case String:
-            printf("В строке %zu пропущено слово %%multilined.\n",
+            printf("At line %zu missing word %%multilined.\n",
                    msc->lexem_begin_line_number());
             et_.ec -> increment_number_of_errors();
             state = Multi_lined_begin;
@@ -294,7 +289,7 @@ bool Comments_parser::single_lined_mark_proc(){
             break;
 
         case Kw_nested:
-            printf("В строке %zu пропущено слово %%multilined.\n",
+            printf("At line %zu missing word %%multilined.\n",
                 msc->lexem_begin_line_number());
             et_.ec -> increment_number_of_errors();
             state = Nested;
@@ -302,15 +297,15 @@ bool Comments_parser::single_lined_mark_proc(){
             break;
 
         case Colon:
-            printf("В строке %zu пропущено слово описание начала "
-                   "многострочного комментария.\n",
+            printf("At line %zu missising a description of "
+                   "the multilined comment begin.\n",
                    msc->lexem_begin_line_number());
             et_.ec -> increment_number_of_errors();
             state = Beg_end_delim;
             break;
 
         default:
-            printf("В строке %zu встречен неожиданный вид лексемы.\n",
+            printf("At line %zu received an unexpected kind of lexeme.\n",
                    msc->lexem_begin_line_number());
             et_.ec -> increment_number_of_errors();
             t = false;
@@ -322,19 +317,19 @@ bool Comments_parser::multi_lined_begin_proc(){
     bool t = true;
     switch(lc){
         case Kw_comments:
-            printf("В строке %zu неожиданно встретилось слово %%comments.\n",
+            printf("At line %zu unexpectedly met the word %%comments.\n",
                    msc->lexem_begin_line_number());
             et_.ec -> increment_number_of_errors();
            break;
 
         case Kw_single_lined:
-            printf("В строке %zu неожиданно встретилось слово %%single_lined.\n",
+            printf("At line %zu unexpectedly met the word %%single_lined.\n",
                    msc->lexem_begin_line_number());
             et_.ec -> increment_number_of_errors();
             break;
 
         case String:
-            printf("В строке %zu пропущено двоеточие.\n",
+            printf("At line %zu missing colon.\n",
                    msc->lexem_begin_line_number());
             et_.ec -> increment_number_of_errors();
             state = Multilined_end;
@@ -342,13 +337,13 @@ bool Comments_parser::multi_lined_begin_proc(){
             break;
 
         case Kw_multilined:
-            printf("В строке %zu неожиданно встретилось слово %%multilined.\n",
+            printf("At line %zu unexpectedly met the word %%multilined.\n",
                    msc->lexem_begin_line_number());
             et_.ec -> increment_number_of_errors();
             break;
 
         case Kw_nested:
-            printf("В строке %zu неожиданно встретилось слово %%nested.\n",
+            printf("At line %zu unexpectedly met the word %%nested.\n",
                    msc->lexem_begin_line_number());
             et_.ec -> increment_number_of_errors();
             break;
@@ -358,7 +353,7 @@ bool Comments_parser::multi_lined_begin_proc(){
             break;
 
         default:
-            printf("В строке %zu встречен неожиданный вид лексемы.\n",
+            printf("At line %zu received an unexpected kind of lexeme.\n",
                    msc->lexem_begin_line_number());
             et_.ec -> increment_number_of_errors();
             t = false;
@@ -370,13 +365,13 @@ bool Comments_parser::nested_proc(){
     bool t = true;
     switch(lc){
         case Kw_comments:
-            printf("В строке %zu неожиданно встретилось слово %%comments.\n",
+            printf("At line %zu unexpectedly met the word %%comments.\n",
                    msc->lexem_begin_line_number());
             et_.ec -> increment_number_of_errors();
             break;
 
         case Kw_single_lined:
-            printf("В строке %zu неожиданно встретилось слово %%single_lined.\n",
+            printf("At line %zu unexpectedly met the word %%single_lined.\n",
                    msc->lexem_begin_line_number());
             et_.ec -> increment_number_of_errors();
             break;
@@ -387,27 +382,27 @@ bool Comments_parser::nested_proc(){
             break;
 
         case Kw_multilined:
-            printf("В строке %zu неожиданно встретилось слово %%multilined.\n",
+            printf("At line %zu unexpectedly met the word %%multilined.\n",
                    msc->lexem_begin_line_number());
             et_.ec -> increment_number_of_errors();
             break;
 
         case Kw_nested:
-            printf("В строке %zu неожиданно встретилось слово %%nested.\n",
+            printf("At line %zu unexpectedly met the word %%nested.\n",
                    msc->lexem_begin_line_number());
             et_.ec -> increment_number_of_errors();
             break;
 
         case Colon:
-            printf("В строке %zu неожиданно пропущено описание начала "
-                   "многострочного комментария.\n",
+            printf("At line %zu missising a description of the "
+                   "multilined comment begin.\n",
                    msc->lexem_begin_line_number());
             et_.ec -> increment_number_of_errors();
             state = Beg_end_delim;
             break;
 
         default:
-            printf("В строке %zu встречен неожиданный вид лексемы.\n",
+            printf("At line %zu received an unexpected kind of lexeme.\n",
                    msc->lexem_begin_line_number());
             et_.ec -> increment_number_of_errors();
             t = false;
@@ -419,13 +414,13 @@ bool Comments_parser::beg_end_delim_proc(){
     bool t = true;
     switch(lc){
         case Kw_comments:
-            printf("В строке %zu неожиданно встретилось слово %%comments.\n",
+            printf("At line %zu unexpectedly met the word %%comments.\n",
                    msc->lexem_begin_line_number());
             et_.ec -> increment_number_of_errors();
             break;
 
         case Kw_single_lined:
-            printf("В строке %zu неожиданно встретилось слово %%single_lined.\n",
+            printf("At line %zu unexpectedly met the word %%single_lined.\n",
                    msc->lexem_begin_line_number());
             et_.ec -> increment_number_of_errors();
             break;
@@ -436,25 +431,25 @@ bool Comments_parser::beg_end_delim_proc(){
             break;
 
         case Kw_multilined:
-            printf("В строке %zu неожиданно встретилось слово %%multilined.\n",
+            printf("At line %zu unexpectedly met the word %%multilined.\n",
                    msc->lexem_begin_line_number());
             et_.ec -> increment_number_of_errors();
             break;
 
         case Kw_nested:
-            printf("В строке %zu неожиданно встретилось слово %%nested.\n",
+            printf("At line %zu unexpectedly met the word %%nested.\n",
                    msc->lexem_begin_line_number());
             et_.ec -> increment_number_of_errors();
             break;
 
         case Colon:
-            printf("В строке %zu неожиданно встретилось слово двоеточие.\n",
+            printf("At line %zu unexpectedly met colon.\n",
                    msc->lexem_begin_line_number());
             et_.ec -> increment_number_of_errors();
             break;
 
         default:
-            printf("В строке %zu встречен неожиданный вид лексемы.\n",
+            printf("At line %zu received an unexpected kind of lexeme.\n",
                    msc->lexem_begin_line_number());
             et_.ec -> increment_number_of_errors();
             t = false;

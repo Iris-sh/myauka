@@ -34,7 +34,7 @@
 #include "../include/implement_automata.h"
 #include "../include/implement_scaner.h"
 #include "../include/scaner_header.h"
-#include "../include/print_char32.h" // для отладочной печати
+#include "../include/print_char32.h" // for debug print
 
 static const char32_t* default_names[] = {
     U"Scaner", U"Lexem_code", U"Id"
@@ -373,6 +373,12 @@ void Main_parser::parse(){
                          multilined_is_nested) =
                     comments_parser->compile();
                 set_of_used_automata |= 1ULL << Comment_aut;
+                break;
+            case Kw_header_additions:
+                break;
+            case Kw_impl_additions:
+                break;
+            case Kw_lexem_info_name
                 break;
             default:
                 ;

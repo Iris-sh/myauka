@@ -61,7 +61,7 @@ private:
         A_start,   A_unknown,   A_id,
         A_keyword, A_delimiter, A_string
     };
-    Automaton_name automaton; /* текущий автомат */
+    Automaton_name automaton; /* current automaton */
 
     typedef bool (Main_scaner::*Automaton_proc)();
     /* This is the type of pointer to the member function that implements

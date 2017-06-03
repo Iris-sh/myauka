@@ -119,7 +119,7 @@ but in the encoding UTF-8
 std::string u32string_to_utf8(const std::u32string& u32str);
 
 /**
-\param [in] с --- character in the encoding UTF-32
+\param [in] c --- character in the encoding UTF-32
 
 \return value of the type std::string, consisting of bytes, representing
 the same character, but in the encoding UTF-8.

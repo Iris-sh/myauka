@@ -75,7 +75,7 @@ static std::string automata_repres_case_j(Info_for_constructing& info,
                                                std::to_string(last_category_suffix);
                 auto result_cat = add_category(info, cat.s, default_cat_name);
                 if(result_cat.first){
-                    // если категории до того не было
+                    // if there was not the category
                     last_category_suffix++;
                 }
                 result = " else if(belongs(" + result_cat.second +
@@ -110,7 +110,7 @@ static std::string automata_repres_case(Info_for_constructing& info,
     }
     if(ifs[0].substr(0, ELSE_SPACE_WIDTH + 1) == sp_else_sp){
         ifs[0] = ifs[0].substr(ELSE_SPACE_WIDTH + 1);
-        // ELSE_SPACE_WIDTH + 1 --- длина строки " else "
+        // ELSE_SPACE_WIDTH + 1 is length of the string " else "
     }
     for(const auto& x : ifs){
         result += triple_indent + x;

@@ -375,8 +375,10 @@ void Main_parser::parse(){
                 set_of_used_automata |= 1ULL << Comment_aut;
                 break;
             case Kw_header_additions:
+                header_additions_idx = additions_parser->compile(Header_or_impl::Header);
                 break;
             case Kw_impl_additions:
+                impl_additions_idx   = additions_parser->compile(Header_or_impl::Impl);
                 break;
             case Kw_lexem_info_name
                 break;

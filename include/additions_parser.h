@@ -23,7 +23,7 @@ public:
     Additions_parser()                        = default;
     Additions_parser(Errors_and_tries              et,
                      std::shared_ptr<Main_scaner>& msc) :
-        scope_(scope), et_(et), msc_(msc) { };
+        et_(et), msc_(msc) { };
     Additions_parser(const Additions_parser&) = default;
     ~Additions_parser()                       = default;
 
@@ -32,7 +32,6 @@ private:
     Main_lexem_info                  li;
     Main_lexem_code                  lc;
 
-    std::shared_ptr<Scope>           scope_;
     Errors_and_tries                 et_;
     std::shared_ptr<Main_scaner>     msc_;
 };

@@ -14,6 +14,7 @@
 #include "../include/attributed_char_trie.h"
 #include "../include/char_conv.h"
 #include "../include/print_char32.h"
+#include "../include/add_newline_if_non_empty.h"
 #include <cstdio>
 #include <string>
 
@@ -549,7 +550,9 @@ static std::string collect_automata_impls(Info_for_constructing& info){
 }
 
 void implement_scaner(Info_for_constructing& info){
-    std::string impl_text      = impl_includes(info.header_name) + procs_tables(info);
+    std::string impl_text      = impl_includes(info.header_name)                   +
+                                 add_newline_if_non_empty(info.impl_additions_str) +
+                                 procs_tables(info);
 
     impl_text += generate_category_table(info) + collect_automata_impls(info) +
                  generate_current_lexem_proc(info);

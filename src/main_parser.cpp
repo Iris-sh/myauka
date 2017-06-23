@@ -124,7 +124,7 @@ static const std::string possible_fin_proc_ptr[] = {
 
 void Main_parser::compile(){
     parse();
-    et_.ec->print();
+//     et_.ec->print();
     if (!verify()){
         et_.ec->print();
         return;
@@ -172,6 +172,8 @@ void Main_parser::compile(){
     constr_info.lexem_info_name                    = "Lexem_info";
     constr_info.multilined_is_nested               = multilined_is_nested;
     constr_info.token_fields_idx                   = token_fields_idx;
+    constr_info.impl_additions_str                 = idx_to_string(et_.strs_trie, impl_additions_idx);
+    constr_info.header_additions_str               = idx_to_string(et_.strs_trie, header_additions_idx);
 
     if(newline_is_lexem){
         constr_info.aut_impl[Start_aut] += start_proc_newline_is_lexem;
@@ -184,6 +186,8 @@ void Main_parser::compile(){
     scaner_header(constr_info);
 
     aux_files_generate();
+
+    et_.ec->print();
 }
 
 using Intersection_msg_index = std::pair<Begin_chars_for_aut, Begin_chars_for_aut>;
@@ -380,7 +384,7 @@ void Main_parser::parse(){
             case Kw_impl_additions:
                 impl_additions_idx   = additions_parser->compile(Header_or_impl::Impl);
                 break;
-            case Kw_lexem_info_name
+            case Kw_lexem_info_name:
                 break;
             default:
                 ;

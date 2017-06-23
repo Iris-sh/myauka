@@ -19,7 +19,7 @@ size_t Additions_parser::compile(const Header_or_impl hi)
     State           state   = State::Addition;
     Main_lexem_code m       = (hi == Header_or_impl::Header) ?
                               Kw_header_additions : Kw_impl_additions;
-    while((lc = (li = msc->current_lexem()).code){
+    while((lc = (li = msc_->current_lexem()).code)){
         switch(state){
             case State::Addition:
                 if(lc == m){
@@ -34,7 +34,7 @@ size_t Additions_parser::compile(const Header_or_impl hi)
                     return li.string_index;
                 }else{
                     printf("Error at line %zu: the string literal was expected.\n",
-                           msc->lexem_begin_line_number() );
+                           msc_->lexem_begin_line_number() );
                     msc_->back();
                     return ret_val;
                 }

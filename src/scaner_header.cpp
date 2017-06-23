@@ -13,6 +13,7 @@
 #include "../include/indent.h"
 #include "../include/list_to_columns.h"
 #include "../include/belongs.h"
+#include "../include/add_newline_if_non_empty.h"
 #include <string>
 #include <vector>
 #include <cstdio>
@@ -165,6 +166,7 @@ void scaner_header(Info_for_constructing& info){
     std::string header = "#ifndef " + sentinel + "\n#define " +
                          sentinel + "\n\n" + header_includes + "\n\n";
 
+    header += add_newline_if_non_empty(info.header_additions_str);
     header += generate_lexem_codes_enum(info);
     header += generate_lexem_info(info);
     header += generate_scaner_class(info);

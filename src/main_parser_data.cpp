@@ -96,6 +96,8 @@ Main_parser_data::Main_parser_data(){
 
     impl_additions_idx      = 0;
     header_additions_idx    = 0;
+
+    lexem_info_name_idx     = 0;
 }
 
 void Main_parser_data::init_end(Location_ptr loc){

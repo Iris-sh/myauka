@@ -128,6 +128,8 @@ protected:
     size_t impl_additions_idx;
     size_t header_additions_idx;
 
+    size_t lexem_info_name_idx;
+
 private:
     void init_end(Location_ptr loc);
 };

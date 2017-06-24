@@ -27,7 +27,6 @@ Contents get_contents(const char* name){
     Contents result = std::make_pair(Get_contents_return_code::Normal, "");
     Binary_file f {name};
     FILE* fptr = f.get();
-//     FILE* fptr = fopen(name, "rb");
     if(!fptr){
         result.first = Get_contents_return_code::Impossible_open;
         return result;
@@ -40,12 +39,10 @@ Contents get_contents(const char* name){
     char*  q         = test_text.get();
     size_t fr        = fread(q, 1, file_size, fptr);
     if(fr < (unsigned long)file_size){
-//         fclose(fptr);
         result.first = Get_contents_return_code::Read_error;
         return result;
     }
     test_text[file_size] = 0;
-//     fclose(fptr);
     result.second = std::string(test_text.get());
     return result;
 }

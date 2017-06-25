@@ -35,6 +35,7 @@
 #include "../include/begin_chars_for_aut.h"
 #include "../include/automaton_with_procs.h"
 #include "../include/additions_parser.h"
+#include "../include/lexem_info_name_parser.h"
 
 class Main_parser_data {
 public:
@@ -45,19 +46,20 @@ public:
     Main_parser_data(Location_ptr loc) : Main_parser_data()
         {init_end(loc);};
 protected:
-    Errors_and_tries                     et_;
-    std::shared_ptr<Scope>               scope_;
-    std::shared_ptr<Main_scaner>         msc;
-    std::shared_ptr<Expr_scaner>         expr_sc;
-    std::shared_ptr<Simple_regex_parser> id_definition_parser;
-    std::shared_ptr<Act_expr_parser>     num_and_str_parser;
-    std::shared_ptr<Codes_and_newline>   codes_and_newline;
-    std::shared_ptr<KW_parser>           keywords_sec_parser;
-    std::shared_ptr<KW_parser>           delimiters_sec_parser;
-    std::shared_ptr<NS_parser>           num_sec_parser;
-    std::shared_ptr<NS_parser>           strs_sec_parser;
-    std::shared_ptr<Comments_parser>     comments_parser;
-    std::shared_ptr<Additions_parser>    additions_parser;
+    Errors_and_tries                        et_;
+    std::shared_ptr<Scope>                  scope_;
+    std::shared_ptr<Main_scaner>            msc;
+    std::shared_ptr<Expr_scaner>            expr_sc;
+    std::shared_ptr<Simple_regex_parser>    id_definition_parser;
+    std::shared_ptr<Act_expr_parser>        num_and_str_parser;
+    std::shared_ptr<Codes_and_newline>      codes_and_newline;
+    std::shared_ptr<KW_parser>              keywords_sec_parser;
+    std::shared_ptr<KW_parser>              delimiters_sec_parser;
+    std::shared_ptr<NS_parser>              num_sec_parser;
+    std::shared_ptr<NS_parser>              strs_sec_parser;
+    std::shared_ptr<Comments_parser>        comments_parser;
+    std::shared_ptr<Additions_parser>       additions_parser;
+    std::shared_ptr<Lexem_info_name_parser> lexem_info_name_parser;
 
     size_t scaner_name_idx;    /* The index of the identifier, which is
                                 * the name of the scanner, in the prefix

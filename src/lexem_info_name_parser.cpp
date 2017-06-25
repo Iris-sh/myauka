@@ -18,15 +18,15 @@ size_t Lexem_info_name_parser::compile(){
     State           state   = State::Keyword;
     while((lc = (li = msc_->current_lexem()).code)){
         switch(state){
-//             case State::Addition:
+            case State::Keyword:
 //                 if(lc == m){
 //                     state = State::Addition_string;
 //                 }else{
 //                     msc_->back();
 //                     return ret_val;
 //                 }
-//                 break;
-//             case State::Addition_string:
+                break;
+            case State::Name:
 //                 if(String == lc){
 //                     return li.string_index;
 //                 }else{
@@ -35,7 +35,7 @@ size_t Lexem_info_name_parser::compile(){
 //                     msc_->back();
 //                     return ret_val;
 //                 }
-//                 break;
+                break;
         }
     }
     return ret_val;

@@ -19,12 +19,12 @@ size_t Lexem_info_name_parser::compile(){
     while((lc = (li = msc_->current_lexem()).code)){
         switch(state){
             case State::Keyword:
-//                 if(lc == m){
-//                     state = State::Addition_string;
-//                 }else{
-//                     msc_->back();
-//                     return ret_val;
-//                 }
+                if(Kw_lexem_info_name == lc){
+                    state = State::Name;
+                }else{
+                    msc_->back();
+                    return ret_val;
+                }
                 break;
             case State::Name:
 //                 if(String == lc){

@@ -385,6 +385,7 @@ void Main_parser::parse(){
                 impl_additions_idx   = additions_parser->compile(Header_or_impl::Impl);
                 break;
             case Kw_lexem_info_name:
+                lexem_info_name_idx  = lexem_info_name_parser->compile();
                 break;
             default:
                 ;

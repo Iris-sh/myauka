@@ -101,17 +101,18 @@ Main_parser_data::Main_parser_data(){
 }
 
 void Main_parser_data::init_end(Location_ptr loc){
-    msc                   = std::make_shared<Main_scaner>(loc, et_);
-    expr_sc               = std::make_shared<Expr_scaner>(loc, et_);
-    id_definition_parser  = std::make_shared<Simple_regex_parser>(expr_sc, et_);
-    num_and_str_parser    = std::make_shared<Act_expr_parser>(expr_sc, et_, scope_);
-    codes_and_newline     = std::make_shared<Codes_and_newline>(scope_, et_, msc);
-    keywords_sec_parser   = std::make_shared<Keyword_parser>(scope_, et_, msc);
-    delimiters_sec_parser = std::make_shared<Delimiter_parser>(scope_, et_, msc);
-    num_sec_parser        = std::make_shared<Number_parser>(scope_, et_, msc, num_and_str_parser);
-    strs_sec_parser       = std::make_shared<String_parser>(scope_, et_, msc, num_and_str_parser);
-    comments_parser       = std::make_shared<Comments_parser>(et_, msc);
-    additions_parser      = std::make_shared<Additions_parser>(et_, msc);
+    msc                    = std::make_shared<Main_scaner>(loc, et_);
+    expr_sc                = std::make_shared<Expr_scaner>(loc, et_);
+    id_definition_parser   = std::make_shared<Simple_regex_parser>(expr_sc, et_);
+    num_and_str_parser     = std::make_shared<Act_expr_parser>(expr_sc, et_, scope_);
+    codes_and_newline      = std::make_shared<Codes_and_newline>(scope_, et_, msc);
+    keywords_sec_parser    = std::make_shared<Keyword_parser>(scope_, et_, msc);
+    delimiters_sec_parser  = std::make_shared<Delimiter_parser>(scope_, et_, msc);
+    num_sec_parser         = std::make_shared<Number_parser>(scope_, et_, msc, num_and_str_parser);
+    strs_sec_parser        = std::make_shared<String_parser>(scope_, et_, msc, num_and_str_parser);
+    comments_parser        = std::make_shared<Comments_parser>(et_, msc);
+    additions_parser       = std::make_shared<Additions_parser>(et_, msc);
+    lexem_info_name_parser = std::make_shared<Lexem_info_name_parser>(et_, msc);
 }
 
 /* This function receives an index of the name of the action, i, in the prefix tree of identifiers,
@@ -133,7 +134,7 @@ std::string Main_parser_data::get_act_repres(size_t i){
 }
 
 /*
- * Adds to the associative array std :: map <size_t, std :: string> category_name a category (set)
+ * Adds to the associative array std::map<size_t, std::string> category_name a category (set)
  * of characters named default_name. If there is no such set, then add it with this name, and
  * return it and true. If there is, then return the existing name and false.
 */

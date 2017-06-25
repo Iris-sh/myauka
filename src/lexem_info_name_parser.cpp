@@ -27,14 +27,14 @@ size_t Lexem_info_name_parser::compile(){
                 }
                 break;
             case State::Name:
-//                 if(String == lc){
-//                     return li.string_index;
-//                 }else{
-//                     printf("Error at line %zu: the string literal was expected.\n",
-//                            msc_->lexem_begin_line_number() );
-//                     msc_->back();
-//                     return ret_val;
-//                 }
+                if(Id == lc){
+                    return li.ident_index;
+                }else{
+                    printf("Error at line %zu: the identifier was expected.\n",
+                           msc_->lexem_begin_line_number() );
+                    msc_->back();
+                    return ret_val;
+                }
                 break;
         }
     }

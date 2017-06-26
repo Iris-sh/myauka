@@ -117,9 +117,9 @@ protected:
     std::vector<std::u32string> delimiter_strings;
     std::vector<std::u32string> keyword_strings;
 
-    std::string get_act_repres(size_t i);
-    std::pair<bool, std::string> add_category(const std::set<char32_t>& s,
-                                              const std::string& default_name);
+//     std::string get_act_repres(size_t i);
+//     std::pair<bool, std::string> add_category(const std::set<char32_t>& s,
+//                                               const std::string& default_name);
 
     bool there_is_Elem_definition;
 

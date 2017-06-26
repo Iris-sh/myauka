@@ -407,9 +407,8 @@ bool Main_parser::id_is_defined(size_t idx){
 }
 
 void Main_parser::set_default_name(size_t& ind, Name_sec section){
-    char32_t*           default_name     =
-        const_cast<char32_t*>(default_names[section]);
-    Id_kind         attribute        = name_attribute[section];
+    char32_t*       default_name   = const_cast<char32_t*>(default_names[section]);
+    Id_kind         attribute      = name_attribute[section];
     Id_attributes   iattr;
 
     size_t idx = et_.ids_trie->insert(default_name);

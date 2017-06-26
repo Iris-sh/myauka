@@ -115,45 +115,45 @@ void Main_parser_data::init_end(Location_ptr loc){
     lexem_info_name_parser = std::make_shared<Lexem_info_name_parser>(et_, msc);
 }
 
-/* This function receives an index of the name of the action, i, in the prefix tree of identifiers,
- * and returns a string representation of the action definition. */
-std::string Main_parser_data::get_act_repres(size_t i){
-    /* A non-empty string is returned only if there is an action with such an index name. */
-    std::string result;
-//     printf("action index is = %zu\n", i);
-    if(!i){
-        return result;
-    }
-    auto isc = scope_->idsc;
-    auto iti = isc.find(i);
-    if(iti != isc.end()){
-        size_t act_str_idx = iti->second.act_string;
-        result = idx_to_string(et_.strs_trie, act_str_idx);
-    }
-    return result;
-}
-
-/*
- * Adds to the associative array std::map<size_t, std::string> category_name a category (set)
- * of characters named default_name. If there is no such set, then add it with this name, and
- * return it and true. If there is, then return the existing name and false.
-*/
-std::pair<bool, std::string> Main_parser_data::add_category(const std::set<char32_t>& s,
-                                                            const std::string& default_name){
-    std::string result_str;
-    bool        result_bool;
-
-    size_t i = char_cat.insertSet(s);
-    auto it  = category_name.find(i);
-    if(it != category_name.end()){
-        result_str  = it->second;
-        result_bool = false;
-    }else{
-        category_name[i] = default_name;
-        result_str       = default_name;
-        result_bool      = true;
-    }
-
-    auto result = std::make_pair(result_bool, result_str);
-    return result;
-}
+// /* This function receives an index of the name of the action, i, in the prefix tree of identifiers,
+//  * and returns a string representation of the action definition. */
+// std::string Main_parser_data::get_act_repres(size_t i){
+//     /* A non-empty string is returned only if there is an action with such an index name. */
+//     std::string result;
+// //     printf("action index is = %zu\n", i);
+//     if(!i){
+//         return result;
+//     }
+//     auto isc = scope_->idsc;
+//     auto iti = isc.find(i);
+//     if(iti != isc.end()){
+//         size_t act_str_idx = iti->second.act_string;
+//         result = idx_to_string(et_.strs_trie, act_str_idx);
+//     }
+//     return result;
+// }
+//
+// /*
+//  * Adds to the associative array std::map<size_t, std::string> category_name a category (set)
+//  * of characters named default_name. If there is no such set, then add it with this name, and
+//  * return it and true. If there is, then return the existing name and false.
+// */
+// std::pair<bool, std::string> Main_parser_data::add_category(const std::set<char32_t>& s,
+//                                                             const std::string& default_name){
+//     std::string result_str;
+//     bool        result_bool;
+//
+//     size_t i = char_cat.insertSet(s);
+//     auto it  = category_name.find(i);
+//     if(it != category_name.end()){
+//         result_str  = it->second;
+//         result_bool = false;
+//     }else{
+//         category_name[i] = default_name;
+//         result_str       = default_name;
+//         result_bool      = true;
+//     }
+//
+//     auto result = std::make_pair(result_bool, result_str);
+//     return result;
+// }

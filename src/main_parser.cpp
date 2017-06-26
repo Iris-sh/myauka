@@ -169,7 +169,7 @@ void Main_parser::compile(){
     constr_info.mark_of_single_lined               = mark_of_single_lined;
     constr_info.mark_of_multilined_begin           = mark_of_multilined_begin;
     constr_info.mark_of_multilined_end             = mark_of_multilined_end;
-    constr_info.lexem_info_name                    = "Lexem_info";
+    constr_info.lexem_info_name                    = lexem_info_name_idx ? idx_to_string(et_.ids_trie, lexem_info_name_idx) : "Lexem_info";
     constr_info.multilined_is_nested               = multilined_is_nested;
     constr_info.token_fields_idx                   = token_fields_idx;
     constr_info.impl_additions_str                 = idx_to_string(et_.strs_trie, impl_additions_idx);

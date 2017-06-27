@@ -2,7 +2,7 @@
 
 Project Myauka is a generator of lexical analyzers, generating the text of a lexical analyzer in C++. By now, there are quite a few such generators, for example [Coco/R](http://www.ssw.uni-linz.ac.at/Coco),
 [flex](http://flex.sourceforge.net), [flex++](http://www.mario-konrad.ch/wiki/doku.php?id=programming:flexbison:flexppbisonpp), [flexc++](http://flexcpp.sourceforge.net), and this list is far from complete.
-However, all these generators have one common drawback. The disadvantage is that these generators essentially automate only the tasks of checking the correctness of writing and detecting the beginning of lexemes, and the generation of the value of the lexeme by its string representation must be performed by the function written by the user of the generator, called after verification of the correctness of the token. In this case, firstly, the passage through the fragment of the input text is performed twice, and secondly, it is necessary to manually implement part of the finite automaton constructed by the generator of lexical analyzers. The proposed generator is aimed at eliminating this disadvantage.
+However, all these generators have one common drawback. The disadvantage is that these generators essentially automate only the tasks of checking the correctness of writing and detecting the beginning of lexemes, and the generation of the value of the lexeme by its string representation must be performed by the function written by the user of the generator, called after verification of the correctness of the token. In this case, firstly, the passage through the fragment of the input text is performed twice, and secondly, it is necessary to manually implement part of the finite automaton constructed by the generator of lexical analyzers. The proposed generator is aimed at eliminating this disadvantage.  
 
 # Input file format
 
@@ -12,33 +12,38 @@ The input file with the description of a lexical analyzer consists of the sequen
 %ident\_name name\_of\_identifier  
 %token\_fields added\_fields\_of\_lexeme  
 %class\_members added\_members\_of\_scaner\_class  
+%header\_additions additions\_to\_the\_header\_file  
+%impl\_additions additions\_to\_the\_implementation\_file  
+%lexem\_info\_name name\_of\_the\_type\_of\_a\_lexeme\_information  
 %newline\_is\_lexem  
 %codes name\_of\_lexeme\_code {, name\_of\_lexeme\_code}  
 %keywords [actions\_after\_finishing:] string\_representing\_the\_keyword : code\_of\_the\_keyword {, string\_representing\_the\_keyword : code\_of\_the\_keyword}  
 %delimiters [actions\_after\_finishing:] string\_representing\_the\_delimiter : code\_of\_the\_delimiter {, string\_representing\_the\_delimiter : code\_of\_the\_delimiter}  
 %idents '{'description\_of_the\_identifier\_begin'}' '{'description\_of\_the\_identifier\_body'}'  
-%numbers \[действия\_при\_инициализации\]:[actions\_after\_finishing] {%action имя\_действия определение\_действия} '{'выражение'}'  
-%strings \[действия\_при\_инициализации\]:[actions\_after\_finishing] {%action имя\_действия определение\_действия} '{'выражение'}'  
-%comments \[%single\_lined начало\_однострочного комментария\] \[%multilined \[%nested] начало\_многострочного\_комментария : конец\_многострочного\_комментария\]
+%numbers [initialization\_actions]:[actions\_after\_finishing] {%action name\_of\_the\_action action\_definition} '{'expression'}'  
+%strings [initialization\_actions]:[actions\_after\_finishing] {%action name\_of\_the\_action action\_definition} '{'expression'}'  
+%comments [%single\_lined begin\_of\_a\_single-line\_comment] [%multilined [%nested] begin\_of\_multi-line\_comment : end\_of\_multi-line\_comment]  
 
-Прежде чем пояснить смысл каждой из приведённых выше конструкций, условимся, что всё, заключённое в квадратные скобки, является необязательным, а всё, заключённое в фигурные скобки может повторяться любое число  раз, в том числе и ни разу. При этом '{' и '}' обозначают сами фигурные скобки.
+Before explaining the meaning of each of the above constructions, we agree that everything enclosed in square brackets is optional, and everything enclosed in braces can be repeated any number of times, including never. In addition, '{' and '}' denote the curly braces themselves.  
 
-Далее отметим, что под строковым литералом Мяуки (далее просто строковым литералом) будет пониматься любая (в том числе пустая) цепочка символов, заключённая в двойные кавычки. Если в этой последовательности нужно указать саму двойную кавычку, то эту кавычку нужно удвоить.  
+Further, we note that under the string literal of Myauka (hereinafter simply a string literal) will be understood any (including empty) character sequence enclosed in double quotes. If you want to specify the double quotation in this sequence, then this quote must be doubled.  
 
-Перейдём теперь к пояснению команд, описывающих лексический анализатор (далее, для краткости, — сканер).  
+Let's now turn to the explanation of the commands describing the lexical analyzer (hereinafter, for brevity, the scanner).  
 
-Прежде всего, если указана команда  
->%scaner_name имя\_сканера  
+First of all, if the command  
 
-то в одном из заголовочных файлов появляется запись вида  
+>%scaner_name name\_of\_scaner  
 
+is specified, then an entry of the form  
 ```c++
-class имя\_сканера {
+class name_of_scaner {
     ...
-};  
+};
 ```
+is appeared.  
 
-Сам же этот заголовочный файл будет называться имя\_сканера'.h. Соответствующий файл реализации будет называться имя\_сканера'.cpp, где имя\_сканера' — имя\_сканера, преобразованное к нижнему регистру. Принятое по умолчанию имя\_сканера — Scaner.  
+And this header file will be called name\_of\_scaner'.h. The corresponding implementation file will be called name\_of\_scaner'.cpp, where name\_of\_scaner' is name\_of\_scaner converted to lowercase. 
+Default name\_of\_scaner is Scaner.    
 
 Далее, если указана команда  
 

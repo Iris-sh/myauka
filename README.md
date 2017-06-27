@@ -1,9 +1,10 @@
-# Введение
+# Introduction
 
-Проект Мяука представляет собой генератор лексических анализаторов, порождающий текст лексического анализатора на языке C++. К данному моменту имеется достаточно много таких генераторов, например [Coco/R](http://www.ssw.uni-linz.ac.at/Coco),
-[flex](http://flex.sourceforge.net), [flex++](http://www.mario-konrad.ch/wiki/doku.php?id=programming:flexbison:flexppbisonpp), [flexc++](http://flexcpp.sourceforge.net), и этот список далеко не полон. Однако у всех этих генераторов есть один общий недостаток. Состоит указанный недостаток в том, что этими генераторами, по существу, автоматизируются лишь задачи проверки корректности записи и обнаружения начала лексем, а порождение значения лексемы по её строковому представлению должно выполняться вызываемой после проверки корректности лексемы функцией, написанной пользователем генератора. При этом, во–первых, дважды выполняется проход по фрагменту входной строки, и, во–вторых, приходится вручную реализовывать часть конечного автомата, построенного генератором лексических анализаторов. Предлагаемый генератор нацелен на устранение данного недостатка.
+Project Myauka is a generator of lexical analyzers, generating the text of a lexical analyzer in C++. By now, there are quite a few such generators, for example [Coco/R](http://www.ssw.uni-linz.ac.at/Coco),
+[flex](http://flex.sourceforge.net), [flex++](http://www.mario-konrad.ch/wiki/doku.php?id=programming:flexbison:flexppbisonpp), [flexc++](http://flexcpp.sourceforge.net), and this list is far from complete.
+However, all these generators have one common drawback. The disadvantage is that these generators essentially automate only the tasks of checking the correctness of writing and detecting the beginning of lexemes, and the generation of the value of the lexeme by its string representation must be performed by the function written by the user of the generator, called after verification of the correctness of the token. In this case, firstly, the passage through the fragment of the input text is performed twice, and secondly, it is necessary to manually implement part of the finite automaton constructed by the generator of lexical analyzers. The proposed generator is aimed at eliminating this disadvantage.
 
-# Формат входного файла
+# Input file format
 
 Входной файл с описанием лексического анализатора состоит из последовательности следующих команд (из них обязательна только команда %codes), которые могут идти в произвольном порядке:  
 %scaner\_name имя\_сканера  

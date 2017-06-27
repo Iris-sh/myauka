@@ -6,19 +6,19 @@ However, all these generators have one common drawback. The disadvantage is that
 
 # Input file format
 
-Входной файл с описанием лексического анализатора состоит из последовательности следующих команд (из них обязательна только команда %codes), которые могут идти в произвольном порядке:  
-%scaner\_name имя\_сканера  
-%codes\_type имя\_типа\_кодов\_лексемы  
-%ident\_name имя\_идентификатора  
-%token\_fields добавляемые\_поля\_лексемы  
-%class\_members добавляемые\_члены\_класса  
+The input file with the description of a lexical analyzer consists of the sequence of the following commands (only the command %codes is required of them), which can go in any order:  
+%scaner\_name name\_of\_scaner  
+%codes\_type name\_of\_type\_of\_lexeme\_codes  
+%ident\_name name\_of\_identifier  
+%token\_fields added\_fields\_of\_lexeme  
+%class\_members added\_members\_of\_scaner\_class  
 %newline\_is\_lexem  
-%codes имя\_кода\_лексемы {, имя\_кода\_лексемы}  
-%keywords \[действия\_по\_завершении:\] строка\_представляющая\_ключевое\_слово : код\_ключевого\_слова {, строка\_представляющая\_ключевое\_слово : код\_ключевого\_слова}  
-%delimiters \[действия\_по\_завершении:\] строка\_представляющая\_разделитель\_слово : код\_разделителя {, строка\_представляющая\_разделитель : код\_разделителя}  
-%idents '{'описание\_начала\_идентификатора'}' '{'описание\_тела\_идентификатора'}'  
-%numbers \[действия\_при\_инициализации\]:\[действия\_по\_завершении\] {%action имя\_действия определение\_действия} '{'выражение'}'  
-%strings \[действия\_при\_инициализации\]:\[действия\_по\_завершении\] {%action имя\_действия определение\_действия} '{'выражение'}'  
+%codes name\_of\_lexeme\_code {, name\_of\_lexeme\_code}  
+%keywords [actions\_after\_finishing:] string\_representing\_the\_keyword : code\_of\_the\_keyword {, string\_representing\_the\_keyword : code\_of\_the\_keyword}  
+%delimiters [actions\_after\_finishing:] string\_representing\_the\_delimiter : code\_of\_the\_delimiter {, string\_representing\_the\_delimiter : code\_of\_the\_delimiter}  
+%idents '{'description\_of_the\_identifier\_begin'}' '{'description\_of\_the\_identifier\_body'}'  
+%numbers \[действия\_при\_инициализации\]:[actions\_after\_finishing] {%action имя\_действия определение\_действия} '{'выражение'}'  
+%strings \[действия\_при\_инициализации\]:[actions\_after\_finishing] {%action имя\_действия определение\_действия} '{'выражение'}'  
 %comments \[%single\_lined начало\_однострочного комментария\] \[%multilined \[%nested] начало\_многострочного\_комментария : конец\_многострочного\_комментария\]
 
 Прежде чем пояснить смысл каждой из приведённых выше конструкций, условимся, что всё, заключённое в квадратные скобки, является необязательным, а всё, заключённое в фигурные скобки может повторяться любое число  раз, в том числе и ни разу. При этом '{' и '}' обозначают сами фигурные скобки.

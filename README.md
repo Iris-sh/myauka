@@ -185,24 +185,26 @@ expression1 → expression2[?|*|+]
 expression2 → expression3[$name\_of\_the\_action]  
 expression3 → character | character\_class | (expression)  
 
-В этой грамматике под словом ''символ'' понимается следующее: любой непробельный символ, кроме символов '|', '\*', +', '?', '\\$', '\\', '"', и символа перехода на новую строку, в файле с описанием сканера представляет самого себя. Если же эти символы нужно указать в регулярном выражении, то следует их записывать как '\\|', '\\\*', '\\+', '\\?', '\\$', '\\\\', '\\"', '\\n' соответственно. При этом все пробельные  символы (то есть символы, коды которых не превосходят кода пробела) генератором лексических анализаторов Мяука игнорируются.  
+In this grammar, the word ''character'' means the following. Any non-whitespace character, except for characters '|', '\*', +', '?', '\\$', '\\', '"', and character on a new line in the file describing the scanner is himself.
+If these symbols need to specify in the regular expression, you should write them down as '\\|', '\\\*', '\\+', '\\?', '\\$', '\\\\', '\\"', '\\n', respectively. All whitespace characters (that is, the characters, the codes of 
+which do not exceed the code of space) are ignored by Myauka.  
 
-Ниже приводится список допустимых классов символов.
+Below is the list of allowed character classes. 
 
-- [:Latin:]   Прописные латинские буквы от 'A' до 'Z'.   
-- [:latin:]   Строчные латинские буквы от 'a' до 'z'.  
-- [:Russian:] Прописные русские буквы от 'А' до 'Я' (включая букву 'Ё').   
-- [:russian:] Строчные русские буквы от 'а' до 'я' (включая букву 'ё').  
-- [:bdigits:] Символы двоичных цифр, т.е. символы '0' и '1'.  
-- [:odigits:] Символы восьмеричных цифр, т.е. символы '0', '1', '2', '3', '4', '5', '6', '7'.  
-- [:digits:]  Символы десятичных цифр, т.е. символы '0', '1', '2', '3', '4', '5', '6', '7', '8', '9'.  
-- [:xdigits:] Символы шестнадцатеричных цифр, т.е. символы '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F', 'a', 'b', 'c', 'd', 'e', 'f'.  
-- [:Letter:]  Прописные латинские буквы от 'A' до 'Z' и прописные русские буквы от 'А' до 'Я' (включая букву 'Ё').   
-- [:letter:]  Строчные латинские буквы от 'a' до 'z' и строчные русские буквы от 'а' до 'я' (включая букву 'ё').  
-- [:nsq:]     Символы, отличные от одинарной кавычки (').  
-- [:ndq:]     Символы, отличные от двойной кавычки (").  
+- [:Latin:]   Uppercase Latin letters from 'A' to 'Z'.   
+- [:latin:]   Lowercase Latin letters from 'a' to 'z'.  
+- [:Russian:] Uppercase Russian letters from 'А' to 'Я' (including the letter 'Ё').   
+- [:russian:] Lowercase Russian letters from 'а' to 'я' (including the letter 'ё').  
+- [:bdigits:] Characters of binary digits, i.e. characters '0' и '1'.  
+- [:odigits:] Characters of octal digits, i.e. characters '0', '1', '2', '3', '4', '5', '6', '7'.  
+- [:digits:]  Characters of decimal digits, i.e. characters '0', '1', '2', '3', '4', '5', '6', '7', '8', '9'.  
+- [:xdigits:] Characters of hexadecimal digits, i.e. characters '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F', 'a', 'b', 'c', 'd', 'e', 'f'.  
+- [:Letter:]  Uppercase Latin letters from 'A' to 'Z' and uppercase Russian letters from 'А' to 'Я' (including the letter 'Ё').   
+- [:letter:]  Lowercase Latin letters from 'a' to 'z' and lowercase Russian letters from 'а' to 'я' (including the letter 'ё')  
+- [:nsq:]     Symbols other than an unary quote (').  
+- [:ndq:]     Symbols other than a double quote (").  
 
-Из всех этих классов символов классы [:nsq:] и [:ndq:] допускаются только в разделе %strings.
+Here character classes [: nsq:] and [: ndq:] are allowed only in the section %strings.
 
 # Building
 

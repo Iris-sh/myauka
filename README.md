@@ -98,22 +98,22 @@ then instead of added\_members\_of\_scaner\_class you need to write
 If it is necessary that the character '\\n' (the newline character) be a separate lexeme, and not whitespace character, then you need to specify the command  
 >%newline_is_lexem  
 
-В обязательном разделе  %codes содержится список разделённых запятыми идентификаторов (правила построения идентификаторов -  такие же, что и в C++), представляющих собой имена кодов лексем. Например, если имя перечисления с кодами лексемы не указано командой %codes\_type}, и раздел %codes имеет вид  
+The required section %codes contains the comma separated list of identifiers. These identfiers are names of codes of lexemes. Rules for constructing identifiers are the same as in C++. For instance, if the enumeration name with the token codes is not specified by the command %codes\_type, and the section %codes has the form  
 
 >%codes  
 >   Kw_if, Kw_then, Kw_else, Kw_endif  
 
-то будет порождено перечисление  
+then the enumeration  
 
 ```c++
 enum Lexem_code : unsigned short {  
     NONE,    UNKNOWN,  
     Kw_if,   Kw_then,   
     Kw_else, Kw_endif  
-%};
+};
 ```  
 
-Иными словами, всегда определяется два специальных кода лексем: NONE, обозначающее конец обрабатываемого текста, и UNKNOWN, обозначающее неизвестную лексему.  
+will be generated. In other words, two special lexeme codes are always defined: NONE, denoting the end of the processed text, and UNKNOWN, which denotes the unknown lexeme.  
 
 В разделе %keywords} указываются ключевые слова языка, для которого пишется сканер, и соответствующие этим ключевым словам коды  лексем, взятые из раздела %codes. Например, если имеются ключевые слова __if__, __then__, __else__, __endif__, и этим ключевым словам соответствуют коды лексем Kw\_if, Kw\_then, Kw\_else, Kw\_endif, то раздел %keywords должен иметь следующий вид:  
 

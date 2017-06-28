@@ -145,24 +145,24 @@ For example, if the language has delimiters \<, \>, \<=, \>=, =, !=, and corresp
 
 Here the ellipsis indicates (possibly existing) a description of other delimiters and operation signs.  
 
-В разделе %numbers указывается регулярное выражение, определяющее числа, с внедрёнными в это регулярное выражение действиями. Каждое из действий должно быть описано командой  
+The section %numbers specifies the regular expression that defines the structure of numbers. In this regular expression, character processing actions are embedded. Each of actions must be descripted by the command  
 
->%action имя\_действия определение\_действия  
+>%action name\_of\_the\_action action\_definition  
 
-где имя\_действия - идентификатор языка C++, являющийся именем определяемого действия, а определение\_действия -
-строковый литерал, содержащий код на C++, выполняющий нужное действие.  
+where name\_of\_the\_action is the C ++ language identifier, which is the name of the action to be determined, and action\_definition is the string literal containing C++ code that performs the required action.  
 
-В разделе %strings описывается структура строковых и символьных литералов (если символьные литералы вообще есть) языка, для которого пишется сканер. Раздел %strings устроен так же, как и раздел %numbers. При этом при указании раздела %strings} у класса сканера автоматически определяются члены std::string\ buffer и int char\_code}.  
+The section %strings describes the structure of character literals and string literals (if there are such literals). The section %string is organized in the same way as the section %numbers. If the section %string is specified, then
+the scanner class contains members std::string buffer и int char\_code.  
 
-Наконец, в разделе \textbf{\%comments} описывается структура комментариев языка, для которого пишется сканер.  
+Finally, the section %comments describes the structure of comments.  
 
-Командой   
+Here the command   
 
->%single_lined начало\_однострочного\_комментария  
+>%single_lined begin\_of\_a\_single-line\_comment  
 
-где начало\_однострочного\_комментария - строковый литерал, представляющий цепочку символов, являющуюся началом однострочного комментария, определяется структура однострочного комментария.  
+defines the structure of the single-line comment, where begin\_of\_a\_single-line\_comment is a string literal representing the sequence of characters that is the beginning of a single-line comment.  
 
-Командой же  
+The command  
 
 >%multilined [%nested] начало\_многострочного\_комментария : конец\_многострочного\_комментария  
 

@@ -164,25 +164,26 @@ defines the structure of the single-line comment, where begin\_of\_a\_single-lin
 
 The command  
 
->%multilined [%nested] начало\_многострочного\_комментария : конец\_многострочного\_комментария  
+>%multilined [%nested] begin\_of\_multi-line\_comment : end\_of\_multi-line\_comment  
 
-определяется структура многострочного комментария. А именно, начало\_многострочного\_комментария и конец\_многострочного\_комментария - строковые литералы, являющиеся цепочками символов, начинающих и заканчивающих многострочный комментарий. Если указано слово %nested, то многострочный комментарий может быть вложенным.  
+defines the structure of the multi-line comment. Namely, begin\_of\_multi-line\_comment and end\_of\_multi-line\_comment are string literals that are sequences of characters beginning and ending multi-line comment, respectively.
+If the keyword %nested is specified, then the multi-line comment can be nested.  
 
-Поясним теперь, что в Мяуке понимается под началом идентификатора, концом идентификатора, и регулярным выражением:  
+We now explain that the generator of lexical analyzers Myauka is meant by the description the beginning identifier, a description of the body of the identifier and the regular expression:  
 
-описание\_начала\_идентификатора → выр  
-описание\_тела\_идентификатора → выр  
-выр → выр0 {'|' выр0}  
-выр0 → выр1 { выр1}  
-выр1 → выр2[?|\* |+]  
-выр2 → символ | класс\_символов  
-класс\_символов → [:Latin:] | [:latin:] | [:Russian:] | [:russian:] | [:bdigits:] |  [:odigits:] | [:digits:] | [:xdigits:] | [:Letter:] | [:letter:] | [:nsq:] | [:ndq:]  
+description\_of_the\_identifier\_begin → expr  
+description\_of\_the\_identifier\_body → expr  
+expr → expr0 {'|' expr0}  
+expr0 → expr1 { expr1}  
+expr1 → expr2[?|\* |+]  
+expr2 → character | character\_class  
+character\_class → [:Latin:] | [:latin:] | [:Russian:] | [:russian:] | [:bdigits:] |  [:odigits:] | [:digits:] | [:xdigits:] | [:Letter:] | [:letter:] | [:nsq:] | [:ndq:]  
 
-выражение → выражение0 {'|' выражение0}  
-выражение0 → выражение1 {выражение1}  
-выражение1 → выражение2[?|*|+]  
-выражение2 → выражение3[$имя\_действия]  
-выражение3 → символ | класс\_символов | (выражение)  
+expression → expression0 {'|' expression0}  
+expression0 → expression1 {expression1}  
+expression1 → expression2[?|*|+]  
+expression2 → expression3[$name\_of\_the\_action]  
+expression3 → character | character\_class | (expression)  
 
 В этой грамматике под словом ''символ'' понимается следующее: любой непробельный символ, кроме символов '|', '\*', +', '?', '\\$', '\\', '"', и символа перехода на новую строку, в файле с описанием сканера представляет самого себя. Если же эти символы нужно указать в регулярном выражении, то следует их записывать как '\\|', '\\\*', '\\+', '\\?', '\\$', '\\\\', '\\"', '\\n' соответственно. При этом все пробельные  символы (то есть символы, коды которых не превосходят кода пробела) генератором лексических анализаторов Мяука игнорируются.  
 

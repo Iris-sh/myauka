@@ -77,25 +77,25 @@ where added\_fields\_of\_lexeme{  is the string literal with the description of 
 >"\_\_float128 x;  
 >\_\_int128    y;"  
 
-Кроме того, если в класс сканера требуется добавить члены, необходимые для каких-либо вычислений, то нужно написать  
+In addition, if you need to add members that are necessary for some calculations, then you need to write  
 
-%class_members добавляемые\_члены\_класса  
+%class_members added\_members\_of\_scaner\_class  
 
-где под добавляемые\_члены\_класса понимается строковый литерал, содержащий перечень добавляемых в сканер членов. Если, например, нужно добавить 
+where added\_members\_of\_scaner\_class is a string literal containing a list of members added to scanner. For example, if you need to add 
 
 >\_\_int128   integer\_value;  
 >\_\_float128 integer\_part;  
 >\_\_float128 fractional\_part;  
 >\_\_float128 exponent;  
 
-то вместо добавляемые\_члены\_класса  
+then instead of added\_members\_of\_scaner\_class you need to write  
 
 >"\_\_int128   integer\_value;  
 >\_\_float128 integer\_part;  
 >\_\_float128 fractional\_part;  
 >\_\_float128 exponent;"  
 
-Если необходимо, чтобы символ '\\n' перехода на новую строку был отдельной лексемой, а не пробельным символом, то нужно указать команду 
+If it is necessary that the character '\\n' (the newline character) be a separate lexeme, and not whitespace character, then you need to specify the command  
 >%newline_is_lexem  
 
 В обязательном разделе  %codes содержится список разделённых запятыми идентификаторов (правила построения идентификаторов -  такие же, что и в C++), представляющих собой имена кодов лексем. Например, если имя перечисления с кодами лексемы не указано командой %codes\_type}, и раздел %codes имеет вид  

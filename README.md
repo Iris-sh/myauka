@@ -45,34 +45,34 @@ is appeared.
 And this header file will be called name\_of\_scaner'.h. The corresponding implementation file will be called name\_of\_scaner'.cpp, where name\_of\_scaner' is name\_of\_scaner converted to lowercase. 
 Default name\_of\_scaner is Scaner.    
 
-Далее, если указана команда  
+Further, if the command  
 
->%codes_type имя\_типа\_кодов\_лексем  
+>%codes_type name\_of\_type\_of\_lexeme\_codes  
 
-то команда %codes порождает в файле имя\_сканера'.h запись вида 
+is specified, then the command %codes generates an entry of the form
 
 ```c++
-enum имя_типа_кодов_лексем : unsigned short {  
+enum name_of_type_of_lexeme_codes : unsigned short {  
     NONE,  
     UNKNOWN,  
-    имя_кода_лексемы1,  
+    name_of_lexeme_code1,  
     ...  
-    имя_кода_лексемыN  
+    name_of_lexeme_codeN  
 };
 ```
-где имя\_кода\_лексемы1, ..., имя\_кода\_лексемыN -  имена кодов лексем, определённые в разделе %codes. Принятое по умолчанию имя типа кодов лексем - Lexem_code.  
+in the file name\_of\_scaner'.h, where где name\_of\_lexeme\_code1, ..., name\_of\_lexeme\_codeN are names of lexeme codes defined in the section %codes. The default name of the type of lexeme codes is Lexem_code.  
 
-Команда  
+The command  
 
-> %ident\_name имя\_идентификатора  
+> %ident\_name name\_of\_identifier  
 
-указывает имя кода лексемы для лексемы 'идентификатор'. Если в языке, для которого пишется сканер, идентификаторов нет, то команда %ident_name необязательна.  
+specifies the name of the code of the lexeme for the lexeme 'identifier'. If there are no identifiers in the language for which the scanner is written, then the command %ident_name is optional.  
 
-Если в описание лексемы нужно добавить какие-либо поля, то необходимо написать команду  
+If you need to add some fields into the lexeme description, then you need to write the command  
 
->%token\_fields добавляемые\_поля\_лексемы  
+>%token\_fields added\_fields\_of\_lexeme  
 
-где добавляемые\_поля\_лексемы - строковый литерал с описанием нужных полей. Например, если лексема может принимать как значения типа \_\_float128, так и значения типа \_\_int128, причём поле типа \_\_float128} по условиям задачи нужно назвать x, а поле типа  \_\_int128 - y, то строковый литерал с добавляемыми в лексему полями может выглядеть, например, так:  
+where added\_fields\_of\_lexeme{  is the string literal with the description of the needed fields. For example, if the lexeme can take both values of the type \_\_float128, and the values of the type \_\_int128, and (according to the conditions of the problem) the field having the type \_\_float128 must be named x, but the field having the type \_\_int128 must be named y, then a string literal with fields added to the lexeme can look, for example, like this:  
 
 >"\_\_float128 x;  
 >\_\_int128    y;"  
@@ -201,9 +201,9 @@ enum Lexem_code : unsigned short {
 
 Из всех этих классов символов классы \[:nsq:\] и \[:ndq:\] допускаются только в разделе %strings.
 
-# Сборка
+# Building
 
-Для сборки генератора Мяука нужно использовать систему сборки [Мурлыка](https://github.com/gavr-vlad-s/murlyka).
+To build the generator Myauka, you need to use the build system [Murlyka](https://github.com/gavr-vlad-s/murlyka). The only external dependency for the project Myauka is boost::system and boost::filesystem.
 
 
 

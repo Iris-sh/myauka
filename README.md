@@ -115,21 +115,23 @@ enum Lexem_code : unsigned short {
 
 will be generated. In other words, two special lexeme codes are always defined: NONE, denoting the end of the processed text, and UNKNOWN, which denotes the unknown lexeme.  
 
-В разделе %keywords} указываются ключевые слова языка, для которого пишется сканер, и соответствующие этим ключевым словам коды  лексем, взятые из раздела %codes. Например, если имеются ключевые слова __if__, __then__, __else__, __endif__, и этим ключевым словам соответствуют коды лексем Kw\_if, Kw\_then, Kw\_else, Kw\_endif, то раздел %keywords должен иметь следующий вид:  
+In the section %keywords, the keywords of the language for which the scaner is written and the corresponding lexeme codes are specified. Codes of lexemes are taken from the section %codes. For example, if
+there are keywords__if__, __then__, __else__, __endif__, and coressponding lexeme codes are Kw\_if, Kw\_then, Kw\_else, Kw\_endif, then the section %keywords should have the following form:  
 
 >   %keywords  
 >       ...  
->       "if" : Kw_if,  
->       "then" : Kw_then,  
->       "else" : Kw_else,  
+>       "if"    : Kw_if,  
+>       "then"  : Kw_then,  
+>       "else"  : Kw_else,  
 >       "endif" : Kw_endif  
 >       ...  
 
-Здесь многоточием обозначено (возможно, имеющееся) описание других ключевых слов.  
+Here the ellipsis indicates (possibly existing) a description of other keywords.  
 
-В разделе %idents определяется структура идентификатора того языка, для которого пишется сканер. Более точно, описание\_начала\_идентификатора указывает, что может быть в начале идентификатора, а описание\_тела\_идентификатора - как устроено тело идентификатора.  
+The %idents section defines the structure of the identifier of the language for which the scanner is written. More precisely, description\_of_the\_identifier\_begin defines what can be at the beginning of the identifier, and description\_of\_the\_identifier\_body defines the structure of the identifier body.  
 
-В разделе %delimiters указываются разделители и знаки операций языка, для которого пишется сканер, и соответствующие этим разделителям и знакам операций коды лексем, взятые из раздела %codes. Например, если в языке есть разделители \<, \>, \<=, \>=, =, !=, с соответствующими кодами лексем del\_LT, del\_GT, del\_LEQ, del\_GEQ, del\_EQ, del\_NEQ, то раздел %delimiters должен иметь вид  
+In the section %delimiters, the operation signs and the delimiters of the language for which the scaner is written and the corresponding lexeme codes are specified. Codes of lexemes are taken from the section %codes. 
+For example, if the language has delimiters \<, \>, \<=, \>=, =, !=, and corresponding lexeme codes are del\_LT, del\_GT, del\_LEQ, del\_GEQ, del\_EQ, del\_NEQ, then the section %delimiters should have the form  
 
 >   %delimiters  
 >       ...  
@@ -141,7 +143,7 @@ will be generated. In other words, two special lexeme codes are always defined: 
 >       "!=" : del_NEQ  
 >       ...  
 
-Здесь многоточием обозначено (возможно, имеющееся) описание других разделителей и знаков операций.  
+Here the ellipsis indicates (possibly existing) a description of other delimiters and operation signs.  
 
 В разделе %numbers указывается регулярное выражение, определяющее числа, с внедрёнными в это регулярное выражение действиями. Каждое из действий должно быть описано командой  
 
@@ -172,34 +174,34 @@ will be generated. In other words, two special lexeme codes are always defined: 
 описание\_тела\_идентификатора → выр  
 выр → выр0 {'|' выр0}  
 выр0 → выр1 { выр1}  
-выр1 → выр2\[?|\* |+\]  
+выр1 → выр2[?|\* |+]  
 выр2 → символ | класс\_символов  
-класс\_символов → \[:Latin:\] | \[:latin:\] | \[:Russian:\] | \[:russian:\] | \[:bdigits:\] |  \[:odigits:\] | \[:digits:\] | \[:xdigits:\] | \[:Letter:\] | \[:letter:\] | \[:nsq:\] | \[:ndq:\]  
+класс\_символов → [:Latin:] | [:latin:] | [:Russian:] | [:russian:] | [:bdigits:] |  [:odigits:] | [:digits:] | [:xdigits:] | [:Letter:] | [:letter:] | [:nsq:] | [:ndq:]  
 
 выражение → выражение0 {'|' выражение0}  
 выражение0 → выражение1 {выражение1}  
-выражение1 → выражение2\[?|*|+\]  
-выражение2 → выражение3\[$имя\_действия\]  
+выражение1 → выражение2[?|*|+]  
+выражение2 → выражение3[$имя\_действия]  
 выражение3 → символ | класс\_символов | (выражение)  
 
 В этой грамматике под словом ''символ'' понимается следующее: любой непробельный символ, кроме символов '|', '\*', +', '?', '\\$', '\\', '"', и символа перехода на новую строку, в файле с описанием сканера представляет самого себя. Если же эти символы нужно указать в регулярном выражении, то следует их записывать как '\\|', '\\\*', '\\+', '\\?', '\\$', '\\\\', '\\"', '\\n' соответственно. При этом все пробельные  символы (то есть символы, коды которых не превосходят кода пробела) генератором лексических анализаторов Мяука игнорируются.  
 
 Ниже приводится список допустимых классов символов.
 
-- \[:Latin:\]   Прописные латинские буквы от 'A' до 'Z'.   
-- \[:latin:\]   Строчные латинские буквы от 'a' до 'z'.  
-- \[:Russian:\] Прописные русские буквы от 'А' до 'Я' (включая букву 'Ё').   
-- \[:russian:\] Строчные русские буквы от 'а' до 'я' (включая букву 'ё').  
-- \[:bdigits:\] Символы двоичных цифр, т.е. символы '0' и '1'.  
-- \[:odigits:\] Символы восьмеричных цифр, т.е. символы '0', '1', '2', '3', '4', '5', '6', '7'.  
-- \[:digits:\]  Символы десятичных цифр, т.е. символы '0', '1', '2', '3', '4', '5', '6', '7', '8', '9'.  
-- \[:xdigits:\] Символы шестнадцатеричных цифр, т.е. символы '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F', 'a', 'b', 'c', 'd', 'e', 'f'.  
-- \[:Letter:\]  Прописные латинские буквы от 'A' до 'Z' и прописные русские буквы от 'А' до 'Я' (включая букву 'Ё').   
-- \[:letter:\]  Строчные латинские буквы от 'a' до 'z' и строчные русские буквы от 'а' до 'я' (включая букву 'ё').  
-- \[:nsq:\]     Символы, отличные от одинарной кавычки (').  
-- \[:ndq:\]     Символы, отличные от двойной кавычки (").  
+- [:Latin:]   Прописные латинские буквы от 'A' до 'Z'.   
+- [:latin:]   Строчные латинские буквы от 'a' до 'z'.  
+- [:Russian:] Прописные русские буквы от 'А' до 'Я' (включая букву 'Ё').   
+- [:russian:] Строчные русские буквы от 'а' до 'я' (включая букву 'ё').  
+- [:bdigits:] Символы двоичных цифр, т.е. символы '0' и '1'.  
+- [:odigits:] Символы восьмеричных цифр, т.е. символы '0', '1', '2', '3', '4', '5', '6', '7'.  
+- [:digits:]  Символы десятичных цифр, т.е. символы '0', '1', '2', '3', '4', '5', '6', '7', '8', '9'.  
+- [:xdigits:] Символы шестнадцатеричных цифр, т.е. символы '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F', 'a', 'b', 'c', 'd', 'e', 'f'.  
+- [:Letter:]  Прописные латинские буквы от 'A' до 'Z' и прописные русские буквы от 'А' до 'Я' (включая букву 'Ё').   
+- [:letter:]  Строчные латинские буквы от 'a' до 'z' и строчные русские буквы от 'а' до 'я' (включая букву 'ё').  
+- [:nsq:]     Символы, отличные от одинарной кавычки (').  
+- [:ndq:]     Символы, отличные от двойной кавычки (").  
 
-Из всех этих классов символов классы \[:nsq:\] и \[:ndq:\] допускаются только в разделе %strings.
+Из всех этих классов символов классы [:nsq:] и [:ndq:] допускаются только в разделе %strings.
 
 # Building
 

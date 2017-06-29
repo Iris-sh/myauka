@@ -115,6 +115,24 @@ enum Lexem_code : unsigned short {
 
 will be generated. In other words, two special lexeme codes are always defined: NONE, denoting the end of the processed text, and UNKNOWN, which denotes the unknown lexeme.  
 
+If you need to insert some text in the beginning of the header file of the generated scanner, then you need to write  
+
+>    %header\_additions additions\_to\_the\_header\_file  
+
+where additions\_to\_the\_header\_file is the string literal with the inserted text. 
+
+Similarly, if you need to insert some text in the beginning of the implementation file of the generated scanner, then you need to write  
+
+>    %impl\_additions additions\_to\_the\_implementation\_file  
+
+where additions\_to\_the\_implementation\_file is the string literal with the inserted text.  
+
+The command  
+
+>    %lexem\_info\_name name\_of\_the\_type\_of\_a\_lexeme\_information  
+
+defines the name of the type of the lexem information, and name\_of\_the\_type\_of\_a\_lexeme\_information is the identifier that is the name of the type of the lexem information. The default name of this type is Lexem_info.  
+
 In the section %keywords, the keywords of the language for which the scaner is written and the corresponding lexeme codes are specified. Codes of lexemes are taken from the section %codes. For example, if
 there are keywords__if__, __then__, __else__, __endif__, and coressponding lexeme codes are Kw\_if, Kw\_then, Kw\_else, Kw\_endif, then the section %keywords should have the following form:  
 
@@ -131,7 +149,7 @@ Here the ellipsis indicates (possibly existing) a description of other keywords.
 The %idents section defines the structure of the identifier of the language for which the scanner is written. More precisely, description\_of_the\_identifier\_begin defines what can be at the beginning of the identifier, and description\_of\_the\_identifier\_body defines the structure of the identifier body.  
 
 In the section %delimiters, the operation signs and the delimiters of the language for which the scaner is written and the corresponding lexeme codes are specified. Codes of lexemes are taken from the section %codes. 
-For example, if the language has delimiters \<, \>, \<=, \>=, =, !=, and corresponding lexeme codes are del\_LT, del\_GT, del\_LEQ, del\_GEQ, del\_EQ, del\_NEQ, then the section %delimiters should have the form  
+For example, if the language has delimiters <, >, <=, >=, =, !=, and corresponding lexeme codes are del\_LT, del\_GT, del\_LEQ, del\_GEQ, del\_EQ, del\_NEQ, then the section %delimiters should have the form  
 
 >   %delimiters  
 >       ...  

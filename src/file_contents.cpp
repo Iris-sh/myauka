@@ -1,12 +1,3 @@
-/*
-    File:    file_contents.cpp
-    Author:  Гаврилов Владимир Сергеевич
-    Created: 4 February 2016, 13:10
-    e-mails: vladimir.s.gavrilov@gmail.com,
-             gavrilov.vladimir.s@mail.ru,
-             gavvs1977@yandex.ru
-*/
-
 #include "../include/file_contents.h"
 #include "../include/fsize.h"
 #include <cstdio>
@@ -17,6 +8,8 @@ public:
     Binary_file() = default;
     Binary_file(const char* name) : fptr(fopen(name, "rb")) {};
     ~Binary_file() {fclose(fptr);};
+    Binary_file& operator=(const Binary_file&) = delete;
+    Binary_file(const Binary_file&) = delete;
 
     FILE* get() const {return fptr;};
 private:
@@ -24,25 +17,30 @@ private:
 };
 
 Contents get_contents(const char* name){
-    Contents result = std::make_pair(Get_contents_return_code::Normal, "");
-    Binary_file f {name};
+    Contents result;
+    Binary_file f(name);
+
     FILE* fptr = f.get();
     if(!fptr){
         result.first = Get_contents_return_code::Impossible_open;
         return result;
     }
+
     long file_size = fsize(fptr);
     if(!file_size){
+        result.first = Get_contents_return_code::Impossible_open;
         return result;
     }
-    auto   test_text = std::make_unique<char[]>(file_size + 1);
-    char*  q         = test_text.get();
-    size_t fr        = fread(q, 1, file_size, fptr);
-    if(fr < (unsigned long)file_size){
+    
+    auto s = std::vector<std::uint8_t>(file_size);
+    unsigned char* data_ptr = s.data();
+    size_t read_count = fread(data_ptr, 1, file_size, fptr);
+    if(read_count != (unsigned long)file_size){
         result.first = Get_contents_return_code::Read_error;
         return result;
     }
-    test_text[file_size] = 0;
-    result.second = std::string(test_text.get());
+    
+    result.first = Get_contents_return_code::Normal;
+    result.second = s;
     return result;
 }

@@ -1,16 +1,9 @@
-/*
-    File:    file_contents.h
-    Author:  Гаврилов Владимир Сергеевич
-    Created: 4 February 2016, 13:10
-    e-mails: vladimir.s.gavrilov@gmail.com,
-             gavrilov.vladimir.s@mail.ru,
-             gavvs1977@yandex.ru
-*/
-
 #ifndef FILE_CONTENTS_H
 #define FILE_CONTENTS_H
-#include <string>
 #include <utility>
+#include <vector>
+#include <cstdint>
+
 
 /** Return codes from the function get_contents. */
 enum class Get_contents_return_code{
@@ -19,7 +12,7 @@ enum class Get_contents_return_code{
     Read_error        ///< This code means that an error occurred while reading the file.
 };
 
-using Contents  = std::pair<Get_contents_return_code, std::string>;
+using Contents = std::pair<Get_contents_return_code, std::vector<std::uint8_t>>;
 
 /**
    Returns: the contents of the file with the specified name
